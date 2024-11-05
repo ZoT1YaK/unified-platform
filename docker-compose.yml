@@ -1,18 +1,30 @@
+version: '3.8'
+
 services:
   backend:
     build:
       context: ./backend
     container_name: backend
+    volumes:
+      - ./backend:/app               # Bind mount the backend source code for live updates
+      - /app/node_modules             # Exclude node_modules from bind mount
     ports:
       - "${PORT:-5000}:5000"
     env_file:
-      - ./backend/.env
+      - ./backend/.env                # Load environment variables from backend .env file
     restart: unless-stopped
+    command: npx nodemon src/server.js  # Use nodemon for live reloading
 
   frontend:
     build:
       context: ./frontend
     container_name: frontend
+    volumes:
+      - ./frontend:/app               # Bind mount the frontend source code for live updates
+      - /app/node_modules             # Exclude node_modules from bind mount
     ports:
       - "3000:3000"
+    env_file:
+      - ./frontend/.env               # Load environment variables from frontend .env file
     restart: unless-stopped
+    command: npm start                # Run React in development mode

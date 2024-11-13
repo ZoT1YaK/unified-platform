@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 // import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./components/Login/Login";
+import Home from "./components/Home(explore)/Home";
 // import Dashboard from "./components/Dashboard/Dashboard";
 
 const App = () => {
@@ -9,7 +10,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        {/* <ProtectedRoute path="/dashboard" element={<Dashboard />} /> */}
+        <Route path="/dashboard" element={<Home />} />
       </Routes>
     </Router>
   );

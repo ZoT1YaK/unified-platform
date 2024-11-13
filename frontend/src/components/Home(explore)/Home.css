@@ -1,0 +1,126 @@
+/* General Home Page styling */
+.home-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  background-color: white; /* Set the background to white */
+  min-height: 100vh; /* Ensure the page takes up the full height */
+  margin: 0; /* Remove any default margin */
+}
+
+/* Top bar styling */
+.top-bar {
+  width: 100%;
+  height: 60px;
+  background-color: #32444d;
+  position: fixed; /* Fix the top bar to the top */
+  top: 0; /* Align it at the top of the page */
+  left: 0; /* Align it to the left edge */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* Left Icon Container */
+.left-icons {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-start;
+  align-items: center;
+  width: auto;
+}
+
+/* Search input container */
+.search-container {
+  width: 292px;
+  height: 34px;
+  background-color: #626e74;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 350px; /* Position 350px from the right border of the top bar */
+}
+
+.search-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+  object-fit: cover;
+}
+
+/* Search input field */
+.search-input {
+  width: 100%;
+  height: 30px;
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.search-input::placeholder {
+  color: white;
+}
+
+/* Right Icon Container (Positioned beside search bar) */
+.right-icons {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-start;
+  align-items: center;
+  margin-left: 10px;
+}
+
+/* Icons container */
+/* .icons {
+  display: flex;
+  gap: 20px;
+  position: absolute;
+  right: 20px;
+} */
+
+/* Icon styling */
+.icon {
+  width: 30px; /* Adjust as per your icon sizes */
+  height: 30px;
+  object-fit: cover;
+}
+
+.icon-peakon {
+  width: 35px;
+  height: 22px;
+  object-fit: cover;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .top-bar {
+    padding: 0 10px;
+  }
+
+  .search-container {
+    width: 200px;
+  }
+
+  .icons {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-container {
+    width: 150px;
+  }
+
+  .icons {
+    gap: 5px;
+  }
+}

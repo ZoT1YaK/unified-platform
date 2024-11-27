@@ -210,26 +210,20 @@
   margin-top: 5px;
 }
 
-/* Layout of gray boxes for the other sections */
 .active-ui-container {
   position: relative;
   width: 100%;
   top: -73px;
   display: flex;
   justify-content: flex-start;
-  /* Ensure horizontal alignment */
   gap: 25px;
-  /* Space between columns */
   flex-wrap: wrap;
-  /* Allow wrapping on smaller screens */
   padding-left: 20px;
-  /* Add padding to only the active UI container */
 }
 
 .profile-column,
 .post-column {
   margin-left: 123px;
-  /* Adjust the distance between the columns */
 }
 
 /* Profile Column */
@@ -238,7 +232,6 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  /* Space between profile and gray boxes */
   flex-shrink: 0;
   /* Prevent shrinking */
 }
@@ -267,8 +260,8 @@
 }
 
 /* Placeholder Gray Boxes for other sections (Achievements, Milestones, etc.) */
-.achievements-gray-box,
-.milestones-gray-box,
+/* .achievements-gray-box, */
+/* .milestones-gray-box,*/
 .post-creation-gray-box,
 .post-feed-gray-box,
 .tasks-gray-box,
@@ -279,22 +272,91 @@
   /* Prevent boxes from shrinking */
 }
 
-.achievements-gray-box {
+.achievements-container {
   /*positioned right bellow the profile overview, at a distance of 5 px*/
   height: 118px;
   width: 400px;
-  margin-top: 5px;
+  /* margin-top: 20px; */
   order: 1;
   margin-left: 123px;
 }
 
-.milestones-gray-box {
+.achievements-container h2 {
+  /* font-size: 18px; */
+  font-weight: bold;
+  color: #32444D;
+  margin-bottom: 10px;
+}
+
+.achievements-box {
+  background-color: white;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.achievements-count {
+  font-size: 16px;
+  color: hsla(200, 21%, 25%, 0.747);
+  margin-bottom: 20px;
+}
+
+.achievements-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.achievement-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+.plus-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  margin-left: 10px;
+}
+
+.milestones-container {
   /*positioned right bellow the achievements box, at a distance of 5 px*/
   height: 118px;
   width: 400px;
-  margin-top: 5px;
+  margin-top: 60px;
   order: 2;
   margin-left: 123px;
+}
+
+.milestones-container h2 {
+  /* font-size: 18px; */
+  font-weight: bold;
+  color: #32444D;
+  margin-bottom: 10px;
+}
+
+.milestones-box {
+  background-color: white;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.milestones-count {
+  font-size: 16px;
+  color: hsla(200, 21%, 25%, 0.747);
+  margin-bottom: 20px;
+}
+
+.milestones-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.milestone-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
 }
 
 .post-creation-gray-box {

@@ -20,6 +20,12 @@ const Home = () => {
         }
     };
 
+    const achievements = [
+        "Ach-badge1", "Ach-badge2", "Ach-badge3", "Ach-badge4", "Ach-badge5"
+    ];
+
+    const milestones = ["Mil-badge1", "Mil-badge2", "Mil-badge3"];
+
     return (
         <div className="home-page">
 
@@ -87,11 +93,43 @@ const Home = () => {
                         </div>
                     </div>
 
-                    {/* Achievements Overview (Gray box) */}
-                    <div className="achievements-gray-box"></div>
+                    {/* Achievements Overview */}
+                    <div className="achievements-container">
+                        <h2>Achievements</h2>
+                        <div className="achievements-box">
+                            <p className="achievements-count">You've gained {achievements.length} achievements</p>
+                            <div className="achievements-row">
+                                {achievements.slice(0, 10).map((achievement, index) => (
+                                    <img
+                                        key={index}
+                                        src={`/${achievement}.png`}
+                                        alt={`Achievement ${index + 1}`}
+                                        className="achievement-icon"
+                                    />
+                                ))}
+                                {achievements.length > 10 && <img src="/plus.png" alt="Plus" className="plus-icon" />}
+                            </div>
+                        </div>
+                    </div>
 
-                    {/* Milestones Overview (Gray box) */}
-                    <div className="milestones-gray-box"></div>
+                    {/* Milestones Overview */}
+                    <div className="milestones-container">
+                        <h2>Milestones</h2>
+                        <div className="milestones-box">
+                            <p className="milestones-count">You've gained {milestones.length} milestones</p>
+                            <div className="milestones-row">
+                                {milestones.map((milestone, index) => (
+                                    <img
+                                        key={index}
+                                        src={`/${milestone}.png`}
+                                        alt={`Milestone ${index + 1}`}
+                                        className="milestone-icon"
+                                    />
+                                ))}
+                                {milestones.length > 10 && <img src="/plus.png" alt="Plus" className="plus-icon" />}
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
 

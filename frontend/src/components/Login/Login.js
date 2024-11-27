@@ -14,10 +14,10 @@ const Login = () => {
         setMessage("");
         try {
             // Send login request to backend
-            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/users/login`, { email, password });
-            const { token, user } = response.data;
-            localStorage.setItem("token", token);
-            localStorage.setItem("user", JSON.stringify(user));
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/employees/login`, { email, password });
+            
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("employee", JSON.stringify(response.data.employee));
             setMessage("Login successful!");
             setTimeout(() => {
                 window.location.href = "/dashboard";

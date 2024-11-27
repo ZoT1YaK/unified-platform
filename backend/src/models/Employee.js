@@ -8,7 +8,7 @@ const employeeSchema = new mongoose.Schema({
     unique: true,
     lowercase: true,
   },
-  dep_num: {
+  dep_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Department",
     required: true,
@@ -37,7 +37,7 @@ const employeeSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  people_leader: {
+  people_leader_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Employee",
     required: false,

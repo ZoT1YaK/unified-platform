@@ -33,7 +33,7 @@ const seedData = async () => {
 
     console.log("Adding location for the department...");
     const location = await Location.create({
-      dep_num: engineeringDepartment._id,
+      dep_id: engineeringDepartment._id,
       country: "Denmark",
       city: "Aarhus",
       zip: "8000",
@@ -54,7 +54,7 @@ const seedData = async () => {
       position: "Manager",
       hire_date: new Date("2020-01-01"),
       is_people_leader: true,
-      dep_num: engineeringDepartment._id,
+      dep_id: engineeringDepartment._id,
     });
 
     // Create the employee who reports to the people leader
@@ -66,8 +66,8 @@ const seedData = async () => {
       position: "Developer",
       hire_date: new Date("2021-01-01"),
       is_people_leader: false,
-      dep_num: engineeringDepartment._id,
-      people_leader: peopleLeader._id,
+      dep_id: engineeringDepartment._id,
+      people_leader_id: peopleLeader._id,
     });
 
     console.log("Seeding teams...");

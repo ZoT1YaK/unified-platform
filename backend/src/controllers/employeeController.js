@@ -42,7 +42,7 @@ exports.getProfile = async (req, res) => {
 
   try {
     const employee = await Employee.findById(id)
-      .populate("dep_num", "number name");
+      .populate("dep_id", "number name");
 
     if (!employee) {
       return res.status(404).json({ message: "Employee not found" });
@@ -56,8 +56,8 @@ exports.getProfile = async (req, res) => {
         l_name: employee.l_name,
         position: employee.position,
         language: employee.language,
-        department: employee.dep_num
-          ? { number: employee.dep_num.number, name: employee.dep_num.name }
+        department: employee.dep_id
+          ? { number: employee.dep_id.number, name: employee.dep_id.name }
           : null,
       },
     });

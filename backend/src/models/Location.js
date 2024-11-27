@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const locationSchema = new mongoose.Schema({
-  dep_num: { 
+  dep_id: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: "Department", 
     required: true 

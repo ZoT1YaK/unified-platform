@@ -18,9 +18,11 @@ const seedData = async () => {
     console.log("Clearing existing data...");
 
     await Employee.deleteMany({});
+    await Location.deleteMany({});
     await Department.deleteMany({});
     await Team.deleteMany({});
     await TeamEmployee.deleteMany({});
+    
 
     console.log("Seeding departments...");
 
@@ -31,7 +33,7 @@ const seedData = async () => {
 
     console.log("Adding location for the department...");
     const location = await Location.create({
-      dep_num: engineering._id,
+      dep_num: engineeringDepartment._id,
       country: "Denmark",
       city: "Aarhus",
       zip: "8000",

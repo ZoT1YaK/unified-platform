@@ -1,6 +1,6 @@
 const express = require("express");
-const { loginEmployee } = require("../controllers/employeeController");
-const { verifyToken, verifyPeopleLeader } = require("../middleware/authMiddleware");
+const { loginEmployee, getProfile } = require("../controllers/employeeController");
+const { verifyToken } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 

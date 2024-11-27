@@ -1,8 +1,11 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+require("dotenv").config();
 const Employee = require("../models/Employee");
 const Department = require("../models/Department");
-require("dotenv").config();
+const Team = require("../models/Team");
+const TeamEmployee = require("../models/TeamEmployee");
+const Location = require("../models/Location");
 
 const seedData = async () => {
   try {
@@ -13,18 +16,30 @@ const seedData = async () => {
     });
 
     console.log("Clearing existing data...");
+
     await Employee.deleteMany({});
     await Department.deleteMany({});
+    await Team.deleteMany({});
+    await TeamEmployee.deleteMany({});
 
-    console.log("Adding new data...");
+    console.log("Seeding departments...");
 
-    // Create departments
     const engineeringDepartment = await Department.create({
       number: "101",
       name: "Engineering",
     });
 
-    // Hash password
+    console.log("Adding location for the department...");
+    const location = await Location.create({
+      dep_num: engineering._id,
+      country: "Denmark",
+      city: "Aarhus",
+      zip: "8000",
+      street: "Example 123",
+    });
+
+    console.log("Seeding employees...");
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(process.env.DEFAULT_EMPLOYEE_PASSWORD, salt);
 
@@ -38,11 +53,10 @@ const seedData = async () => {
       hire_date: new Date("2020-01-01"),
       is_people_leader: true,
       dep_num: engineeringDepartment._id,
-      people_leader: null, // No one to report to
     });
 
     // Create the employee who reports to the people leader
-    const reportingEmployee = await Employee.create({
+    const employee = await Employee.create({
       email: "employee@example.com",
       password: hashedPassword,
       f_name: "Employee",
@@ -54,9 +68,16 @@ const seedData = async () => {
       people_leader: peopleLeader._id,
     });
 
-    console.log("Employees and departments seeded successfully.");
-    console.log("People Leader:", peopleLeader);
-    console.log("Reporting Employee:", reportingEmployee);
+    console.log("Seeding teams...");
+
+    const teamAlpha = await Team.create({ name: "Alpha Team" });
+
+    console.log("Assigning employees to teams...");
+
+    await TeamEmployee.create({ team_id: teamAlpha._id, emp_id: peopleLeader._id });
+    await TeamEmployee.create({ team_id: teamAlpha._id, emp_id: employee._id });
+
+    console.log("Database seeded successfully.");
     process.exit();
   } catch (error) {
     console.error("Error seeding database:", error);

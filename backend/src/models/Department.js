@@ -3,12 +3,12 @@ const mongoose = require("mongoose");
 const departmentSchema = new mongoose.Schema({
   number: {
     type: String,
-    required: [true, "Department number is required"],
+    required: true,
     unique: true,
   },
   name: {
     type: String,
-    required: [true, "Department name is required"],
+    required: true,
   },
 });
 

@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const employeeSchema = new mongoose.Schema({
   email: {
     type: String,
-    required: [true, "Email is required"],
+    required: true,
     unique: true,
     trim: true,
     lowercase: true,
@@ -17,20 +17,20 @@ const employeeSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "Password is required"],
+    required: true,
     minlength: 8,
   },
   f_name: {
     type: String,
-    required: [true, "First name is required"],
+    required: true,
   },
   l_name: {
     type: String,
-    required: [true, "Last name is required"],
+    required: true,
   },
   position: {
     type: String,
-    required: [true, "Position is required"],
+    required: true,
   },
   hire_date: {
     type: Date,

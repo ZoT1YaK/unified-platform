@@ -2,15 +2,19 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 
+const employeeRoutes = require("./routes/employeeRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+
 const app = express();
+
+// Middleware
+app.use(cors()); // Enable Cross-Origin Resource Sharing
+app.use(express.json()); // Parse JSON payloads
+
 connectDB();
 
-app.use(cors());
-// Middleware
-app.use(express.json());
-
 // Routes
-app.use("/api/users", require("./routes/userRoute"));
-app.use("/api/dashboard", require("./routes/dashboardRoute"));
+app.use("/api/employees", employeeRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 module.exports = app;

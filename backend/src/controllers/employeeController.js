@@ -2,15 +2,12 @@ const jwt = require("jsonwebtoken");
 const Employee = require("../models/Employee");
 const Department = require("../models/Department");
 
-// Employee login
 exports.loginEmployee = async (req, res) => {
   const { email, password } = req.body;
 
   try {
     // Find employee and populate references
-    const employee = await Employee.findOne({ email })
-      .populate("dep_num", "number name") // Populate department details
-      .populate("people_leader", "f_name l_name email"); // Populate leader details
+    const employee = await Employee.findOne({ email });
 
     if (!employee) {
       return res.status(404).json({ message: "Employee not found" });
@@ -24,7 +21,7 @@ exports.loginEmployee = async (req, res) => {
 
     // Generate JWT
     const token = jwt.sign(
-      { id: employee._id, position: employee.position },
+      { id: employee._id, is_people_leader: employee.is_people_leader },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -33,24 +30,39 @@ exports.loginEmployee = async (req, res) => {
     res.status(200).json({
       message: "Login successful",
       token,
-      employee: {
+    });
+  } catch (error) {
+    console.error("Error in loginEmployee:", error.stack);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getProfile = async (req, res) => {
+  const { id } = req.user;
+
+  try {
+    const employee = await Employee.findById(id)
+      .populate("dep_num", "number name");
+
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    res.status(200).json({
+      profile: {
         id: employee._id,
         email: employee.email,
         f_name: employee.f_name,
         l_name: employee.l_name,
         position: employee.position,
-        department: employee.dep_num ? { number: employee.dep_num.number, name: employee.dep_num.name } : null,
-        people_leader: employee.people_leader
-          ? {
-              id: employee.people_leader._id,
-              email: employee.people_leader.email,
-              name: `${employee.people_leader.f_name} ${employee.people_leader.l_name}`,
-            }
+        language: employee.language,
+        department: employee.dep_num
+          ? { number: employee.dep_num.number, name: employee.dep_num.name }
           : null,
       },
     });
   } catch (error) {
-    console.error("Error in loginEmployee:", error.stack);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error fetching profile:", error.stack);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

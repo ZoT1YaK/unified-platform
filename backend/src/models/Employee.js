@@ -6,19 +6,16 @@ const employeeSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    trim: true,
     lowercase: true,
-    match: [/.+@.+\..+/, "Please enter a valid email address"],
   },
   dep_num: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Department",
-    required: false,
+    required: true,
   },
   password: {
     type: String,
     required: true,
-    minlength: 8,
   },
   f_name: {
     type: String,

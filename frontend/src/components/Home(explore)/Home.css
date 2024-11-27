@@ -216,8 +216,54 @@
   width: 100%;
   top: -73px;
   display: flex;
+  justify-content: flex-start;
+  /* Ensure horizontal alignment */
+  gap: 25px;
+  /* Space between columns */
   flex-wrap: wrap;
-  /* justify-content: space-between; */
+  /* Allow wrapping on smaller screens */
+  padding-left: 20px;
+  /* Add padding to only the active UI container */
+}
+
+.profile-column,
+.post-column {
+  margin-left: 123px;
+  /* Adjust the distance between the columns */
+}
+
+/* Profile Column */
+.profile-column {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  /* Space between profile and gray boxes */
+  flex-shrink: 0;
+  /* Prevent shrinking */
+}
+
+/* Post Column */
+.post-column {
+  width: 885px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  /* Space between post creation and feed boxes */
+  flex-shrink: 0;
+  /* margin-left: 123px; */
+  /* Prevent shrinking */
+}
+
+/* Tasks Column */
+.tasks-column {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  /* Space between tasks and events boxes */
+  flex-shrink: 0;
+  /* Prevent shrinking */
 }
 
 /* Placeholder Gray Boxes for other sections (Achievements, Milestones, etc.) */
@@ -229,6 +275,8 @@
 .events-gray-box {
   background-color: #D3D3D3;
   border-radius: 10px;
+  flex-shrink: 0;
+  /* Prevent boxes from shrinking */
 }
 
 .achievements-gray-box {
@@ -236,6 +284,8 @@
   height: 118px;
   width: 400px;
   margin-top: 5px;
+  order: 1;
+  margin-left: 123px;
 }
 
 .milestones-gray-box {
@@ -243,13 +293,16 @@
   height: 118px;
   width: 400px;
   margin-top: 5px;
+  order: 2;
+  margin-left: 123px;
 }
 
 .post-creation-gray-box {
   /*positioned at the right of the profile overview, at a distance of 25px, at the same hight*/
   width: 885px;
   height: 107px;
-  margin-left: 25px;
+  /* margin-left: 25px; */
+  order: 3;
 }
 
 .post-feed-gray-box {
@@ -257,13 +310,15 @@
   width: 885px;
   height: 458px;
   margin-top: 5px;
+  order: 4;
 }
 
 .tasks-gray-box {
   /*positioned at the right of the post creation box, at a distance of 25px, at the same hight*/
   width: 400px;
   height: 326px;
-  margin-left: 25px;
+  /* margin-left: 25px; */
+  order: 5;
 }
 
 .events-gray-box {
@@ -271,9 +326,16 @@
   width: 400px;
   height: 664px;
   margin-top: 5px;
+  order: 6;
 }
 
-/* Responsive Design */
+
+@media (max-width: 1024px) {
+  .active-ui-container {
+    justify-content: space-between;
+  }
+}
+
 @media (max-width: 768px) {
   .top-bar {
     padding: 0 10px;
@@ -309,6 +371,41 @@
 
   .stat {
     margin-bottom: 15px;
+  }
+
+  .active-ui-container {
+    flex-direction: column;
+    align-items: center;
+    padding-left: 10px;
+    /* Reduce left padding on smaller screens */
+
+  }
+
+  .profile-column,
+  .post-column,
+  .tasks-column {
+    margin-left: 10px;
+    /* Adjust column margins for mobile */
+  }
+
+  /* Make the gray boxes responsive */
+  .achievements-gray-box,
+  .milestones-gray-box,
+  .post-creation-gray-box,
+  .post-feed-gray-box,
+  .tasks-gray-box,
+  .events-gray-box {
+    width: 90%;
+    margin-top: 10px;
+  }
+
+  .post-creation-gray-box {
+    width: 100%;
+  }
+
+  .tasks-gray-box,
+  .events-gray-box {
+    width: 100%;
   }
 }
 

@@ -93,24 +93,24 @@ const Home = () => {
                     {/* Milestones Overview (Gray box) */}
                     <div className="milestones-gray-box"></div>
 
-                    <div className="post-column">
+                </div>
 
-                        {/* Post Creation box (Gray box) */}
-                        <div className="post-creation-gray-box"></div>
+                <div className="post-column">
 
-                        {/* Feed box (Gray box)*/}
-                        <div className="post-feed-gray-box"></div>
+                    {/* Post Creation box (Gray box) */}
+                    <div className="post-creation-gray-box"></div>
 
-                        <div className="tasks-column">
+                    {/* Feed box (Gray box)*/}
+                    <div className="post-feed-gray-box"></div>
+                </div>
 
-                            {/* Tasks box (Gray box) */}
-                            <div className="tasks-gray-box"></div>
+                <div className="tasks-column">
 
-                            {/* Events box (Gray box) */}
-                            <div className="events-gray-box"></div>
+                    {/* Tasks box (Gray box) */}
+                    <div className="tasks-gray-box"></div>
 
-                        </div>
-                    </div>
+                    {/* Events box (Gray box) */}
+                    <div className="events-gray-box"></div>
                 </div>
             </div>
         </div>

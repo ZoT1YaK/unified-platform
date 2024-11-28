@@ -6,6 +6,8 @@ const Department = require("../models/Department");
 const Team = require("../models/Team");
 const TeamEmployee = require("../models/TeamEmployee");
 const Location = require("../models/Location");
+const NotificationType = require("../models/NotificationType");
+const NotificationSettings = require("../models/NotificationSettings");
 
 const seedData = async () => {
   try {
@@ -15,17 +17,7 @@ const seedData = async () => {
       useUnifiedTopology: true,
     });
 
-    console.log("Clearing existing data...");
-
-    await Employee.deleteMany({});
-    await Location.deleteMany({});
-    await Department.deleteMany({});
-    await Team.deleteMany({});
-    await TeamEmployee.deleteMany({});
-    
-
     console.log("Seeding departments...");
-
     const engineeringDepartment = await Department.create({
       number: "101",
       name: "Engineering",
@@ -33,7 +25,7 @@ const seedData = async () => {
 
     console.log("Adding location for the department...");
     const location = await Location.create({
-      dep_num: engineeringDepartment._id,
+      dep_id: engineeringDepartment._id,
       country: "Denmark",
       city: "Aarhus",
       zip: "8000",
@@ -41,11 +33,9 @@ const seedData = async () => {
     });
 
     console.log("Seeding employees...");
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(process.env.DEFAULT_EMPLOYEE_PASSWORD, salt);
 
-    // Create the people leader
     const peopleLeader = await Employee.create({
       email: "leader@example.com",
       password: hashedPassword,
@@ -54,10 +44,9 @@ const seedData = async () => {
       position: "Manager",
       hire_date: new Date("2020-01-01"),
       is_people_leader: true,
-      dep_num: engineeringDepartment._id,
+      dep_id: engineeringDepartment._id,
     });
 
-    // Create the employee who reports to the people leader
     const employee = await Employee.create({
       email: "employee@example.com",
       password: hashedPassword,
@@ -66,18 +55,39 @@ const seedData = async () => {
       position: "Developer",
       hire_date: new Date("2021-01-01"),
       is_people_leader: false,
-      dep_num: engineeringDepartment._id,
-      people_leader: peopleLeader._id,
+      dep_id: engineeringDepartment._id,
+      people_leader_id: peopleLeader._id,
     });
 
     console.log("Seeding teams...");
-
     const teamAlpha = await Team.create({ name: "Alpha Team" });
 
     console.log("Assigning employees to teams...");
-
     await TeamEmployee.create({ team_id: teamAlpha._id, emp_id: peopleLeader._id });
     await TeamEmployee.create({ team_id: teamAlpha._id, emp_id: employee._id });
+
+    console.log("Seeding notification types...");
+    const types = [
+      { type_name: "Comment on Post", description: "Notification for comments on posts" },
+      { type_name: "Task Assignment", description: "Notification for task assignments" },
+      { type_name: "Report Available", description: "Notification for available reports" },
+    ];
+    const notificationTypes = await NotificationType.insertMany(types);
+
+    console.log("Seeding notification settings...");
+    const defaultSettings = [];
+
+    [peopleLeader, employee].forEach((emp) => {
+      notificationTypes.forEach((type) => {
+        defaultSettings.push({
+          emp_id: emp._id,
+          noti_type_id: type._id,
+          preference: true, 
+        });
+      });
+    });
+
+    await NotificationSettings.insertMany(defaultSettings);
 
     console.log("Database seeded successfully.");
     process.exit();

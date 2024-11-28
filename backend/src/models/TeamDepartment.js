@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const teamDepartmentSchema = new mongoose.Schema({
-  dep_num: { 
+  dep_id: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: "Department", 
     required: true 
@@ -13,6 +13,6 @@ const teamDepartmentSchema = new mongoose.Schema({
   },
 });
 
-teamDepartmentSchema.index({ dep_num: 1, team_id: 1 }, { unique: true });
+teamDepartmentSchema.index({ dep_id: 1, team_id: 1 }, { unique: true });
 
 module.exports = mongoose.model("TeamDepartment", teamDepartmentSchema);

@@ -1,10 +1,13 @@
 const express = require("express");
-const { getTeamsByEmployee } = require("../controllers/teamController");
+const { getTeamsByEmployee, getTeamMembers } = require("../controllers/teamController");
 const { verifyToken, verifyPeopleLeader } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
 // People Leader: View managed teams
-router.get("/my-teams", verifyToken, verifyPeopleLeader, getTeamsByEmployee);
+router.get("/get-teams", verifyToken, verifyPeopleLeader, getTeamsByEmployee);
+
+// View team members
+router.get("/get-members", verifyToken, getTeamMembers);
 
 module.exports = router;

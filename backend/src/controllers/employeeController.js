@@ -6,33 +6,33 @@ exports.loginEmployee = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Find employee and populate references
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
     const employee = await Employee.findOne({ email });
 
     if (!employee) {
       return res.status(404).json({ message: "Employee not found" });
     }
 
-    // Verify password
     const isMatch = await employee.comparePassword(password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    // Generate JWT
     const token = jwt.sign(
       { id: employee._id, is_people_leader: employee.is_people_leader },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    // Send response
     res.status(200).json({
       message: "Login successful",
       token,
     });
   } catch (error) {
-    console.error("Error in loginEmployee:", error.stack);
+    console.error("Error logging in employee:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -62,7 +62,7 @@ exports.getProfile = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching profile:", error.stack);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error fetching profile:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };

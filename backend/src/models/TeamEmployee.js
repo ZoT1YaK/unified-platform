@@ -13,6 +13,6 @@ const teamEmployeeSchema = new mongoose.Schema({
   },
 });
 
-teamEmployeeSchema.index({ team_id: 1, emp_email: 1 }, { unique: true });
+teamEmployeeSchema.index({ team_id: 1, emp_id: 1 }, { unique: true });
 
 module.exports = mongoose.model("TeamEmployee", teamEmployeeSchema);

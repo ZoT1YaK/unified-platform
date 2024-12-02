@@ -1,0 +1,483 @@
+/* Home Page styling */
+.home-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  background-color: #f2f2f2;
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* Other home-specific styles */
+.home-page .top-bar {
+  width: 100%;
+  height: 60px;
+  background-color: #32444d;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+/* Left Icon Container */
+.left-icons {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-start;
+  align-items: center;
+  width: auto;
+}
+
+/* Right Container (Search bar and right icons together) */
+.right-container {
+  display: flex;
+  gap: 19px;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 182px;
+}
+
+/* Search input container */
+.search-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 292px;
+  height: 34px;
+  background-color: #626e74;
+  border-radius: 10px;
+  margin-left: 0;
+}
+
+/* Search input field */
+.search-input {
+  width: 100%;
+  height: 30px;
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.search-input::placeholder {
+  color: white;
+  opacity: 1;
+}
+
+/* Search icon styling */
+.search-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+  object-fit: cover;
+}
+
+/* Right Icon Container */
+.right-icons {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-start;
+  align-items: center;
+  width: auto;
+}
+
+/* Icon styling */
+.icon {
+  width: 24px;
+  height: 24px;
+  object-fit: cover;
+}
+
+.icon-peakon {
+  width: 35px;
+  height: 22px;
+  object-fit: cover;
+}
+
+.home-page .header {
+  background-color: #B4FBC4;
+  height: 324px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.home-page .header h1 {
+  font-family: 'Noto', sans-serif;
+  color: #32444D;
+  font-size: 36px;
+}
+
+/* .home-page .highlight {
+  font-weight: bold;
+} */
+
+.profile-container {
+  margin-left: 123px;
+  border-radius: 10px;
+  width: 400px;
+  height: 320px;
+  background-color: white;
+  position: relative;
+
+}
+
+.profile-container-top {
+  width: 100%;
+  height: 73px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background-color: #82ED9B;
+  position: absolute;
+  top: 0;
+}
+
+.avatar {
+  width: 165px;
+  height: 165px;
+  object-fit: cover;
+  /* positioned in the top left corner with a padding of 20px from top and 16px from left*/
+  position: absolute;
+  top: 20px;
+  left: 16px;
+}
+
+.user-details {
+  margin-left: 190px;
+  margin-top: 55px;
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-details h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #32444D;
+  margin-bottom: 0px;
+
+}
+
+.user-details p {
+  font-size: 14px;
+  color: #32444D;
+  margin: 5px 0;
+}
+
+.message {
+  font-size: 18px;
+  font-weight: bold;
+  color: #32444D;
+}
+
+.stats {
+  /* positioned in a row, centered, bellow the other elements, leaving 36px from the bottom of the container, at an equal distance between each other, with a distance of 37px from the left and right sides of the container. */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  bottom: 36px;
+  left: 37px;
+  right: 37px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 36px;
+  font-weight: bold;
+  color: #32444D;
+  text-align: center;
+  flex: 1;
+}
+
+.stat-description {
+  font-size: 14px;
+  color: #32444D;
+  margin-top: 5px;
+}
+
+.active-ui-container {
+  position: relative;
+  width: 100%;
+  top: -73px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 25px;
+  flex-wrap: wrap;
+  padding-left: 20px;
+}
+
+.profile-column,
+.post-column {
+  margin-left: 123px;
+}
+
+/* Profile Column */
+.profile-column {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+  /* Prevent shrinking */
+}
+
+/* Post Column */
+.post-column {
+  width: 885px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  /* Space between post creation and feed boxes */
+  flex-shrink: 0;
+  /* margin-left: 123px; */
+  /* Prevent shrinking */
+}
+
+/* Tasks Column */
+.tasks-column {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  /* Space between tasks and events boxes */
+  flex-shrink: 0;
+  /* Prevent shrinking */
+}
+
+/* Placeholder Gray Boxes for other sections (Achievements, Milestones, etc.) */
+/* .achievements-gray-box, */
+/* .milestones-gray-box,*/
+.post-creation-gray-box,
+.post-feed-gray-box,
+.tasks-gray-box,
+.events-gray-box {
+  background-color: #D3D3D3;
+  border-radius: 10px;
+  flex-shrink: 0;
+  /* Prevent boxes from shrinking */
+}
+
+.achievements-container {
+  /*positioned right bellow the profile overview, at a distance of 5 px*/
+  height: 118px;
+  width: 400px;
+  /* margin-top: 20px; */
+  order: 1;
+  margin-left: 123px;
+}
+
+.achievements-container h2 {
+  /* font-size: 18px; */
+  font-weight: bold;
+  color: #32444D;
+  margin-bottom: 10px;
+}
+
+.achievements-box {
+  background-color: white;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.achievements-count {
+  font-size: 16px;
+  color: hsla(200, 21%, 25%, 0.747);
+  margin-bottom: 20px;
+}
+
+.achievements-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.achievement-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+.plus-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  margin-left: 10px;
+}
+
+.milestones-container {
+  /*positioned right bellow the achievements box, at a distance of 5 px*/
+  height: 118px;
+  width: 400px;
+  margin-top: 60px;
+  order: 2;
+  margin-left: 123px;
+}
+
+.milestones-container h2 {
+  /* font-size: 18px; */
+  font-weight: bold;
+  color: #32444D;
+  margin-bottom: 10px;
+}
+
+.milestones-box {
+  background-color: white;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.milestones-count {
+  font-size: 16px;
+  color: hsla(200, 21%, 25%, 0.747);
+  margin-bottom: 20px;
+}
+
+.milestones-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.milestone-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+.post-creation-gray-box {
+  /*positioned at the right of the profile overview, at a distance of 25px, at the same hight*/
+  width: 885px;
+  height: 107px;
+  /* margin-left: 25px; */
+  order: 3;
+}
+
+.post-feed-gray-box {
+  /*positioned right bellow the post creation box, at a distance of 5 px*/
+  width: 885px;
+  height: 458px;
+  margin-top: 5px;
+  order: 4;
+}
+
+.tasks-gray-box {
+  /*positioned at the right of the post creation box, at a distance of 25px, at the same hight*/
+  width: 400px;
+  height: 326px;
+  /* margin-left: 25px; */
+  order: 5;
+}
+
+.events-gray-box {
+  /*positioned right bellow the tasks overview, at a distance of 5 px*/
+  width: 400px;
+  height: 664px;
+  margin-top: 5px;
+  order: 6;
+}
+
+
+@media (max-width: 1024px) {
+  .active-ui-container {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-bar {
+    padding: 0 10px;
+  }
+
+  .search-container {
+    width: 200px;
+  }
+
+  .left-icons,
+  .right-icons {
+    gap: 10px;
+  }
+
+  .profile-container {
+    width: 90%;
+    margin-left: 10px;
+  }
+
+  .avatar {
+    width: 140px;
+    height: 140px;
+  }
+
+  .user-details {
+    margin-left: 160px;
+  }
+
+  .stats {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stat {
+    margin-bottom: 15px;
+  }
+
+  .active-ui-container {
+    flex-direction: column;
+    align-items: center;
+    padding-left: 10px;
+    /* Reduce left padding on smaller screens */
+
+  }
+
+  .profile-column,
+  .post-column,
+  .tasks-column {
+    margin-left: 10px;
+    /* Adjust column margins for mobile */
+  }
+
+  /* Make the gray boxes responsive */
+  .achievements-gray-box,
+  .milestones-gray-box,
+  .post-creation-gray-box,
+  .post-feed-gray-box,
+  .tasks-gray-box,
+  .events-gray-box {
+    width: 90%;
+    margin-top: 10px;
+  }
+
+  .post-creation-gray-box {
+    width: 100%;
+  }
+
+  .tasks-gray-box,
+  .events-gray-box {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-container {
+    width: 150px;
+  }
+
+  .left-icons,
+  .right-icons {
+    gap: 5px;
+  }
+}

@@ -264,8 +264,7 @@
 /* .milestones-gray-box,*/
 .post-creation-gray-box,
 .post-feed-gray-box,
-.tasks-gray-box,
-.events-gray-box {
+.tasks-gray-box {
   background-color: #D3D3D3;
   border-radius: 10px;
   flex-shrink: 0;
@@ -385,12 +384,37 @@
 
 .events-gray-box {
   /*positioned right bellow the tasks overview, at a distance of 5 px*/
-  width: 400px;
-  height: 664px;
+  width: 100%;
+  height: auto;
   margin-top: 5px;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  overflow-y: auto;
   order: 6;
 }
 
+.events-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.events-gray-box hr {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 20px 0;
+  /* Add some spacing around the horizontal line */
+}
+
+.events-gray-box h2 {
+  font-weight: bold;
+  color: #32444D;
+}
+
+.events-gray-box h2+.events-list {
+  margin-top: 10px;
+  padding-top: 20px;
+}
 
 @media (max-width: 1024px) {
   .active-ui-container {

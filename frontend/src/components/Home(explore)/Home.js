@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Home.css';
+import EventCard from './../EventCard/EventCard';
 
 const Home = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -25,6 +26,62 @@ const Home = () => {
     ];
 
     const milestones = ["Mil-badge1", "Mil-badge2", "Mil-badge3"];
+
+    // this is mock data, to be removed when BE is done
+    const events = [
+        {
+            thumbnail: '/PaintingEvent.png',
+            date: '09/09/24',
+            title: 'Lets paint!',
+            description: 'Join us on the big yearly marathon, sed do eiusmod tempor incididunt ...',
+            location: 'My Region',
+        },
+        {
+            thumbnail: '/RecycleEvent.jpeg',
+            date: '10/10/24',
+            title: 'Let’s recycle in the office!',
+            description: 'Join us on the big yearly marathon, sed do eiusmod tempor incididunt ...',
+            location: 'My Region',
+        },
+        {
+            thumbnail: '/UglySweaterEvent.jpg',
+            date: '12/12/24',
+            title: 'Ugly Sweater Weather',
+            description: 'Join us on the big yearly marathon, sed do eiusmod tempor incididunt ...',
+            location: 'Other Region',
+        },
+        {
+            thumbnail: '/MarathonEvent.jpg',
+            date: '08/11/24',
+            title: 'The Yearly Big Marathon!',
+            description: 'Join us on the big yearly marathon, sed do eiusmod tempor incididunt ...',
+            location: 'Other Region',
+        },
+        {
+            thumbnail: '/WorkshopEvent.png',
+            date: '03/12/24',
+            title: '3D Design Workshop',
+            description: 'Join us on the big yearly marathon, sed do eiusmod tempor incididunt ...',
+            location: 'My Region',
+        },
+    ];
+
+    // Separate events by location
+    const myRegionEvents = events.filter(event => event.location === 'My Region');
+    const otherRegionEvents = events.filter(event => event.location !== 'My Region');
+
+    // Sort by date (earliest first)
+    const sortByDate = (eventA, eventB) => {
+        const dateA = new Date(eventA.date);
+        const dateB = new Date(eventB.date);
+        return dateA - dateB;
+    };
+
+    const sortedMyRegionEvents = myRegionEvents.sort(sortByDate);
+    const sortedOtherRegionEvents = otherRegionEvents.sort(sortByDate);
+
+    // Randomly display some other region events
+    const randomOtherRegionEvents = sortedOtherRegionEvents.slice(0, 2); // Choose a couple of random events
 
     return (
         <div className="home-page">
@@ -148,7 +205,37 @@ const Home = () => {
                     <div className="tasks-gray-box"></div>
 
                     {/* Events box (Gray box) */}
-                    <div className="events-gray-box"></div>
+                    <div className="events-gray-box">
+                        {/* <h2>Events in My Region</h2> */}
+                        <div className="events-list">
+                            {sortedMyRegionEvents.map((event, index) => (
+                                <EventCard
+                                    key={index}
+                                    thumbnail={event.thumbnail}
+                                    date={event.date}
+                                    title={event.title}
+                                    description={event.description}
+                                />
+                            ))}
+                        </div>
+
+                        {/* Separator */}
+                        <hr />
+
+                        {/* You Might Also Like... */}
+                        <h2>You might also like ...</h2>
+                        <div className="events-list">
+                            {randomOtherRegionEvents.map((event, index) => (
+                                <EventCard
+                                    key={index}
+                                    thumbnail={event.thumbnail}
+                                    date={event.date}
+                                    title={event.title}
+                                    description={event.description}
+                                />
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -156,3 +243,4 @@ const Home = () => {
 };
 
 export default Home;
+

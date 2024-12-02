@@ -1,0 +1,588 @@
+.employee-profile-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    background-color: #f2f2f2;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Top Bar */
+.employee-profile-page .top-bar {
+    width: 100%;
+    height: 60px;
+    background-color: #32444d;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+/* Left Icon Container */
+.left-icons {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-start;
+    align-items: center;
+    width: auto;
+  }
+  
+  /* Right Container (Search bar and right icons together) */
+  .right-container {
+    display: flex;
+    gap: 19px;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 182px;
+  }
+  
+  /* Search input container */
+  .search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 292px;
+    height: 34px;
+    background-color: #626e74;
+    border-radius: 10px;
+    margin-left: 0;
+  }
+  
+  /* Search input field */
+  .search-input {
+    width: 100%;
+    height: 30px;
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 0 10px;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+  
+  .search-input::placeholder {
+    color: white;
+    opacity: 1;
+  }
+  
+  /* Search icon styling */
+  .search-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    object-fit: cover;
+  }
+  
+  /* Right Icon Container */
+  .right-icons {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-start;
+    align-items: center;
+    width: auto;
+  }
+  
+  /* Icon styling */
+  .icon {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+  }
+  
+  .icon-peakon {
+    width: 35px;
+    height: 22px;
+    object-fit: cover;
+  }
+
+/* Header */
+.employee-profile-page .header {
+    background-color: #B4FBC4;
+    height: 324px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.employee-profile-page .header h1 {
+    font-family: 'Noto', sans-serif;
+    color: #32444D;
+    font-size: 36px;
+  }
+
+/* Content Flex */
+.content-flex {
+    display: flex;
+    justify-content: space-between; /* Distribute panels evenly */
+    align-items: flex-start; /* Align items at the top */
+    gap: 20px; /* Space between panels */
+    width: 100%;
+    max-width: 1400px; /* Optional: Constrain overall width */
+    margin: 0 auto; /* Center flex container horizontally */
+    padding: 20px;
+}
+
+.left-panel {
+    flex: 2; /* Allow left panel to grow more */
+    min-width: 400px; /* Set a minimum width */
+    max-width: 500px; /* Optional: Set a maximum width to avoid overly stretching */
+    overflow: visible; /* Prevent content overflow */
+    
+}
+
+.center-panel {
+    flex: 1.5; /* Adjust the center panel's space */
+    max-width: 700px; /* Constrain max width for balance */
+}
+
+.right-panel {
+    flex: 1; /* Give the right panel less priority */
+    max-width: 300px; /* Optional: Constrain its width */
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    gap: 20px; /* Add space between the boxes */
+}
+/* Achievements Section */
+.achievements-section {
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.achievements-section h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #32444d;
+}
+
+.achievements-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.achievements-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.achievements-filters button {
+    background: none;
+    border: none;
+    color: #32444d;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.achievements-filters button.active,
+.achievements-filters button:hover {
+    background-color: #f0f0f0;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+.search-bar input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+}
+
+.search-bar img {
+    width: 16px;
+    height: 16px;
+}
+
+.achievements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.achievement-row {
+    display: flex;
+    align-items: center;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 10px;
+    gap: 15px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    width: 100%;
+}
+
+.achievement-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+}
+
+.achievement-details {
+    flex: 1;
+}
+
+.achievement-details h3 {
+    font-size: 16px;
+    margin: 0;
+    color: #32444d;
+}
+
+.achievement-details p {
+    font-size: 12px;
+    margin: 5px 0 0;
+    color: #626e74;
+}
+
+.visibility-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.achievement-date {
+    font-size: 12px;
+    color: #a9a9a9;
+}
+
+/* Milestones Section */
+.milestones-section {
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    /* Adds spacing below achievements */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.milestones-section h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #32444d;
+}
+
+.milestones-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.milestones-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.milestones-filters button {
+    background: none;
+    border: none;
+    color: #32444d;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.milestones-filters button.active,
+.milestones-filters button:hover {
+    background-color: #f0f0f0;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+.search-bar input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+}
+
+.search-bar img {
+    width: 16px;
+    height: 16px;
+}
+
+.milestones-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.milestone-row {
+    display: flex;
+    align-items: center;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 10px;
+    gap: 15px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    width: 100%;
+}
+
+.milestone-badge {
+    width: 40px;
+    height: 40px;
+    background-color: #82ed9b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    border-radius: 50%;
+}
+
+.milestone-details {
+    flex: 1;
+}
+
+.milestone-details h3 {
+    font-size: 16px;
+    margin: 0;
+    color: #32444d;
+}
+
+.milestone-details p {
+    font-size: 12px;
+    margin: 5px 0 0;
+    color: #626e74;
+}
+
+.visibility-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.milestone-date {
+    font-size: 12px;
+    color: #a9a9a9;
+}
+
+/* Center Panel Styling */
+.center-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Keep content centered horizontally */
+    margin-top: 0; /* Remove negative margin */
+    position: relative;
+    z-index: 1; /* Lower z-index to allow the avatar to sit above */
+    width: 100%;
+    padding-top: 60px; /* Add padding to separate from other sections */
+}
+
+
+/* Employee User Container */
+.employee-user-container {
+    width: 100%; /* Full width of center-panel */
+    max-width: 500px; /* Optional: Constrain maximum width */
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Center text alignment */
+    padding: 20px;
+}
+
+/* Green Header Section */
+.employee-user-container-top {
+    background-color: #82ED9B;
+    height: 100px; /* Adjusted height */
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    position: relative;
+}
+
+/* Avatar Overlap */
+.employee-user-avatar {
+    width: 100px; /* Adjust size for balance */
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%; /* Align to overlap with header */
+    left: 20px; /* Left-align avatar */
+    transform: translateY(-50%); /* Center avatar vertically */
+    border: 4px solid white; /* White border for emphasis */
+    z-index: 2; /* Ensure avatar stays on top */
+}
+
+/* User Details */
+.employee-user-details {
+    margin-left: 140px; /* Add space for avatar on the left */
+    margin-top: -10px; /* Adjust spacing to align with header */
+}
+
+.employee-user-details h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #32444d;
+    margin-bottom: 5px;
+}
+
+.employee-user-details p {
+    font-size: 14px;
+    color: #626e74;
+    margin: 5px 0;
+}
+
+/* Analytics Section */
+.analytics-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 15px; /* Add spacing between boxes */
+    margin-top: 20px;
+    border-top: 1px solid #e0e0e0; /* Separate analytics section */
+}
+
+.analytics-stat {
+    flex: 1;
+    text-align: center;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.analytics-stat p {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    color: #32444D;
+}
+
+.analytics-stat span {
+    display: block;
+    font-size: 14px;
+    color: #626E74;
+    margin-top: 5px;
+}
+
+.analytics-stat .stat-description {
+    font-size: 12px;
+    color: #A9A9A9;
+    margin-top: 5px;
+}
+/* Activity and Events Container */
+.activity-events-container {
+    display: flex;
+    flex-direction: column; /* Stack boxes vertically */
+    gap: 20px; /* Space between activity and events */
+    margin-top: 20px;
+}
+
+/* Activity Box */
+.activity {
+    background-color: #d3d3d3;
+    width: 100%; /* Match container width */
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* Events Box */
+.events {
+    background-color: #d3d3d3;
+    width: 100%; /* Match container width */
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* Right column*/
+/* Individual Sections (Dashboard and Tasks) */
+.right-panel > div {
+    background-color: #d3d3d3; /* Light gray background */
+    border-radius: 10px; /* Rounded corners */
+    padding: 20px; /* Add some padding for content */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    text-align: center; /* Center-align text */
+}
+
+/* Section Headings */
+.right-panel > div h2 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #32444d;
+    margin-bottom: 10px;
+}
+
+/* Section Descriptions */
+.right-panel > div p {
+    font-size: 14px;
+    color: #626e74;
+    margin: 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    
+
+    .achievements-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .achievements-filters {
+        justify-content: flex-start;
+        gap: 5px;
+    }
+
+    .analytics-stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .analytics-stat {
+        padding: 15px;
+    }
+
+    .bottom-section {
+        flex-direction: column;
+    }
+
+    .activity,
+    .events {
+        margin: 10px 0;
+    }
+
+}

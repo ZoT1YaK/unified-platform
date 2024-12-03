@@ -26,7 +26,8 @@ const notificationSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ["Pending", "Sent", "Read"],
-    default: "Pending",},
+    default: "Pending",
+  },
 });
 
 module.exports = mongoose.model("Notification", notificationSchema);

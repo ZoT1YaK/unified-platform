@@ -1,5 +1,6 @@
 const Employee = require("../models/Employee");
 const Milestone = require("../models/Milestone");
+const NotificationType = require("../models/NotificationType");
 const NotificationController = require("../controllers/notificationController");
 
 const milestoneDetails = {
@@ -59,10 +60,15 @@ const checkForMilestones = async () => {
 
             console.log(`Milestone created: ${milestone.name}`);
 
+            const notificationType = await NotificationType.findOne({type_name: "Milestone Reminder"});
+            if (!notificationType) {
+              return res.status(404).json({ message: "Notification type not found" });
+            }
+
             // Notify the employee
             const result = await NotificationController.createNotification({
               recipient_id: employee._id,
-              noti_type_id: "674e77c3caebf33486b95707", // Replace with actual NotificationType ID
+              noti_type_id: notificationType._id,
               related_entity_id: milestone._id,
               message: milestoneData.description,
             });

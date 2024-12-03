@@ -8,6 +8,7 @@ const TeamEmployee = require("../models/TeamEmployee");
 const Location = require("../models/Location");
 const NotificationType = require("../models/NotificationType");
 const NotificationSettings = require("../models/NotificationSettings");
+const Badge = require("../models/Badge");
 
 const seedData = async () => {
   try {
@@ -43,6 +44,7 @@ const seedData = async () => {
       l_name: "One",
       position: "Manager",
       hire_date: new Date("2020-01-01"),
+      is_admin: true,
       is_people_leader: true,
       dep_id: engineeringDepartment._id,
     });
@@ -89,6 +91,22 @@ const seedData = async () => {
     });
 
     await NotificationSettings.insertMany(defaultSettings);
+
+    console.log("Seeding badges...");
+    await Badge.create([
+      {
+        created_by_id: peopleLeader._id,
+        name: "Employee of the Month",
+        description: "Awarded to the most outstanding employee of the month.",
+        img_link: "https://example.com/badge1.png",
+      },
+      {
+        created_by_id: peopleLeader._id,
+        name: "Team Player",
+        description: "Recognizing exceptional teamwork and collaboration.",
+        img_link: "https://example.com/badge2.png",
+      },
+    ]);
 
     console.log("Database seeded successfully.");
     process.exit();

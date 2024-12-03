@@ -1,4 +1,4 @@
-/* Home Page styling */
+/* Home.css */
 .home-page {
   display: flex;
   flex-direction: column;
@@ -8,99 +8,6 @@
   background-color: #f2f2f2;
   min-height: 100vh;
   margin: 0;
-}
-
-/* Other home-specific styles */
-.home-page .top-bar {
-  width: 100%;
-  height: 60px;
-  background-color: #32444d;
-  position: fixed;
-  top: 0;
-  left: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-  box-sizing: border-box;
-  z-index: 1;
-}
-
-/* Left Icon Container */
-.left-icons {
-  display: flex;
-  gap: 20px;
-  justify-content: flex-start;
-  align-items: center;
-  width: auto;
-}
-
-/* Right Container (Search bar and right icons together) */
-.right-container {
-  display: flex;
-  gap: 19px;
-  align-items: center;
-  margin-left: auto;
-  margin-right: 182px;
-}
-
-/* Search input container */
-.search-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 292px;
-  height: 34px;
-  background-color: #626e74;
-  border-radius: 10px;
-  margin-left: 0;
-}
-
-/* Search input field */
-.search-input {
-  width: 100%;
-  height: 30px;
-  background: transparent;
-  border: none;
-  color: white;
-  padding: 0 10px;
-  border-radius: 10px;
-  font-size: 14px;
-}
-
-.search-input::placeholder {
-  color: white;
-  opacity: 1;
-}
-
-/* Search icon styling */
-.search-icon {
-  width: 20px;
-  height: 20px;
-  margin-left: 10px;
-  object-fit: cover;
-}
-
-/* Right Icon Container */
-.right-icons {
-  display: flex;
-  gap: 20px;
-  justify-content: flex-start;
-  align-items: center;
-  width: auto;
-}
-
-/* Icon styling */
-.icon {
-  width: 24px;
-  height: 24px;
-  object-fit: cover;
-}
-
-.icon-peakon {
-  width: 35px;
-  height: 22px;
-  object-fit: cover;
 }
 
 .home-page .header {
@@ -118,10 +25,7 @@
   font-size: 36px;
 }
 
-/* .home-page .highlight {
-  font-weight: bold;
-} */
-
+/* Other Home-specific styles */
 .profile-container {
   margin-left: 123px;
   border-radius: 10px;
@@ -129,7 +33,6 @@
   height: 320px;
   background-color: white;
   position: relative;
-
 }
 
 .profile-container-top {
@@ -146,7 +49,6 @@
   width: 165px;
   height: 165px;
   object-fit: cover;
-  /* positioned in the top left corner with a padding of 20px from top and 16px from left*/
   position: absolute;
   top: 20px;
   left: 16px;
@@ -166,7 +68,6 @@
   font-weight: bold;
   color: #32444D;
   margin-bottom: 0px;
-
 }
 
 .user-details p {
@@ -226,62 +127,47 @@
   margin-left: 123px;
 }
 
-/* Profile Column */
 .profile-column {
   width: 400px;
   display: flex;
   flex-direction: column;
   gap: 5px;
-  flex-shrink: 0;
-  /* Prevent shrinking */
 }
 
-/* Post Column */
 .post-column {
   width: 885px;
   display: flex;
   flex-direction: column;
   gap: 5px;
-  /* Space between post creation and feed boxes */
   flex-shrink: 0;
-  /* margin-left: 123px; */
-  /* Prevent shrinking */
+
 }
 
-/* Tasks Column */
 .tasks-column {
   width: 400px;
   display: flex;
   flex-direction: column;
   gap: 5px;
-  /* Space between tasks and events boxes */
   flex-shrink: 0;
-  /* Prevent shrinking */
+
 }
 
-/* Placeholder Gray Boxes for other sections (Achievements, Milestones, etc.) */
-/* .achievements-gray-box, */
-/* .milestones-gray-box,*/
 .post-creation-gray-box,
 .post-feed-gray-box,
 .tasks-gray-box {
   background-color: #D3D3D3;
   border-radius: 10px;
   flex-shrink: 0;
-  /* Prevent boxes from shrinking */
 }
 
 .achievements-container {
-  /*positioned right bellow the profile overview, at a distance of 5 px*/
   height: 118px;
   width: 400px;
-  /* margin-top: 20px; */
   order: 1;
   margin-left: 123px;
 }
 
 .achievements-container h2 {
-  /* font-size: 18px; */
   font-weight: bold;
   color: #32444D;
   margin-bottom: 10px;
@@ -319,7 +205,6 @@
 }
 
 .milestones-container {
-  /*positioned right bellow the achievements box, at a distance of 5 px*/
   height: 118px;
   width: 400px;
   margin-top: 60px;
@@ -328,7 +213,6 @@
 }
 
 .milestones-container h2 {
-  /* font-size: 18px; */
   font-weight: bold;
   color: #32444D;
   margin-bottom: 10px;
@@ -383,7 +267,6 @@
 }
 
 .events-gray-box {
-  /*positioned right bellow the tasks overview, at a distance of 5 px*/
   width: 100%;
   height: auto;
   margin-top: 5px;
@@ -403,7 +286,6 @@
   border: none;
   border-top: 1px solid #ccc;
   margin: 20px 0;
-  /* Add some spacing around the horizontal line */
 }
 
 .events-gray-box h2 {
@@ -416,6 +298,7 @@
   padding-top: 20px;
 }
 
+/* Responsive Styles */
 @media (max-width: 1024px) {
   .active-ui-container {
     justify-content: space-between;
@@ -463,18 +346,14 @@
     flex-direction: column;
     align-items: center;
     padding-left: 10px;
-    /* Reduce left padding on smaller screens */
-
   }
 
   .profile-column,
   .post-column,
   .tasks-column {
     margin-left: 10px;
-    /* Adjust column margins for mobile */
   }
 
-  /* Make the gray boxes responsive */
   .achievements-gray-box,
   .milestones-gray-box,
   .post-creation-gray-box,

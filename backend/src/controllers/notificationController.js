@@ -2,23 +2,22 @@ const mongoose = require("mongoose");
 const Notification = require("../models/Notification");
 const NotificationSettings = require("../models/NotificationSettings");
 const NotificationType = require("../models/NotificationType");
+const Employee = require("../models/Employee");
 
-exports.createNotification = async (req, res) => {
-  const { recipient_id, noti_type_id, related_entity_id, message } = req.body;
-
+exports.createNotification = async ({ recipient_id, noti_type_id, related_entity_id, message }) => {
   try {
-    if (!recipient_id || !notification_type_id || !message) {
-      return res.status(400).json({ message: "Missing required fields" });
+    if (!recipient_id || !noti_type_id || !message) {
+      throw new Error("Missing required fields: recipient_id, noti_type_id, or message.");
     }
 
     const recipient = await Employee.findById(recipient_id);
     if (!recipient) {
-      return res.status(404).json({ message: "Recipient not found" });
+      throw new Error("Recipient not found.");
     }
 
     const notificationType = await NotificationType.findById(noti_type_id);
     if (!notificationType) {
-      return res.status(404).json({ message: "Notification type not found" });
+      throw new Error("Notification type not found.");
     }
 
     const settings = await NotificationSettings.findOne({
@@ -27,23 +26,42 @@ exports.createNotification = async (req, res) => {
     });
 
     if (settings && !settings.preference) {
-      return res.status(200).json({ message: "Notification is disabled for this recipient." });
+      return { status: "skipped", message: "Notification is disabled for this recipient." };
     }
 
-    const notification = await Notification.create({
+    const recipientNotification = await Notification.create({
       recipient_id,
       noti_type_id,
       related_entity_id,
       message,
     });
 
-    res.status(201).json({
-      message: "Notification created successfully",
-      notification,
-    });
+    let leaderNotification = null;
+
+    if (notificationType.type_name === "Milestone Reminder" && recipient.people_leader_id) {
+      const leaderSettings = await NotificationSettings.findOne({
+        emp_id: recipient.people_leader_id,
+        noti_type_id,
+      });
+
+      if (!leaderSettings || leaderSettings.preference) {
+        leaderNotification = await Notification.create({
+          recipient_id: recipient.people_leader_id,
+          noti_type_id,
+          related_entity_id,
+          message: `${recipient.f_name} ${recipient.l_name} has achieved a milestone: ${message}`,
+        });
+      }
+    }
+
+    return {
+      status: "success",
+      recipientNotification,
+      leaderNotification,
+    };
   } catch (error) {
-    console.error("Error creating notification:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error creating notification:", error.message);
+    throw error;
   }
 };
 

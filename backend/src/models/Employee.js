@@ -41,6 +41,7 @@ const employeeSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Employee",
     required: false,
+    default: null,
   },
   createdAt: {
     type: Date,

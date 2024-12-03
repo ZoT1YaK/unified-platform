@@ -7,6 +7,8 @@ const Location = require("../models/Location");
 const NotificationType = require("../models/NotificationType");
 const NotificationSettings = require("../models/NotificationSettings");
 const Notification = require("../models/Notification");
+const Milestone = require("../models/Milestone");
+const Badge = require("../models/Badge");
 require("dotenv").config();
 
 const clearDatabase = async () => {
@@ -25,6 +27,8 @@ const clearDatabase = async () => {
     await NotificationType.deleteMany({});
     await NotificationSettings.deleteMany({});
     await Notification.deleteMany({});
+    await Milestone.deleteMany({});
+    await Badge.deleteMany({});
     console.log("Database cleared.");
     process.exit();
   } catch (error) {

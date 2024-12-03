@@ -1,25 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
+// import { useState } from 'react';
 import './Home.css';
 import EventCard from './../EventCard/EventCard';
+import TopBar from '../TopBar/TopBar';
 
 const Home = () => {
-    const [searchQuery, setSearchQuery] = useState('');
+    // const [searchQuery, setSearchQuery] = useState('');
 
-    const handleSearchChange = (e) => {
-        setSearchQuery(e.target.value);
-    };
+    // const handleSearchChange = (e) => {
+    //     setSearchQuery(e.target.value);
+    // };
 
-    const handleFocus = () => {
-        if (searchQuery === '') {
-            setSearchQuery('');
-        }
-    };
+    // const handleFocus = () => {
+    //     if (searchQuery === '') {
+    //         setSearchQuery('');
+    //     }
+    // };
 
-    const handleBlur = () => {
-        if (searchQuery === '') {
-            setSearchQuery('');
-        }
-    };
+    // const handleBlur = () => {
+    //     if (searchQuery === '') {
+    //         setSearchQuery('');
+    //     }
+    // };
 
     const achievements = [
         "Ach-badge1", "Ach-badge2", "Ach-badge3", "Ach-badge4", "Ach-badge5"
@@ -27,7 +29,7 @@ const Home = () => {
 
     const milestones = ["Mil-badge1", "Mil-badge2", "Mil-badge3"];
 
-    // this is mock data, to be removed when BE is done
+    // Mock data for events (to be replaced by backend data later)
     const events = [
         {
             thumbnail: '/PaintingEvent.png',
@@ -81,42 +83,11 @@ const Home = () => {
     const sortedOtherRegionEvents = otherRegionEvents.sort(sortByDate);
 
     // Randomly display some other region events
-    const randomOtherRegionEvents = sortedOtherRegionEvents.slice(0, 2); // Choose a couple of random events
+    const randomOtherRegionEvents = sortedOtherRegionEvents.slice(0, 2);
 
     return (
         <div className="home-page">
-
-            {/* Top Bar */}
-            <div className="top-bar">
-                <div className="left-icons">
-                    <img src="/Screenshot_1.png" alt="icon1" className="icon-peakon" />
-                    <img src="/Udemy-Emblem.png" alt="icon2" className="icon" />
-                    <img src="/5019634-middle.png" alt="icon3" className="icon" />
-                    <img src="/Microsoft_Office_SharePoint_(2019–present).svg.png" alt="icon4" className="icon" />
-                </div>
-
-                {/* Right Container (Search bar + Right icons) */}
-                <div className="right-container">
-                    <div className="search-container">
-                        <img src='/magnifying-glass 2.png' alt="icon5" className='search-icon' />
-                        <input
-                            type="text"
-                            className="search-input"
-                            value={searchQuery}
-                            onChange={handleSearchChange}
-                            onFocus={handleFocus}
-                            onBlur={handleBlur}
-                            placeholder="Search..."
-                        />
-                    </div>
-
-                    <div className="right-icons">
-                        <img src="/business (1).png" alt="icon6" className="icon" />
-                        <img src="/notification.png" alt="icon7" className="icon" />
-                        <img src="/cat.png" alt="icon8" className="icon" />
-                    </div>
-                </div>
-            </div>
+            <TopBar />
 
             {/* Header */}
             <div className="header">
@@ -125,7 +96,6 @@ const Home = () => {
 
             {/* Active UI Container */}
             <div className="active-ui-container">
-
                 <div className="profile-column">
                     {/* User Profile Overview */}
                     <div className="profile-container">
@@ -191,22 +161,15 @@ const Home = () => {
                 </div>
 
                 <div className="post-column">
-
-                    {/* Post Creation box (Gray box) */}
+                    {/* Post Creation and Feed boxes */}
                     <div className="post-creation-gray-box"></div>
-
-                    {/* Feed box (Gray box)*/}
                     <div className="post-feed-gray-box"></div>
                 </div>
 
                 <div className="tasks-column">
-
-                    {/* Tasks box (Gray box) */}
+                    {/* Tasks and Events boxes */}
                     <div className="tasks-gray-box"></div>
-
-                    {/* Events box (Gray box) */}
                     <div className="events-gray-box">
-                        {/* <h2>Events in My Region</h2> */}
                         <div className="events-list">
                             {sortedMyRegionEvents.map((event, index) => (
                                 <EventCard
@@ -218,11 +181,7 @@ const Home = () => {
                                 />
                             ))}
                         </div>
-
-                        {/* Separator */}
                         <hr />
-
-                        {/* You Might Also Like... */}
                         <h2>You might also like ...</h2>
                         <div className="events-list">
                             {randomOtherRegionEvents.map((event, index) => (
@@ -243,4 +202,3 @@ const Home = () => {
 };
 
 export default Home;
-

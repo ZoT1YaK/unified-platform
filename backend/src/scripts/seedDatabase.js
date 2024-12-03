@@ -71,6 +71,7 @@ const seedData = async () => {
       { type_name: "Comment on Post", description: "Notification for comments on posts" },
       { type_name: "Task Assignment", description: "Notification for task assignments" },
       { type_name: "Report Available", description: "Notification for available reports" },
+      { type_name: "Milestone Reminder", description: "Notification for employee milestones" },
     ];
     const notificationTypes = await NotificationType.insertMany(types);
 

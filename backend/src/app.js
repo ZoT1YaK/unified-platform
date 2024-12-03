@@ -1,10 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
+require("./utils/scheduledTasks");
 
 const employeeRoutes = require("./routes/employeeRoutes");
 const teamRoutes = require("./routes/teamRoutes");
 const notificationsRoutes = require("./routes/notificationRoutes");
+const milestoneRoutes = require("./routes/milestoneRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const app = express();
@@ -19,6 +21,7 @@ connectDB();
 app.use("/api/employees", employeeRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/notifications", notificationsRoutes);
+app.use("/api/milestones", milestoneRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 module.exports = app;

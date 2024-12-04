@@ -6,22 +6,19 @@ import TopBar from '../TopBar/TopBar';
 const EmployeeProfile = () => {
     const [filter, setFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState('');
+    const [dataMind, setDataMind] = useState("Curious");
 
-    // const handleSearchChange = (e) => {
-    //     setSearchQuery(e.target.value);
-    // };
+    const dataMindOptions = ["Curious", "Creative", "Innovative", "Resilient", "Collaborative"];
 
-    // const handleFocus = () => {
-    //     if (searchQuery === '') {
-    //         setSearchQuery('');
-    //     }
-    // };
+    const generateRandomDataMind = () => {
+        const randomIndex = Math.floor(Math.random() * dataMindOptions.length);
+        setDataMind(dataMindOptions[randomIndex]);
+    };
 
-    // const handleBlur = () => {
-    //     if (searchQuery === '') {
-    //         setSearchQuery('');
-    //     }
-    // };
+    const handleDataMindChange = (event) => {
+        setDataMind(event.target.value);
+    };
+
 
     const achievements = [
         { id: 1, title: "Ach-badge1", description: "Complete the annual biking contest", date: "12/12/2024", visible: true },
@@ -164,33 +161,45 @@ const EmployeeProfile = () => {
                     <div className="employee-user-container">
                         {/* Green Header Section */}
                         <div className="employee-user-container-top">
-                            <h2>#IAmXDataMind</h2>
+                        <h2>#IAm{dataMind}DataMind</h2>
+    
                         </div>
 
-                        {/* Profile Section */}
-                        <img src="/cat.png" alt="User Avatar" className="employee-user-avatar" />
-                        <div className="employee-user-details">
-                            <h2>Bob Bobrovich</h2>
-                            <p>Head of HR | HR Team</p>
-                            <p>Vejle, Region of Southern Denmark, Denmark</p>
+                        {/* User Avatar and Details */}
+                        <div className="employee-info">
+                            <img src="/cat.png" alt="User Avatar" className="employee-user-avatar" />
+                            <div className="employee-user-details">
+                                <h2>Bob Bobrovich</h2>
+                                <p>Head of HR | HR Team</p>
+                                <p>Vejle, Region of Southern Denmark, Denmark</p>
+                            </div>
+
+                            {/* DataMind Controls */}
+                            <div className="datamind-controls">
+                                <button onClick={generateRandomDataMind}>Generate</button>
+                                <select value={dataMind} onChange={handleDataMindChange}>
+                                    {dataMindOptions.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
 
                         {/* Analytics Section */}
                         <div className="analytics-container">
                             <div className="analytics-stat">
-                                <p>29</p>
-                                <span>Profile views</span>
-                                <p className="stat-description">Discover who's viewed your profile</p>
+                                <p>{achievements.length}</p>
+                                <span>Achievements</span>
                             </div>
                             <div className="analytics-stat">
-                                <p>2</p>
-                                <span>Post impressions</span>
-                                <p className="stat-description">Check out who's engaging with your posts</p>
+                                <p>15</p>
+                                <span>Posts</span>
                             </div>
                             <div className="analytics-stat">
-                                <p>58</p>
-                                <span>Search appearances</span>
-                                <p className="stat-description">See how often you appear in search results</p>
+                                <p>{milestones.length}</p>
+                                <span>Milestones</span>
                             </div>
                         </div>
 

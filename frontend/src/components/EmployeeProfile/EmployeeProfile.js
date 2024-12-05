@@ -6,37 +6,49 @@ import TopBar from '../TopBar/TopBar';
 const EmployeeProfile = () => {
     const [filter, setFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState('');
+    const [dataMind, setDataMind] = useState("Curious");
 
-    // const handleSearchChange = (e) => {
-    //     setSearchQuery(e.target.value);
-    // };
+    const dataMindOptions = ["Curious", "Creative", "Innovative", "Resilient", "Collaborative"];
 
-    // const handleFocus = () => {
-    //     if (searchQuery === '') {
-    //         setSearchQuery('');
-    //     }
-    // };
+    const generateRandomDataMind = () => {
+        const randomIndex = Math.floor(Math.random() * dataMindOptions.length);
+        setDataMind(dataMindOptions[randomIndex]);
+    };
 
-    // const handleBlur = () => {
-    //     if (searchQuery === '') {
-    //         setSearchQuery('');
-    //     }
-    // };
+    const handleDataMindChange = (event) => {
+        setDataMind(event.target.value);
+    };
 
-    const achievements = [
+
+    const [achievements, setAchievements] = useState([
         { id: 1, title: "Ach-badge1", description: "Complete the annual biking contest", date: "12/12/2024", visible: true },
         { id: 2, title: "Ach-badge2", description: "Run the yearly marathon", date: "12/12/2024", visible: true },
         { id: 3, title: "Ach-badge3", description: "Recycle 50kg of paper waste", date: "12/12/2024", visible: true },
         { id: 4, title: "Ach-badge4", description: "Join the group cooking activity", date: "12/12/2024", visible: true },
         { id: 5, title: "Ach-badge5", description: "Build bird nests for the coming season", date: "12/12/2024", visible: false },
-    ];
+    ]);
 
-    const milestones = [
+    const [milestones, setMilestones] = useState([
         { id: 1, badge: "5", title: "Mil-badge1", description: "You've been with us for a whole 5 years!", date: "12/12/2024", visible: true },
         { id: 2, badge: "1", title: "Mil-badge2", description: "You've been with us for a whole year!", date: "12/12/2024", visible: true },
         { id: 3, badge: "0.5", title: "Mil-badge3", description: "You've been with us for a whole 6 months!", date: "12/12/2024", visible: true },
-    ];
+    ]);
 
+    const toggleVisibility = (id, type) => {
+        if (type === "achievement") {
+            setAchievements((prevAchievements) =>
+                prevAchievements.map((item) =>
+                    item.id === id ? { ...item, visible: !item.visible } : item
+                )
+            );
+        } else if (type === "milestone") {
+            setMilestones((prevMilestones) =>
+                prevMilestones.map((item) =>
+                    item.id === id ? { ...item, visible: !item.visible } : item
+                )
+            );
+        }
+    };
     // Filter and search logic
     const filterAndSearchItems = (items) =>
         items
@@ -105,6 +117,7 @@ const EmployeeProfile = () => {
                                         className="visibility-icon"
                                         src={achievement.visible ? "/eye-icon.png" : "/eye-off-icon.png"}
                                         alt="Visibility toggle"
+                                        onClick={() => toggleVisibility(achievement.id, "achievement")}
                                     />
                                     <p className="achievement-date">Unlocked on {achievement.date}</p>
                                 </div>
@@ -151,6 +164,7 @@ const EmployeeProfile = () => {
                                         className="visibility-icon"
                                         src={milestone.visible ? "/eye-icon.png" : "/eye-off-icon.png"}
                                         alt="Visibility toggle"
+                                        onClick={() => toggleVisibility(milestone.id, "milestone")}
                                     />
                                     <p className="milestone-date">Unlocked on {milestone.date}</p>
                                 </div>
@@ -164,33 +178,54 @@ const EmployeeProfile = () => {
                     <div className="employee-user-container">
                         {/* Green Header Section */}
                         <div className="employee-user-container-top">
-                            <h2>#IAmXDataMind</h2>
+                            <h2>#IAm{dataMind}DataMind</h2>
+
                         </div>
 
-                        {/* Profile Section */}
-                        <img src="/cat.png" alt="User Avatar" className="employee-user-avatar" />
-                        <div className="employee-user-details">
-                            <h2>Bob Bobrovich</h2>
-                            <p>Head of HR | HR Team</p>
-                            <p>Vejle, Region of Southern Denmark, Denmark</p>
+                        {/* User Avatar and Details */}
+                        <div className="employee-info">
+                            <img src="/cat.png" alt="User Avatar" className="employee-user-avatar" />
+                            <div className="employee-user-details">
+                                <h2>Bob Bobrovich</h2>
+                                <p>Head of HR | HR Team</p>
+                                <p>Vejle, Region of Southern Denmark, Denmark</p>
+                            </div>
+
+                            {/* DataMind Controls */}
+                            <div className="datamind-controls">
+                                <select
+                                    value={dataMind}
+                                    onChange={handleDataMindChange}
+                                    className="datamind-dropdown"
+                                >
+                                    <option disabled value="">
+                                        What is your Data Mind?
+                                    </option>
+                                    {dataMindOptions.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button onClick={generateRandomDataMind} className="datamind-button">
+                                    Generate
+                                </button>
+                            </div>
                         </div>
 
                         {/* Analytics Section */}
                         <div className="analytics-container">
                             <div className="analytics-stat">
-                                <p>29</p>
-                                <span>Profile views</span>
-                                <p className="stat-description">Discover who's viewed your profile</p>
+                                <p>{achievements.length}</p>
+                                <span>Achievements</span>
                             </div>
                             <div className="analytics-stat">
-                                <p>2</p>
-                                <span>Post impressions</span>
-                                <p className="stat-description">Check out who's engaging with your posts</p>
+                                <p>15</p>
+                                <span>Posts</span>
                             </div>
                             <div className="analytics-stat">
-                                <p>58</p>
-                                <span>Search appearances</span>
-                                <p className="stat-description">See how often you appear in search results</p>
+                                <p>{milestones.length}</p>
+                                <span>Milestones</span>
                             </div>
                         </div>
 

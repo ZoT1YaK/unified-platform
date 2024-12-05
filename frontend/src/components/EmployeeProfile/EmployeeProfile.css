@@ -23,43 +23,59 @@
     font-family: 'Noto', sans-serif;
     color: #32444D;
     font-size: 36px;
-  }
+}
 
 /* Content Flex */
 .content-flex {
-    display: flex;
-    justify-content: space-between; /* Distribute panels evenly */
-    align-items: flex-start; /* Align items at the top */
-    gap: 20px; /* Space between panels */
-    width: 100%;
-    max-width: 1400px; /* Optional: Constrain overall width */
-    margin: 0 auto; /* Center flex container horizontally */
+    position: relative;
+    top: -73px;
     padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 50px;
+    width: 95%;
+    max-width: 1725px;
+    margin: 0 auto;
 }
 
 .left-panel {
-    flex: 2; /* Allow left panel to grow more */
-    min-width: 400px; /* Set a minimum width */
-    max-width: 500px; /* Optional: Set a maximum width to avoid overly stretching */
-    overflow: visible; /* Prevent content overflow */
-    
+    flex: 0 0 359px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
 }
 
 .center-panel {
-    flex: 1.5; /* Adjust the center panel's space */
-    max-width: 700px; /* Constrain max width for balance */
+    position: relative;
+    top: -27px;
+    flex: 0 0 795px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 .right-panel {
-    flex: 1; /* Give the right panel less priority */
-    max-width: 300px; /* Optional: Constrain its width */
     display: flex;
-    flex-direction: column; /* Stack items vertically */
-    gap: 20px; /* Add space between the boxes */
+    flex-direction: column;
+    gap: 20px;
+    flex: 0 0 359px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+.left-panel,
+.center-panel,
+.right-panel {
+    box-sizing: border-box;
+}
+
 /* Achievements Section */
 .achievements-section {
-    width: 100%;
+
     background-color: white;
     border-radius: 10px;
     padding: 20px;
@@ -162,9 +178,14 @@
 }
 
 .visibility-icon {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.visibility-icon:hover {
+    transform: scale(1.1);
 }
 
 .achievement-date {
@@ -174,12 +195,10 @@
 
 /* Milestones Section */
 .milestones-section {
-    width: 100%;
     background-color: white;
     border-radius: 10px;
     padding: 20px;
     margin-top: 20px;
-    /* Adds spacing below achievements */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -296,57 +315,57 @@
     color: #a9a9a9;
 }
 
-/* Center Panel Styling */
-.center-panel {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Keep content centered horizontally */
-    margin-top: 0; /* Remove negative margin */
-    position: relative;
-    z-index: 1; /* Lower z-index to allow the avatar to sit above */
-    width: 100%;
-    padding-top: 60px; /* Add padding to separate from other sections */
-}
 
 
 /* Employee User Container */
 .employee-user-container {
-    width: 100%; /* Full width of center-panel */
-    max-width: 500px; /* Optional: Constrain maximum width */
+
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center; /* Center text alignment */
-    padding: 20px;
+    text-align: center;
+
 }
 
 /* Green Header Section */
 .employee-user-container-top {
     background-color: #82ED9B;
-    height: 100px; /* Adjusted height */
+    height: 100px;
+    /* Adjusted height */
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     position: relative;
+    top: -40px
+}
+
+.employee-user-container-top h2 {
+    padding-top: 35px;
+}
+
+.employee-info {
+    margin-top: -50px;
+    display: flex;
+    align-items: start;
+    gap: 40px;
 }
 
 /* Avatar Overlap */
 .employee-user-avatar {
-    width: 100px; /* Adjust size for balance */
-    height: 100px;
+    width: 165px;
+    /* Adjust size for balance */
+    height: 165px;
     object-fit: cover;
     border-radius: 50%;
     position: absolute;
-    top: 50%; /* Align to overlap with header */
-    left: 20px; /* Left-align avatar */
-    transform: translateY(-50%); /* Center avatar vertically */
-    border: 4px solid white; /* White border for emphasis */
-    z-index: 2; /* Ensure avatar stays on top */
+    top: 0;
+    /* Align to overlap with header */
+
 }
 
 /* User Details */
 .employee-user-details {
-    margin-left: 140px; /* Add space for avatar on the left */
-    margin-top: -10px; /* Adjust spacing to align with header */
+    margin-left: 180px;
+    text-align: left;
 }
 
 .employee-user-details h2 {
@@ -362,27 +381,81 @@
     margin: 5px 0;
 }
 
+.datamind-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    /* Align content to the right */
+    gap: 10px;
+    /* Add spacing between elements */
+    margin-top: -60px;
+}
+
+/*Datamind*/
+.datamind-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0px;
+    margin-top: 10px;
+}
+
+/* Dropdown Styled as Input */
+.datamind-dropdown {
+    appearance: none;
+    /* Remove default dropdown styling */
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #626E74;
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    max-width: 200px;
+    text-align: center;
+}
+
+/* Placeholder Option */
+.datamind-dropdown option[disabled] {
+    color: #a9a9a9;
+    /* Lighter color for placeholder */
+}
+
+/* Button */
+.datamind-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    color: white;
+    background-color: #32444D;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.datamind-button:hover {
+    background-color: #42657D;
+}
+
 /* Analytics Section */
 .analytics-container {
     display: flex;
-    justify-content: space-between;
-    padding: 20px;
-    gap: 15px; /* Add spacing between boxes */
+    justify-content: space-around;
     margin-top: 20px;
-    border-top: 1px solid #e0e0e0; /* Separate analytics section */
+    padding: 10px 0;
+    border-top: 1px solid #e0e0e0;
+    /* Add separation line */
 }
 
 .analytics-stat {
     flex: 1;
     text-align: center;
-    padding: 15px;
-    border-radius: 10px;
-    background-color: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .analytics-stat p {
-    font-size: 24px;
+    font-size: 36px;
+    /* Increase font size for prominence */
     font-weight: bold;
     margin: 0;
     color: #32444D;
@@ -390,28 +463,27 @@
 
 .analytics-stat span {
     display: block;
-    font-size: 14px;
+    font-size: 16px;
+    /* Larger text for better readability */
     color: #626E74;
     margin-top: 5px;
 }
 
-.analytics-stat .stat-description {
-    font-size: 12px;
-    color: #A9A9A9;
-    margin-top: 5px;
-}
 /* Activity and Events Container */
 .activity-events-container {
     display: flex;
-    flex-direction: column; /* Stack boxes vertically */
-    gap: 20px; /* Space between activity and events */
+    flex-direction: column;
+    /* Stack boxes vertically */
+    gap: 20px;
+    /* Space between activity and events */
     margin-top: 20px;
 }
 
 /* Activity Box */
 .activity {
     background-color: #d3d3d3;
-    width: 100%; /* Match container width */
+    width: 100%;
+    /* Match container width */
     height: 150px;
     display: flex;
     flex-direction: column;
@@ -424,7 +496,8 @@
 /* Events Box */
 .events {
     background-color: #d3d3d3;
-    width: 100%; /* Match container width */
+    width: 100%;
+    /* Match container width */
     height: 200px;
     display: flex;
     flex-direction: column;
@@ -436,16 +509,21 @@
 
 /* Right column*/
 /* Individual Sections (Dashboard and Tasks) */
-.right-panel > div {
-    background-color: #d3d3d3; /* Light gray background */
-    border-radius: 10px; /* Rounded corners */
-    padding: 20px; /* Add some padding for content */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    text-align: center; /* Center-align text */
+.right-panel>div {
+    background-color: #d3d3d3;
+    /* Light gray background */
+    border-radius: 10px;
+    /* Rounded corners */
+    padding: 20px;
+    /* Add some padding for content */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow for depth */
+    text-align: center;
+    /* Center-align text */
 }
 
 /* Section Headings */
-.right-panel > div h2 {
+.right-panel>div h2 {
     font-size: 18px;
     font-weight: bold;
     color: #32444d;
@@ -453,43 +531,62 @@
 }
 
 /* Section Descriptions */
-.right-panel > div p {
+.right-panel>div p {
     font-size: 14px;
     color: #626e74;
     margin: 0;
 }
 
-/* Responsive Adjustments */
+/* Responsive Design */
 @media (max-width: 768px) {
-    
+    .content-flex {
+        flex-direction: column; /* Stack panels vertically */
+        gap: 20px; /* Add space between stacked panels */
+    }
 
-    .achievements-header {
-        flex-direction: column;
+    .center-panel {
+        order: 1; /* Show center panel first */
+        width: 100%; /* Full width */
+    }
+
+    .right-panel {
+        order: 2; /* Show right panel second */
+        width: 100%; /* Full width */
+    }
+
+    .left-panel {
+        order: 3; /* Show left panel last */
+        width: 100%; /* Full width */
+    }
+
+    .header {
+        height: 200px; /* Adjust header height for smaller screens */
+    }
+
+    .header h1 {
+        font-size: 24px; /* Reduce font size for smaller screens */
+        text-align: center;
+    }
+
+    .achievements-header,
+    .milestones-header {
+        flex-direction: column; /* Stack filter buttons vertically */
         align-items: flex-start;
         gap: 10px;
     }
 
-    .achievements-filters {
+    .achievements-filters,
+    .milestones-filters {
         justify-content: flex-start;
         gap: 5px;
     }
 
-    .analytics-stats {
-        flex-direction: column;
-        gap: 10px;
-    }
-
     .analytics-stat {
-        padding: 15px;
-    }
-
-    .bottom-section {
-        flex-direction: column;
+        padding: 15px; /* Adjust padding for smaller cards */
     }
 
     .activity,
     .events {
         margin: 10px 0;
     }
-
 }

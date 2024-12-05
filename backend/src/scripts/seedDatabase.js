@@ -47,6 +47,7 @@ const seedData = async () => {
       is_admin: true,
       is_people_leader: true,
       dep_id: engineeringDepartment._id,
+      location: "Denmark",
     });
 
     const employee = await Employee.create({
@@ -59,6 +60,7 @@ const seedData = async () => {
       is_people_leader: false,
       dep_id: engineeringDepartment._id,
       people_leader_id: peopleLeader._id,
+      location: "Poland",
     });
 
     console.log("Seeding teams...");
@@ -74,6 +76,7 @@ const seedData = async () => {
       { type_name: "Task Assignment", description: "Notification for task assignments" },
       { type_name: "Report Available", description: "Notification for available reports" },
       { type_name: "Milestone Reminder", description: "Notification for employee milestones" },
+      { type_name: "Congratulatory Post", description: "Notification for congratulatory posts" },
     ];
     const notificationTypes = await NotificationType.insertMany(types);
 

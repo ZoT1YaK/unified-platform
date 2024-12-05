@@ -45,6 +45,15 @@ const employeeSchema = new mongoose.Schema({
     type: String, 
     default: "en" 
   },
+  data_mind_type: {
+    type: String,
+    required: true,
+    default: null
+  },
+  location: { 
+    type: String, 
+    required: true 
+  },
   people_leader_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Employee",

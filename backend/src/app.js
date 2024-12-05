@@ -8,6 +8,7 @@ const teamRoutes = require("./routes/teamRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const milestoneRoutes = require("./routes/milestoneRoutes");
 const badgeRoutes = require("./routes/badgeRoutes");
+const postRoutes = require("./routes/postRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const app = express();
@@ -24,6 +25,7 @@ app.use("/api/teams", teamRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/milestones", milestoneRoutes);
 app.use("/api/badges", badgeRoutes);
+app.use("/api/posts", postRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 module.exports = app;

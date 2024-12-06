@@ -145,16 +145,19 @@
 
 .tasks-column {
   width: 400px;
+  /* width: 100%; */
   display: flex;
   flex-direction: column;
   gap: 5px;
   flex-shrink: 0;
-
+  align-items: flex-start;
+  /* Align to the start of the container */
+  justify-content: flex-start;
+  /* Allow the content to grow naturally */
 }
 
 .post-creation-gray-box,
-.post-feed-gray-box,
-.tasks-gray-box {
+.post-feed-gray-box {
   background-color: #D3D3D3;
   border-radius: 10px;
   flex-shrink: 0;
@@ -260,10 +263,137 @@
 
 .tasks-gray-box {
   /*positioned at the right of the post creation box, at a distance of 25px, at the same hight*/
-  width: 400px;
-  height: 326px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 440px;
+  height: auto;
+  /* Let the height adjust based on content */
+  overflow-y: auto;
+  /* Ensures no content overflows */
+  max-height: 100%;
+  /* Prevents the box from expanding beyond the container if there’s too much content */
   /* margin-left: 25px; */
   order: 5;
+}
+
+/* Task Search Bar */
+.task-search-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.task-search-wrapper {
+  width: 70%;
+  /* Adjust width of the wrapper */
+  background-color: #F2F2F2;
+  /* Set gray background for the wrapper */
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  /* Vertically align the icon and text */
+  padding: 0 10px;
+  /* Add some padding to the left and right */
+}
+
+.task-search {
+  width: 100%;
+  padding: 10px;
+  /* Padding left added to make room for the icon */
+  border-radius: 10px;
+  background-color: transparent;
+  font-size: 16px;
+  color: #32444D;
+  opacity: 0.5;
+  border: none;
+  /* No border */
+  /* display: flex; */
+  align-items: center;
+  /* Center the content vertically */
+}
+
+.task-search .search-icon {
+  /* position: absolute; */
+  margin-right: 10px;
+  /* Space between the icon and text */
+  font-size: 18px;
+  /* Icon size */
+}
+
+.task-search::placeholder {
+  color: #32444D;
+  opacity: 0.5;
+  text-align: left;
+}
+
+/* Task List Box */
+.tasks-box {
+  background-color: white;
+  border-radius: 10px;
+  /* padding: 20px; */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Task Cards */
+.task-card {
+  display: flex;
+  flex-direction: column;
+  /* padding: 15px; */
+  margin-bottom: 10px;
+  /* background-color: white; */
+  border-radius: 10px;
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+}
+
+.task-card .task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-card h3 {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.task-card .task-checkbox {
+  width: 20px;
+  height: 20px;
+}
+
+.task-card .deadline {
+  font-size: 14px;
+  color: #888;
+  margin-left: 10px;
+}
+
+/* Resources Button */
+.resources-btn {
+  background-color: white;
+  border: none;
+  color: #32444D;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* Resources Dropdown */
+.resources {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.resources ul {
+  padding-left: 10px;
+}
+
+.resources li {
+  font-size: 14px;
+  list-style-type: disc;
 }
 
 .events-gray-box {

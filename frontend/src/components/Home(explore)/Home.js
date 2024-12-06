@@ -1,27 +1,17 @@
 import React from 'react';
-// import { useState } from 'react';
+import { useState } from 'react';
 import './Home.css';
 import EventCard from './../EventCard/EventCard';
 import TopBar from '../TopBar/TopBar';
+import TaskCard from '../TaskCard/TaskCard';
 
 const Home = () => {
-    // const [searchQuery, setSearchQuery] = useState('');
+    // Search state for filtering tasks
+    const [searchQuery, setSearchQuery] = useState('');
 
-    // const handleSearchChange = (e) => {
-    //     setSearchQuery(e.target.value);
-    // };
-
-    // const handleFocus = () => {
-    //     if (searchQuery === '') {
-    //         setSearchQuery('');
-    //     }
-    // };
-
-    // const handleBlur = () => {
-    //     if (searchQuery === '') {
-    //         setSearchQuery('');
-    //     }
-    // };
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
 
     const achievements = [
         "Ach-badge1", "Ach-badge2", "Ach-badge3", "Ach-badge4", "Ach-badge5"
@@ -84,6 +74,51 @@ const Home = () => {
 
     // Randomly display some other region events
     const randomOtherRegionEvents = sortedOtherRegionEvents.slice(0, 2);
+
+    // Mock tasks (to be replaced by backend data later)
+    const tasks = [
+        {
+            title: "Order necessary hardware through Tango",
+            deadline: "12/12/2024",
+            resources: ["Hardware", "Tango Account"],
+            isChecked: false,
+            isAssignedByLeader: true,
+        },
+        {
+            title: "Complete the learning path for the first month",
+            deadline: "12/12/2024",
+            resources: ["Learning Portal", "Mentor"],
+            isChecked: false,
+            isAssignedByLeader: true,
+        },
+        {
+            title: "To do X",
+            deadline: null,
+            resources: [],
+            isChecked: false,
+            isAssignedByLeader: false,
+        },
+        {
+            title: "To do Y",
+            deadline: null,
+            resources: [],
+            isChecked: false,
+            isAssignedByLeader: false,
+        },
+        {
+            title: "To do Z",
+            deadline: "12/12/2024",
+            resources: ["Tool E", "Guide F"],
+            isChecked: true,
+            isAssignedByLeader: false,
+        }
+    ];
+
+    // Filter tasks based on the search query
+    const filteredTasks = tasks.filter((task) => {
+        return task.title.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+
 
     return (
         <div className="home-page">
@@ -160,15 +195,63 @@ const Home = () => {
 
                 </div>
 
+
                 <div className="post-column">
                     {/* Post Creation and Feed boxes */}
                     <div className="post-creation-gray-box"></div>
                     <div className="post-feed-gray-box"></div>
                 </div>
 
+
                 <div className="tasks-column">
                     {/* Tasks and Events boxes */}
-                    <div className="tasks-gray-box"></div>
+                    <div className="tasks-gray-box">
+                        {/* Search input for filtering tasks */}
+                        <div className="task-search-container">
+                            <div className="task-search-wrapper">
+                                <img src="/magnifying-glass 1.png" alt="Search Icon" className="search-icon" />
+                                <input
+                                    type="text"
+                                    className="task-search"
+                                    placeholder="Search for a task..."
+                                    value={searchQuery}  // The value is controlled by the searchQuery state
+                                    onChange={handleSearchChange}  // This is where the function is used
+                                />
+                            </div>
+                        </div>
+
+                        {/* Tasks assigned by the people's leader */}
+                        <div className="tasks-box">
+
+                            {/* Tasks assigned by the people's leader */}
+                            {filteredTasks.filter(task => task.isAssignedByLeader).map((task, index) => (
+                                <TaskCard
+                                    key={index}
+                                    title={task.title}
+                                    deadline={task.deadline}
+                                    resources={task.resources}
+                                    isChecked={task.isChecked}
+                                    isAssignedByLeader={task.isAssignedByLeader}
+                                />
+                            ))}
+
+                            {/* Horizontal line between task sections */}
+                            <hr />
+
+                            {/* Tasks created by the employee */}
+                            {filteredTasks.filter(task => !task.isAssignedByLeader).map((task, index) => (
+                                <TaskCard
+                                    key={index}
+                                    title={task.title}
+                                    deadline={task.deadline}
+                                    resources={task.resources}
+                                    isChecked={task.isChecked}
+                                    isAssignedByLeader={task.isAssignedByLeader}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
                     <div className="events-gray-box">
                         <div className="events-list">
                             {sortedMyRegionEvents.map((event, index) => (

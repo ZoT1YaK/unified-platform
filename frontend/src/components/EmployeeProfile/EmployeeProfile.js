@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './EmployeeProfile.css';
 import TopBar from '../TopBar/TopBar';
 import Header from '../Header/Header';
+import Achievements from '../Achievements/Achievements'; 
+import Milestones from '../Milestones/Milestones'; 
 
 
 const EmployeeProfile = () => {
@@ -50,19 +52,7 @@ const EmployeeProfile = () => {
             );
         }
     };
-    // Filter and search logic
-    const filterAndSearchItems = (items) =>
-        items
-            .filter((item) => {
-                if (filter === "All") return true;
-                if (filter === "Visible") return item.visible;
-                if (filter === "Hidden") return !item.visible;
-                return true;
-            })
-            .filter((item) => item.title.toLowerCase().includes(searchQuery.toLowerCase()));
-
-    const filteredAchievements = filterAndSearchItems(achievements);
-    const filteredMilestones = filterAndSearchItems(milestones);
+   
 
     return (
         <div className="employee-profile-page">
@@ -71,105 +61,23 @@ const EmployeeProfile = () => {
             {/* Main Content */}
             <div className="content-flex">
                 <div className="left-panel">
-                    {/* Achievements Section */}
-                    <div className="achievements-section">
-                        <h2>Achievements</h2>
-                        <div className="achievements-header">
-                            <p>You've gained {achievements.length} achievements</p>
-                            <div className="achievements-filters">
-                                <button onClick={() => setFilter("All")} className={filter === "All" ? "active" : ""}>
-                                    All
-                                </button>
-                                <button onClick={() => setFilter("Visible")} className={filter === "Visible" ? "active" : ""}>
-                                    Visible
-                                </button>
-                                <button onClick={() => setFilter("Hidden")} className={filter === "Hidden" ? "active" : ""}>
-                                    Hidden
-                                </button>
-                                <div className="search-bar">
-                                    <input
-                                        type="text"
-                                        placeholder="Search"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                    />
-                                    <img src="/magnifying-glass 2.png" alt="Search" />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="achievements-list">
-                            {filteredAchievements.map((achievement) => (
-                                <div key={achievement.id} className="achievement-row">
-                                    <img
-                                        className="achievement-icon"
-                                        src={`/${achievement.title.toLowerCase().replace(/ /g, "-")}.png`}
-                                        alt={`Icon for ${achievement.title}`}
-                                    />
-                                    <div className="achievement-details">
-                                        <h3>{achievement.title}</h3>
-                                        <p>{achievement.description}</p>
-                                    </div>
-                                    <img
-                                        className="visibility-icon"
-                                        src={achievement.visible ? "/eye-icon.png" : "/eye-off-icon.png"}
-                                        alt="Visibility toggle"
-                                        onClick={() => toggleVisibility(achievement.id, "achievement")}
-                                    />
-                                    <p className="achievement-date">Unlocked on {achievement.date}</p>
-                                </div>
-                            ))}
-                            {filteredAchievements.length === 0 && <p>No achievements found.</p>}
-                        </div>
-                    </div>
-
-                    {/* Milestones Section */}
-                    <div className="milestones-section">
-                        <h2>Milestones</h2>
-                        <div className="milestones-header">
-                            <p>You've gained {milestones.length} milestones</p>
-                            <div className="milestones-filters">
-                                <button onClick={() => setFilter("All")} className={filter === "All" ? "active" : ""}>
-                                    All
-                                </button>
-                                <button onClick={() => setFilter("Visible")} className={filter === "Visible" ? "active" : ""}>
-                                    Visible
-                                </button>
-                                <button onClick={() => setFilter("Hidden")} className={filter === "Hidden" ? "active" : ""}>
-                                    Hidden
-                                </button>
-                                <div className="search-bar">
-                                    <input
-                                        type="text"
-                                        placeholder="Search"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                    />
-                                    <img src="/magnifying-glass 2.png" alt="Search" />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="milestones-list">
-                            {filteredMilestones.map((milestone) => (
-                                <div key={milestone.id} className="milestone-row">
-                                    <div className="milestone-badge">{milestone.badge}</div>
-                                    <div className="milestone-details">
-                                        <h3>{milestone.title}</h3>
-                                        <p>{milestone.description}</p>
-                                    </div>
-                                    <img
-                                        className="visibility-icon"
-                                        src={milestone.visible ? "/eye-icon.png" : "/eye-off-icon.png"}
-                                        alt="Visibility toggle"
-                                        onClick={() => toggleVisibility(milestone.id, "milestone")}
-                                    />
-                                    <p className="milestone-date">Unlocked on {milestone.date}</p>
-                                </div>
-                            ))}
-                            {filteredMilestones.length === 0 && <p>No milestones found.</p>}
-                        </div>
-                    </div>
+                    <Achievements
+                        achievements={achievements}
+                        filter={filter}
+                        searchQuery={searchQuery}
+                        toggleVisibility={toggleVisibility}
+                        setFilter={setFilter}
+                        setSearchQuery={setSearchQuery}
+                    />
+                    <Milestones
+                        milestones={milestones}
+                        filter={filter}
+                        searchQuery={searchQuery}
+                        toggleVisibility={toggleVisibility}
+                        setFilter={setFilter}
+                        setSearchQuery={setSearchQuery}
+                    />
                 </div>
-
                 <div className="center-panel">
                     <div className="employee-user-container">
                         {/* Green Header Section */}

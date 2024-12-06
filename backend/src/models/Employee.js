@@ -33,9 +33,25 @@ const employeeSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  is_admin: {
+    type: Boolean,
+    default: false,
+  },
   is_people_leader: {
     type: Boolean,
     default: false,
+  },
+  preferred_language: { 
+    type: String, 
+    default: "en" 
+  },
+  data_mind_type: {
+    type: String,
+    default: null
+  },
+  location: { 
+    type: String, 
+    required: true 
   },
   people_leader_id: {
     type: mongoose.Schema.Types.ObjectId,

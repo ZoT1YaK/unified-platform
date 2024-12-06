@@ -66,3 +66,25 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.updateLanguage = async (req, res) => {
+  const { id } = req.user;
+  const { language } = req.body;
+
+  try {
+    const employee = await Employee.findByIdAndUpdate(
+      { _id: id },
+      { preferred_language: language},
+      { new: true }
+    );
+
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    res.status(200).json({ message: "Language updated successfully", language });
+  } catch (error) {
+    console.error("Error updating language:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

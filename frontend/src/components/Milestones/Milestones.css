@@ -1,0 +1,122 @@
+.milestones-section {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.milestones-section h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #32444d;
+}
+
+.milestones-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.milestones-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.milestones-filters button {
+    background: none;
+    border: none;
+    color: #32444d;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.milestones-filters button.active,
+.milestones-filters button:hover {
+    background-color: #f0f0f0;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+.search-bar input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+}
+
+.search-bar img {
+    width: 16px;
+    height: 16px;
+}
+
+.milestones-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.milestone-row {
+    display: flex;
+    align-items: center;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 10px;
+    gap: 15px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    width: 100%;
+}
+
+.milestone-badge {
+    width: 40px;
+    height: 40px;
+    background-color: #82ed9b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    border-radius: 50%;
+}
+
+.milestone-details {
+    flex: 1;
+}
+
+.milestone-details h3 {
+    font-size: 16px;
+    margin: 0;
+    color: #32444d;
+}
+
+.milestone-details p {
+    font-size: 12px;
+    margin: 5px 0 0;
+    color: #626e74;
+}
+
+.visibility-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.milestone-date {
+    font-size: 12px;
+    color: #a9a9a9;
+}
+
+

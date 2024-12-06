@@ -4,6 +4,8 @@ import './Home.css';
 import EventCard from './../EventCard/EventCard';
 import TopBar from '../TopBar/TopBar';
 import TaskCard from '../TaskCard/TaskCard';
+import Header from '../Header/Header';
+
 
 const Home = () => {
     // Search state for filtering tasks
@@ -123,12 +125,13 @@ const Home = () => {
     return (
         <div className="home-page">
             <TopBar />
-
-            {/* Header */}
+            <Header />
+      
             <div className="header">
                 <h1>All Kinds of <span className="highlight">Data</span> Minds</h1>
             </div>
-
+            {/* Header */}
+           
             {/* Active UI Container */}
             <div className="active-ui-container">
                 <div className="profile-column">

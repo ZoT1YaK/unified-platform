@@ -8,6 +8,7 @@ const TeamEmployee = require("../models/TeamEmployee");
 const Location = require("../models/Location");
 const NotificationType = require("../models/NotificationType");
 const NotificationSettings = require("../models/NotificationSettings");
+const Badge = require("../models/Badge");
 
 const seedData = async () => {
   try {
@@ -43,8 +44,10 @@ const seedData = async () => {
       l_name: "One",
       position: "Manager",
       hire_date: new Date("2020-01-01"),
+      is_admin: true,
       is_people_leader: true,
       dep_id: engineeringDepartment._id,
+      location: "Denmark",
     });
 
     const employee = await Employee.create({
@@ -57,6 +60,20 @@ const seedData = async () => {
       is_people_leader: false,
       dep_id: engineeringDepartment._id,
       people_leader_id: peopleLeader._id,
+      location: "Poland",
+    });
+
+    const employee2 = await Employee.create({
+      email: "employee2@example.com",
+      password: hashedPassword,
+      f_name: "Employee",
+      l_name: "Three",
+      position: "Developer",
+      hire_date: new Date("2023-01-01"),
+      is_people_leader: false,
+      dep_id: engineeringDepartment._id,
+      people_leader_id: peopleLeader._id,
+      location: "Poland",
     });
 
     console.log("Seeding teams...");
@@ -65,6 +82,7 @@ const seedData = async () => {
     console.log("Assigning employees to teams...");
     await TeamEmployee.create({ team_id: teamAlpha._id, emp_id: peopleLeader._id });
     await TeamEmployee.create({ team_id: teamAlpha._id, emp_id: employee._id });
+    await TeamEmployee.create({ team_id: teamAlpha._id, emp_id: employee2._id });
 
     console.log("Seeding notification types...");
     const types = [
@@ -72,13 +90,14 @@ const seedData = async () => {
       { type_name: "Task Assignment", description: "Notification for task assignments" },
       { type_name: "Report Available", description: "Notification for available reports" },
       { type_name: "Milestone Reminder", description: "Notification for employee milestones" },
+      { type_name: "Congratulatory Post", description: "Notification for congratulatory posts" },
     ];
     const notificationTypes = await NotificationType.insertMany(types);
 
     console.log("Seeding notification settings...");
     const defaultSettings = [];
 
-    [peopleLeader, employee].forEach((emp) => {
+    [peopleLeader, employee, employee2].forEach((emp) => {
       notificationTypes.forEach((type) => {
         defaultSettings.push({
           emp_id: emp._id,
@@ -89,6 +108,22 @@ const seedData = async () => {
     });
 
     await NotificationSettings.insertMany(defaultSettings);
+
+    console.log("Seeding badges...");
+    await Badge.create([
+      {
+        created_by_id: peopleLeader._id,
+        name: "Employee of the Month",
+        description: "Awarded to the most outstanding employee of the month.",
+        img_link: "https://example.com/badge1.png",
+      },
+      {
+        created_by_id: peopleLeader._id,
+        name: "Team Player",
+        description: "Recognizing exceptional teamwork and collaboration.",
+        img_link: "https://example.com/badge2.png",
+      },
+    ]);
 
     console.log("Database seeded successfully.");
     process.exit();

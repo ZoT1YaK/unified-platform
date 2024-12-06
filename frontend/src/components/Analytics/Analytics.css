@@ -1,0 +1,29 @@
+.analytics-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    padding: 10px 0;
+    border-top: 1px solid #e0e0e0;
+
+}
+
+.analytics-stat {
+    flex: 1;
+    text-align: center;
+}
+
+.analytics-stat p {
+    font-size: 36px;
+   
+    font-weight: bold;
+    margin: 0;
+    color: #32444D;
+}
+
+.analytics-stat span {
+    display: block;
+    font-size: 16px;
+  
+    color: #626E74;
+    margin-top: 5px;
+}

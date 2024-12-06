@@ -1,225 +1,206 @@
 import React, { useState } from 'react';
 import './EmployeeProfile.css';
 import TopBar from '../TopBar/TopBar';
-
+import Header from '../Header/Header';
+import Achievements from '../Achievements/Achievements';
+import Milestones from '../Milestones/Milestones';
+import EmployeeDetails from '../EmployeeDetails/EmployeeDetails';
+import Datamind from '../Datamind/Datamind';
+import Analytics from '../Analytics/Analytics';
+import Activity from '../Activity/Activity';
+import EventCard from '../EventCard/EventCard';
+import TaskStatus from '../TaskStatus/TaskStatus';
+import EmployeeTasks from '../EmployeeTasks/EmployeeTasks';
 
 const EmployeeProfile = () => {
     const [filter, setFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState('');
+    const [dataMind, setDataMind] = useState("Curious");
 
-    // const handleSearchChange = (e) => {
-    //     setSearchQuery(e.target.value);
-    // };
+    const dataMindOptions = ["Curious", "Creative", "Innovative", "Resilient", "Collaborative"];
 
-    // const handleFocus = () => {
-    //     if (searchQuery === '') {
-    //         setSearchQuery('');
-    //     }
-    // };
+    const generateRandomDataMind = () => {
+        const randomIndex = Math.floor(Math.random() * dataMindOptions.length);
+        setDataMind(dataMindOptions[randomIndex]);
+    };
 
-    // const handleBlur = () => {
-    //     if (searchQuery === '') {
-    //         setSearchQuery('');
-    //     }
-    // };
+    const handleDataMindChange = (event) => {
+        setDataMind(event.target.value);
+    };
 
-    const achievements = [
+
+    const [achievements, setAchievements] = useState([
         { id: 1, title: "Ach-badge1", description: "Complete the annual biking contest", date: "12/12/2024", visible: true },
         { id: 2, title: "Ach-badge2", description: "Run the yearly marathon", date: "12/12/2024", visible: true },
         { id: 3, title: "Ach-badge3", description: "Recycle 50kg of paper waste", date: "12/12/2024", visible: true },
         { id: 4, title: "Ach-badge4", description: "Join the group cooking activity", date: "12/12/2024", visible: true },
         { id: 5, title: "Ach-badge5", description: "Build bird nests for the coming season", date: "12/12/2024", visible: false },
-    ];
+    ]);
 
-    const milestones = [
+    const [milestones, setMilestones] = useState([
         { id: 1, badge: "5", title: "Mil-badge1", description: "You've been with us for a whole 5 years!", date: "12/12/2024", visible: true },
         { id: 2, badge: "1", title: "Mil-badge2", description: "You've been with us for a whole year!", date: "12/12/2024", visible: true },
         { id: 3, badge: "0.5", title: "Mil-badge3", description: "You've been with us for a whole 6 months!", date: "12/12/2024", visible: true },
+    ]);
+
+    const toggleVisibility = (id, type) => {
+        if (type === "achievement") {
+            setAchievements((prevAchievements) =>
+                prevAchievements.map((item) =>
+                    item.id === id ? { ...item, visible: !item.visible } : item
+                )
+            );
+        } else if (type === "milestone") {
+            setMilestones((prevMilestones) =>
+                prevMilestones.map((item) =>
+                    item.id === id ? { ...item, visible: !item.visible } : item
+                )
+            );
+        }
+    };
+    // Mock data for events (to be replaced by backend data later)
+    const events = [
+        {
+            thumbnail: '/PaintingEvent.png',
+            date: '09/09/24',
+            title: 'Lets paint!',
+            description: 'Join us on the big yearly marathon, sed do eiusmod tempor incididunt ...',
+            location: 'My Region',
+        },
+        {
+            thumbnail: '/RecycleEvent.jpeg',
+            date: '10/10/24',
+            title: 'Let’s recycle in the office!',
+            description: 'Join us on the big yearly marathon, sed do eiusmod tempor incididunt ...',
+            location: 'My Region',
+        },
+        {
+            thumbnail: '/UglySweaterEvent.jpg',
+            date: '12/12/24',
+            title: 'Ugly Sweater Weather',
+            description: 'Join us on the big yearly marathon, sed do eiusmod tempor incididunt ...',
+            location: 'Other Region',
+        },
+        {
+            thumbnail: '/MarathonEvent.jpg',
+            date: '08/11/24',
+            title: 'The Yearly Big Marathon!',
+            description: 'Join us on the big yearly marathon, sed do eiusmod tempor incididunt ...',
+            location: 'Other Region',
+        },
+        {
+            thumbnail: '/WorkshopEvent.png',
+            date: '03/12/24',
+            title: '3D Design Workshop',
+            description: 'Join us on the big yearly marathon, sed do eiusmod tempor incididunt ...',
+            location: 'My Region',
+        },
     ];
 
-    // Filter and search logic
-    const filterAndSearchItems = (items) =>
-        items
-            .filter((item) => {
-                if (filter === "All") return true;
-                if (filter === "Visible") return item.visible;
-                if (filter === "Hidden") return !item.visible;
-                return true;
-            })
-            .filter((item) => item.title.toLowerCase().includes(searchQuery.toLowerCase()));
+    // Separate events by location
+    const myRegionEvents = events.filter(event => event.location === 'My Region');
+    const otherRegionEvents = events.filter(event => event.location !== 'My Region');
 
-    const filteredAchievements = filterAndSearchItems(achievements);
-    const filteredMilestones = filterAndSearchItems(milestones);
+    // Sort by date (earliest first)
+    const sortByDate = (eventA, eventB) => {
+        const dateA = new Date(eventA.date);
+        const dateB = new Date(eventB.date);
+        return dateA - dateB;
+    };
+
+    const sortedMyRegionEvents = myRegionEvents.sort(sortByDate);
+    const sortedOtherRegionEvents = otherRegionEvents.sort(sortByDate);
+
+    // Randomly display some other region events
+    const randomOtherRegionEvents = sortedOtherRegionEvents.slice(0, 2);
+
 
     return (
         <div className="employee-profile-page">
-            <TopBar />  {/* Include the TopBar component here */}
-
-            {/* Header */}
-            <div className="header">
-                <h1>All Kinds of <span className="highlight">Data</span> Minds</h1>
-            </div>
-
+            <TopBar />
+            <Header />
             {/* Main Content */}
             <div className="content-flex">
                 <div className="left-panel">
-                    {/* Achievements Section */}
-                    <div className="achievements-section">
-                        <h2>Achievements</h2>
-                        <div className="achievements-header">
-                            <p>You've gained {achievements.length} achievements</p>
-                            <div className="achievements-filters">
-                                <button onClick={() => setFilter("All")} className={filter === "All" ? "active" : ""}>
-                                    All
-                                </button>
-                                <button onClick={() => setFilter("Visible")} className={filter === "Visible" ? "active" : ""}>
-                                    Visible
-                                </button>
-                                <button onClick={() => setFilter("Hidden")} className={filter === "Hidden" ? "active" : ""}>
-                                    Hidden
-                                </button>
-                                <div className="search-bar">
-                                    <input
-                                        type="text"
-                                        placeholder="Search"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                    />
-                                    <img src="/magnifying-glass 2.png" alt="Search" />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="achievements-list">
-                            {filteredAchievements.map((achievement) => (
-                                <div key={achievement.id} className="achievement-row">
-                                    <img
-                                        className="achievement-icon"
-                                        src={`/${achievement.title.toLowerCase().replace(/ /g, "-")}.png`}
-                                        alt={`Icon for ${achievement.title}`}
-                                    />
-                                    <div className="achievement-details">
-                                        <h3>{achievement.title}</h3>
-                                        <p>{achievement.description}</p>
-                                    </div>
-                                    <img
-                                        className="visibility-icon"
-                                        src={achievement.visible ? "/eye-icon.png" : "/eye-off-icon.png"}
-                                        alt="Visibility toggle"
-                                    />
-                                    <p className="achievement-date">Unlocked on {achievement.date}</p>
-                                </div>
-                            ))}
-                            {filteredAchievements.length === 0 && <p>No achievements found.</p>}
-                        </div>
-                    </div>
-
-                    {/* Milestones Section */}
-                    <div className="milestones-section">
-                        <h2>Milestones</h2>
-                        <div className="milestones-header">
-                            <p>You've gained {milestones.length} milestones</p>
-                            <div className="milestones-filters">
-                                <button onClick={() => setFilter("All")} className={filter === "All" ? "active" : ""}>
-                                    All
-                                </button>
-                                <button onClick={() => setFilter("Visible")} className={filter === "Visible" ? "active" : ""}>
-                                    Visible
-                                </button>
-                                <button onClick={() => setFilter("Hidden")} className={filter === "Hidden" ? "active" : ""}>
-                                    Hidden
-                                </button>
-                                <div className="search-bar">
-                                    <input
-                                        type="text"
-                                        placeholder="Search"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                    />
-                                    <img src="/magnifying-glass 2.png" alt="Search" />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="milestones-list">
-                            {filteredMilestones.map((milestone) => (
-                                <div key={milestone.id} className="milestone-row">
-                                    <div className="milestone-badge">{milestone.badge}</div>
-                                    <div className="milestone-details">
-                                        <h3>{milestone.title}</h3>
-                                        <p>{milestone.description}</p>
-                                    </div>
-                                    <img
-                                        className="visibility-icon"
-                                        src={milestone.visible ? "/eye-icon.png" : "/eye-off-icon.png"}
-                                        alt="Visibility toggle"
-                                    />
-                                    <p className="milestone-date">Unlocked on {milestone.date}</p>
-                                </div>
-                            ))}
-                            {filteredMilestones.length === 0 && <p>No milestones found.</p>}
-                        </div>
-                    </div>
+                    <Achievements
+                        achievements={achievements}
+                        filter={filter}
+                        searchQuery={searchQuery}
+                        toggleVisibility={toggleVisibility}
+                        setFilter={setFilter}
+                        setSearchQuery={setSearchQuery}
+                    />
+                    <Milestones
+                        milestones={milestones}
+                        filter={filter}
+                        searchQuery={searchQuery}
+                        toggleVisibility={toggleVisibility}
+                        setFilter={setFilter}
+                        setSearchQuery={setSearchQuery}
+                    />
                 </div>
-
                 <div className="center-panel">
-                    <div className="employee-user-container">
-                        {/* Green Header Section */}
-                        <div className="employee-user-container-top">
-                            <h2>#IAmXDataMind</h2>
-                        </div>
+                    <EmployeeDetails
+                        name="Bob Bobrovich"
+                        position="Head of HR | HR Team"
+                        location="Vejle, Region of Southern Denmark, Denmark"
+                        avatar="/cat.png"
+                    >
+                        <Datamind
+                            dataMind={dataMind}
+                            dataMindOptions={dataMindOptions}
+                            handleDataMindChange={handleDataMindChange}
+                            generateRandomDataMind={generateRandomDataMind}
+                        />
+                    </EmployeeDetails>
 
-                        {/* Profile Section */}
-                        <img src="/cat.png" alt="User Avatar" className="employee-user-avatar" />
-                        <div className="employee-user-details">
-                            <h2>Bob Bobrovich</h2>
-                            <p>Head of HR | HR Team</p>
-                            <p>Vejle, Region of Southern Denmark, Denmark</p>
-                        </div>
+                    <Analytics
+                        achievementsCount={achievements.length}
+                        postsCount={15}
+                        milestonesCount={milestones.length}
+                    />
 
-                        {/* Analytics Section */}
-                        <div className="analytics-container">
-                            <div className="analytics-stat">
-                                <p>29</p>
-                                <span>Profile views</span>
-                                <p className="stat-description">Discover who's viewed your profile</p>
-                            </div>
-                            <div className="analytics-stat">
-                                <p>2</p>
-                                <span>Post impressions</span>
-                                <p className="stat-description">Check out who's engaging with your posts</p>
-                            </div>
-                            <div className="analytics-stat">
-                                <p>58</p>
-                                <span>Search appearances</span>
-                                <p className="stat-description">See how often you appear in search results</p>
-                            </div>
-                        </div>
+                    {/* Activity and Events */}
+                    <div className="activity-events-container">
+                        <Activity />
 
-                        {/* Activity and Events */}
-                        <div className="activity-events-container">
-                            <div className="activity">
-                                <h3>Activity</h3>
-                                <p>Most recent to the top</p>
+                        <div className="events-gray-box">
+                            <div className="events-list">
+                                {sortedMyRegionEvents.map((event, index) => (
+                                    <EventCard
+                                        key={index}
+                                        thumbnail={event.thumbnail}
+                                        date={event.date}
+                                        title={event.title}
+                                        description={event.description}
+                                    />
+                                ))}
                             </div>
-                            <div className="events">
-                                <h3>Upcoming Events</h3>
-                                <p>Joined and General</p>
+                            <hr />
+                            <h2>You might also like ...</h2>
+                            <div className="events-list">
+                                {randomOtherRegionEvents.map((event, index) => (
+                                    <EventCard
+                                        key={index}
+                                        thumbnail={event.thumbnail}
+                                        date={event.date}
+                                        title={event.title}
+                                        description={event.description}
+                                    />
+                                ))}
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div className="right-panel">
-                    <div className="dashboard">
-                        <h2>Dashboard</h2>
-                        <p>Overview of completions</p>
-                    </div>
-                    <div className="tasks">
-                        <h2>Tasks</h2>
-                        <p>Overview of tasks</p>
-                    </div>
+                    <TaskStatus />
+                    <EmployeeTasks />
                 </div>
             </div>
+
+
         </div>
+
     );
 };
 

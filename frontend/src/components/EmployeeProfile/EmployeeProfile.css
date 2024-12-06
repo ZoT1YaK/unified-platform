@@ -9,380 +9,74 @@
     margin: 0;
 }
 
-/* Header */
-.employee-profile-page .header {
-    background-color: #B4FBC4;
-    height: 324px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-
-.employee-profile-page .header h1 {
-    font-family: 'Noto', sans-serif;
-    color: #32444D;
-    font-size: 36px;
-  }
 
 /* Content Flex */
 .content-flex {
-    display: flex;
-    justify-content: space-between; /* Distribute panels evenly */
-    align-items: flex-start; /* Align items at the top */
-    gap: 20px; /* Space between panels */
-    width: 100%;
-    max-width: 1400px; /* Optional: Constrain overall width */
-    margin: 0 auto; /* Center flex container horizontally */
+    position: relative;
+    top: -73px;
     padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 50px;
+    width: 95%;
+    max-width: 1725px;
+    margin: 0 auto;
 }
 
 .left-panel {
-    flex: 2; /* Allow left panel to grow more */
-    min-width: 400px; /* Set a minimum width */
-    max-width: 500px; /* Optional: Set a maximum width to avoid overly stretching */
-    overflow: visible; /* Prevent content overflow */
-    
+    flex: 0 0 359px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
 }
 
 .center-panel {
-    flex: 1.5; /* Adjust the center panel's space */
-    max-width: 700px; /* Constrain max width for balance */
+    position: relative;
+    top: -27px;
+    flex: 0 0 795px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 .right-panel {
-    flex: 1; /* Give the right panel less priority */
-    max-width: 300px; /* Optional: Constrain its width */
-    display: flex;
-    flex-direction: column; /* Stack items vertically */
-    gap: 20px; /* Add space between the boxes */
-}
-/* Achievements Section */
-.achievements-section {
-    width: 100%;
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.achievements-section h2 {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: #32444d;
-}
-
-.achievements-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.achievements-filters {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.achievements-filters button {
-    background: none;
-    border: none;
-    color: #32444d;
-    font-size: 14px;
-    cursor: pointer;
-    padding: 5px 10px;
-    border-radius: 5px;
-    transition: background-color 0.2s;
-}
-
-.achievements-filters button.active,
-.achievements-filters button:hover {
-    background-color: #f0f0f0;
-}
-
-.search-bar {
-    display: flex;
-    align-items: center;
-    background-color: #f2f2f2;
-    border-radius: 5px;
-    padding: 5px 10px;
-}
-
-.search-bar input {
-    border: none;
-    background: transparent;
-    outline: none;
-    font-size: 14px;
-}
-
-.search-bar img {
-    width: 16px;
-    height: 16px;
-}
-
-.achievements-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-}
-
-.achievement-row {
-    display: flex;
-    align-items: center;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    padding: 10px;
-    gap: 15px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    width: 100%;
-}
-
-.achievement-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 5px;
-}
-
-.achievement-details {
-    flex: 1;
-}
-
-.achievement-details h3 {
-    font-size: 16px;
-    margin: 0;
-    color: #32444d;
-}
-
-.achievement-details p {
-    font-size: 12px;
-    margin: 5px 0 0;
-    color: #626e74;
-}
-
-.visibility-icon {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-}
-
-.achievement-date {
-    font-size: 12px;
-    color: #a9a9a9;
-}
-
-/* Milestones Section */
-.milestones-section {
-    width: 100%;
+    gap: 20px;
+    flex: 0 0 359px;
     background-color: white;
     border-radius: 10px;
-    padding: 20px;
-    margin-top: 20px;
-    /* Adds spacing below achievements */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.milestones-section h2 {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: #32444d;
+.left-panel,
+.center-panel,
+.right-panel {
+    box-sizing: border-box;
 }
 
-.milestones-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.milestones-filters {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.milestones-filters button {
-    background: none;
-    border: none;
-    color: #32444d;
-    font-size: 14px;
-    cursor: pointer;
-    padding: 5px 10px;
-    border-radius: 5px;
-    transition: background-color 0.2s;
-}
-
-.milestones-filters button.active,
-.milestones-filters button:hover {
-    background-color: #f0f0f0;
-}
-
-.search-bar {
-    display: flex;
-    align-items: center;
-    background-color: #f2f2f2;
-    border-radius: 5px;
-    padding: 5px 10px;
-}
-
-.search-bar input {
-    border: none;
-    background: transparent;
-    outline: none;
-    font-size: 14px;
-}
-
-.search-bar img {
-    width: 16px;
-    height: 16px;
-}
-
-.milestones-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.milestone-row {
-    display: flex;
-    align-items: center;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    padding: 10px;
-    gap: 15px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    width: 100%;
-}
-
-.milestone-badge {
-    width: 40px;
-    height: 40px;
-    background-color: #82ed9b;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-    border-radius: 50%;
-}
-
-.milestone-details {
-    flex: 1;
-}
-
-.milestone-details h3 {
-    font-size: 16px;
-    margin: 0;
-    color: #32444d;
-}
-
-.milestone-details p {
-    font-size: 12px;
-    margin: 5px 0 0;
-    color: #626e74;
-}
-
-.visibility-icon {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-}
-
-.milestone-date {
-    font-size: 12px;
-    color: #a9a9a9;
-}
-
-/* Center Panel Styling */
-.center-panel {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Keep content centered horizontally */
-    margin-top: 0; /* Remove negative margin */
-    position: relative;
-    z-index: 1; /* Lower z-index to allow the avatar to sit above */
-    width: 100%;
-    padding-top: 60px; /* Add padding to separate from other sections */
-}
-
-
-/* Employee User Container */
-.employee-user-container {
-    width: 100%; /* Full width of center-panel */
-    max-width: 500px; /* Optional: Constrain maximum width */
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center; /* Center text alignment */
-    padding: 20px;
-}
-
-/* Green Header Section */
-.employee-user-container-top {
-    background-color: #82ED9B;
-    height: 100px; /* Adjusted height */
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    position: relative;
-}
-
-/* Avatar Overlap */
-.employee-user-avatar {
-    width: 100px; /* Adjust size for balance */
-    height: 100px;
-    object-fit: cover;
-    border-radius: 50%;
-    position: absolute;
-    top: 50%; /* Align to overlap with header */
-    left: 20px; /* Left-align avatar */
-    transform: translateY(-50%); /* Center avatar vertically */
-    border: 4px solid white; /* White border for emphasis */
-    z-index: 2; /* Ensure avatar stays on top */
-}
-
-/* User Details */
-.employee-user-details {
-    margin-left: 140px; /* Add space for avatar on the left */
-    margin-top: -10px; /* Adjust spacing to align with header */
-}
-
-.employee-user-details h2 {
-    font-size: 20px;
-    font-weight: bold;
-    color: #32444d;
-    margin-bottom: 5px;
-}
-
-.employee-user-details p {
-    font-size: 14px;
-    color: #626e74;
-    margin: 5px 0;
-}
 
 /* Analytics Section */
 .analytics-container {
     display: flex;
-    justify-content: space-between;
-    padding: 20px;
-    gap: 15px; /* Add spacing between boxes */
+    justify-content: space-around;
     margin-top: 20px;
-    border-top: 1px solid #e0e0e0; /* Separate analytics section */
+    padding: 10px 0;
+    border-top: 1px solid #e0e0e0;
+    /* Add separation line */
 }
 
 .analytics-stat {
     flex: 1;
     text-align: center;
-    padding: 15px;
-    border-radius: 10px;
-    background-color: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .analytics-stat p {
-    font-size: 24px;
+    font-size: 36px;
+    /* Increase font size for prominence */
     font-weight: bold;
     margin: 0;
     color: #32444D;
@@ -390,106 +84,96 @@
 
 .analytics-stat span {
     display: block;
-    font-size: 14px;
+    font-size: 16px;
+    /* Larger text for better readability */
     color: #626E74;
     margin-top: 5px;
 }
 
-.analytics-stat .stat-description {
-    font-size: 12px;
-    color: #A9A9A9;
-    margin-top: 5px;
-}
 /* Activity and Events Container */
 .activity-events-container {
     display: flex;
-    flex-direction: column; /* Stack boxes vertically */
-    gap: 20px; /* Space between activity and events */
+    flex-direction: column;
+    /* Stack boxes vertically */
+    gap: 20px;
+    /* Space between activity and events */
     margin-top: 20px;
 }
 
-/* Activity Box */
-.activity {
-    background-color: #d3d3d3;
-    width: 100%; /* Match container width */
-    height: 150px;
+.employee-profile-page .events-gray-box {
+    width: 795px;
+    height: auto;
+    margin-top: 5px;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    overflow-y: auto;
+    order: 6;
+  }
+  
+  .employee-profile-page .events-list {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px;
-    text-align: center;
-}
-
-/* Events Box */
-.events {
-    background-color: #d3d3d3;
-    width: 100%; /* Match container width */
-    height: 200px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px;
-    text-align: center;
-}
-
-/* Right column*/
-/* Individual Sections (Dashboard and Tasks) */
-.right-panel > div {
-    background-color: #d3d3d3; /* Light gray background */
-    border-radius: 10px; /* Rounded corners */
-    padding: 20px; /* Add some padding for content */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    text-align: center; /* Center-align text */
-}
-
-/* Section Headings */
-.right-panel > div h2 {
-    font-size: 18px;
+  }
+  
+  .employee-profile-page .events-gray-box hr {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 20px 0;
+  }
+  
+  .employee-profile-page .events-gray-box h2 {
     font-weight: bold;
-    color: #32444d;
-    margin-bottom: 10px;
-}
+    color: #32444D;
+  }
+  
+  .employee-profile-page .events-gray-box h2+.events-list {
+    margin-top: 10px;
+    padding-top: 20px;
+  }
+  
 
-/* Section Descriptions */
-.right-panel > div p {
-    font-size: 14px;
-    color: #626e74;
-    margin: 0;
-}
-
-/* Responsive Adjustments */
+/* Responsive Design */
 @media (max-width: 768px) {
-    
+    .content-flex {
+        flex-direction: column; /* Stack panels vertically */
+        gap: 20px; /* Add space between stacked panels */
+    }
 
-    .achievements-header {
-        flex-direction: column;
+    .center-panel {
+        order: 1; /* Show center panel first */
+        width: 100%; /* Full width */
+    }
+
+    .right-panel {
+        order: 2; /* Show right panel second */
+        width: 100%; /* Full width */
+    }
+
+    .left-panel {
+        order: 3; /* Show left panel last */
+        width: 100%; /* Full width */
+    }
+
+    .achievements-header,
+    .milestones-header {
+        flex-direction: column; /* Stack filter buttons vertically */
         align-items: flex-start;
         gap: 10px;
     }
 
-    .achievements-filters {
+    .achievements-filters,
+    .milestones-filters {
         justify-content: flex-start;
         gap: 5px;
     }
 
-    .analytics-stats {
-        flex-direction: column;
-        gap: 10px;
-    }
-
     .analytics-stat {
-        padding: 15px;
-    }
-
-    .bottom-section {
-        flex-direction: column;
+        padding: 15px; /* Adjust padding for smaller cards */
     }
 
     .activity,
     .events {
         margin: 10px 0;
     }
-
 }

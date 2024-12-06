@@ -7,6 +7,8 @@ import Milestones from '../Milestones/Milestones';
 import EmployeeDetails from '../EmployeeDetails/EmployeeDetails';
 import Datamind from '../Datamind/Datamind';
 import Analytics from '../Analytics/Analytics';
+import Activity from '../Activity/Activity';
+import EventCard from '../EventCard/EventCard';
 
 const EmployeeProfile = () => {
     const [filter, setFilter] = useState("All");
@@ -54,6 +56,61 @@ const EmployeeProfile = () => {
             );
         }
     };
+    // Mock data for events (to be replaced by backend data later)
+    const events = [
+        {
+            thumbnail: '/PaintingEvent.png',
+            date: '09/09/24',
+            title: 'Lets paint!',
+            description: 'Join us on the big yearly marathon, sed do eiusmod tempor incididunt ...',
+            location: 'My Region',
+        },
+        {
+            thumbnail: '/RecycleEvent.jpeg',
+            date: '10/10/24',
+            title: 'Let’s recycle in the office!',
+            description: 'Join us on the big yearly marathon, sed do eiusmod tempor incididunt ...',
+            location: 'My Region',
+        },
+        {
+            thumbnail: '/UglySweaterEvent.jpg',
+            date: '12/12/24',
+            title: 'Ugly Sweater Weather',
+            description: 'Join us on the big yearly marathon, sed do eiusmod tempor incididunt ...',
+            location: 'Other Region',
+        },
+        {
+            thumbnail: '/MarathonEvent.jpg',
+            date: '08/11/24',
+            title: 'The Yearly Big Marathon!',
+            description: 'Join us on the big yearly marathon, sed do eiusmod tempor incididunt ...',
+            location: 'Other Region',
+        },
+        {
+            thumbnail: '/WorkshopEvent.png',
+            date: '03/12/24',
+            title: '3D Design Workshop',
+            description: 'Join us on the big yearly marathon, sed do eiusmod tempor incididunt ...',
+            location: 'My Region',
+        },
+    ];
+
+    // Separate events by location
+    const myRegionEvents = events.filter(event => event.location === 'My Region');
+    const otherRegionEvents = events.filter(event => event.location !== 'My Region');
+
+    // Sort by date (earliest first)
+    const sortByDate = (eventA, eventB) => {
+        const dateA = new Date(eventA.date);
+        const dateB = new Date(eventB.date);
+        return dateA - dateB;
+    };
+
+    const sortedMyRegionEvents = myRegionEvents.sort(sortByDate);
+    const sortedOtherRegionEvents = otherRegionEvents.sort(sortByDate);
+
+    // Randomly display some other region events
+    const randomOtherRegionEvents = sortedOtherRegionEvents.slice(0, 2);
 
 
     return (
@@ -103,14 +160,34 @@ const EmployeeProfile = () => {
 
                     {/* Activity and Events */}
                     <div className="activity-events-container">
-                        <div className="activity">
-                            <h3>Activity</h3>
-                            <p>Most recent to the top</p>
+                        <Activity />
+
+                        <div className="events-gray-box">
+                        <div className="events-list">
+                            {sortedMyRegionEvents.map((event, index) => (
+                                <EventCard
+                                    key={index}
+                                    thumbnail={event.thumbnail}
+                                    date={event.date}
+                                    title={event.title}
+                                    description={event.description}
+                                />
+                            ))}
                         </div>
-                        <div className="events">
-                            <h3>Upcoming Events</h3>
-                            <p>Joined and General</p>
+                        <hr />
+                        <h2>You might also like ...</h2>
+                        <div className="events-list">
+                            {randomOtherRegionEvents.map((event, index) => (
+                                <EventCard
+                                    key={index}
+                                    thumbnail={event.thumbnail}
+                                    date={event.date}
+                                    title={event.title}
+                                    description={event.description}
+                                />
+                            ))}
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./EmployeeTasks.css";
+import TaskStatus from "../TaskStatus/TaskStatus";
 
 const EmployeeTasks = () => {
     const [tasks, setTasks] = useState([
@@ -8,6 +9,11 @@ const EmployeeTasks = () => {
         { id: 3, title: "Complete the learning path for the first month", description: "Resources >", deadline: "12/12/2024", completed: false },
         { id: 4, title: "Join the mandatory onboarding events", description: "Resources >", deadline: "12/12/2024", completed: true },
     ]);
+
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter((task) => task.completed).length;
+    const uncompletedTasks = totalTasks - completedTasks;
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
@@ -46,6 +52,11 @@ const EmployeeTasks = () => {
 
     return (
         <div className="employee-tasks">
+             <TaskStatus
+                totalTasks={totalTasks}
+                completedTasks={completedTasks}
+                uncompletedTasks={uncompletedTasks}
+            />
             <h2>Assigned Tasks</h2>
                     <div className="search-add-container">
                          <input

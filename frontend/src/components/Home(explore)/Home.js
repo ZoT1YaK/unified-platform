@@ -126,12 +126,7 @@ const Home = () => {
         <div className="home-page">
             <TopBar />
             <Header />
-      
-            <div className="header">
-                <h1>All Kinds of <span className="highlight">Data</span> Minds</h1>
-            </div>
-            {/* Header */}
-           
+
             {/* Active UI Container */}
             <div className="active-ui-container">
                 <div className="profile-column">

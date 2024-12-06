@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './EmployeeProfile.css';
 import TopBar from '../TopBar/TopBar';
+import Header from '../Header/Header';
 
 
 const EmployeeProfile = () => {
@@ -65,13 +66,8 @@ const EmployeeProfile = () => {
 
     return (
         <div className="employee-profile-page">
-            <TopBar />  {/* Include the TopBar component here */}
-
-            {/* Header */}
-            <div className="header">
-                <h1>All Kinds of <span className="highlight">Data</span> Minds</h1>
-            </div>
-
+            <TopBar />  
+            <Header />           
             {/* Main Content */}
             <div className="content-flex">
                 <div className="left-panel">

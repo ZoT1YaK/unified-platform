@@ -9,21 +9,6 @@
     margin: 0;
 }
 
-/* Header */
-.employee-profile-page .header {
-    background-color: #B4FBC4;
-    height: 324px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-
-.employee-profile-page .header h1 {
-    font-family: 'Noto', sans-serif;
-    color: #32444D;
-    font-size: 36px;
-}
 
 /* Content Flex */
 .content-flex {
@@ -557,15 +542,6 @@
     .left-panel {
         order: 3; /* Show left panel last */
         width: 100%; /* Full width */
-    }
-
-    .header {
-        height: 200px; /* Adjust header height for smaller screens */
-    }
-
-    .header h1 {
-        font-size: 24px; /* Reduce font size for smaller screens */
-        text-align: center;
     }
 
     .achievements-header,

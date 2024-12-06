@@ -1,0 +1,55 @@
+.datamind-heading {
+    position: relative;
+    background-color: transparent;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    z-index: 2; /* Ensure it stays above the .employee-user-container-top */
+}
+
+
+.datamind-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0px;
+    margin-top: 50px;
+}
+
+/* Dropdown Styled as Input */
+.datamind-dropdown {
+    appearance: none;
+    /* Remove default dropdown styling */
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #626E74;
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    max-width: 200px;
+    text-align: center;
+}
+
+/* Placeholder Option */
+.datamind-dropdown option[disabled] {
+    color: #a9a9a9;
+    /* Lighter color for placeholder */
+}
+
+/* Button */
+.datamind-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    color: white;
+    background-color: #32444D;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.datamind-button:hover {
+    background-color: #42657D;
+}

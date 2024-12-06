@@ -6,6 +6,7 @@ import Achievements from '../Achievements/Achievements';
 import Milestones from '../Milestones/Milestones';
 import EmployeeDetails from '../EmployeeDetails/EmployeeDetails';
 import Datamind from '../Datamind/Datamind';
+import Analytics from '../Analytics/Analytics';
 
 const EmployeeProfile = () => {
     const [filter, setFilter] = useState("All");
@@ -86,7 +87,6 @@ const EmployeeProfile = () => {
                         location="Vejle, Region of Southern Denmark, Denmark"
                         avatar="/cat.png"
                     >
-                        {/* Pass Datamind as a child */}
                         <Datamind
                             dataMind={dataMind}
                             dataMindOptions={dataMindOptions}
@@ -95,21 +95,11 @@ const EmployeeProfile = () => {
                         />
                     </EmployeeDetails>
 
-                    {/* Analytics Section */}
-                    <div className="analytics-container">
-                        <div className="analytics-stat">
-                            <p>{achievements.length}</p>
-                            <span>Achievements</span>
-                        </div>
-                        <div className="analytics-stat">
-                            <p>15</p>
-                            <span>Posts</span>
-                        </div>
-                        <div className="analytics-stat">
-                            <p>{milestones.length}</p>
-                            <span>Milestones</span>
-                        </div>
-                    </div>
+                    <Analytics
+                        achievementsCount={achievements.length}
+                        postsCount={15}
+                        milestonesCount={milestones.length}
+                    />
 
                     {/* Activity and Events */}
                     <div className="activity-events-container">

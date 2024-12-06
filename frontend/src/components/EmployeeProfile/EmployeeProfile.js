@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import './EmployeeProfile.css';
 import TopBar from '../TopBar/TopBar';
 import Header from '../Header/Header';
-import Achievements from '../Achievements/Achievements'; 
-import Milestones from '../Milestones/Milestones'; 
+import Achievements from '../Achievements/Achievements';
+import Milestones from '../Milestones/Milestones';
 import EmployeeDetails from '../EmployeeDetails/EmployeeDetails';
-
+import Datamind from '../Datamind/Datamind';
 
 const EmployeeProfile = () => {
     const [filter, setFilter] = useState("All");
@@ -53,12 +53,12 @@ const EmployeeProfile = () => {
             );
         }
     };
-   
+
 
     return (
         <div className="employee-profile-page">
-            <TopBar />  
-            <Header />           
+            <TopBar />
+            <Header />
             {/* Main Content */}
             <div className="content-flex">
                 <div className="left-panel">
@@ -80,77 +80,63 @@ const EmployeeProfile = () => {
                     />
                 </div>
                 <div className="center-panel">
-                         <EmployeeDetails
-                            name="Bob Bobrovich"
-                            position="Head of HR | HR Team"
-                            location="Vejle, Region of Southern Denmark, Denmark"
-                            avatar="/cat.png"
+                    <EmployeeDetails
+                        name="Bob Bobrovich"
+                        position="Head of HR | HR Team"
+                        location="Vejle, Region of Southern Denmark, Denmark"
+                        avatar="/cat.png"
+                    >
+                        {/* Pass Datamind as a child */}
+                        <Datamind
+                            dataMind={dataMind}
+                            dataMindOptions={dataMindOptions}
+                            handleDataMindChange={handleDataMindChange}
+                            generateRandomDataMind={generateRandomDataMind}
                         />
+                    </EmployeeDetails>
 
-                            {/* DataMind Controls */}
-                            <div className="datamind-controls">
-                                <select
-                                    value={dataMind}
-                                    onChange={handleDataMindChange}
-                                    className="datamind-dropdown"
-                                >
-                                    <option disabled value="">
-                                        What is your Data Mind?
-                                    </option>
-                                    {dataMindOptions.map((option) => (
-                                        <option key={option} value={option}>
-                                            {option}
-                                        </option>
-                                    ))}
-                                </select>
-                                <button onClick={generateRandomDataMind} className="datamind-button">
-                                    Generate
-                                </button>
-                            
+                    {/* Analytics Section */}
+                    <div className="analytics-container">
+                        <div className="analytics-stat">
+                            <p>{achievements.length}</p>
+                            <span>Achievements</span>
                         </div>
-
-                        {/* Analytics Section */}
-                        <div className="analytics-container">
-                            <div className="analytics-stat">
-                                <p>{achievements.length}</p>
-                                <span>Achievements</span>
-                            </div>
-                            <div className="analytics-stat">
-                                <p>15</p>
-                                <span>Posts</span>
-                            </div>
-                            <div className="analytics-stat">
-                                <p>{milestones.length}</p>
-                                <span>Milestones</span>
-                            </div>
+                        <div className="analytics-stat">
+                            <p>15</p>
+                            <span>Posts</span>
                         </div>
-
-                        {/* Activity and Events */}
-                        <div className="activity-events-container">
-                            <div className="activity">
-                                <h3>Activity</h3>
-                                <p>Most recent to the top</p>
-                            </div>
-                            <div className="events">
-                                <h3>Upcoming Events</h3>
-                                <p>Joined and General</p>
-                            </div>
+                        <div className="analytics-stat">
+                            <p>{milestones.length}</p>
+                            <span>Milestones</span>
                         </div>
                     </div>
-                </div>
 
-                <div className="right-panel">
-                    <div className="dashboard">
-                        <h2>Dashboard</h2>
-                        <p>Overview of completions</p>
-                    </div>
-                    <div className="tasks">
-                        <h2>Tasks</h2>
-                        <p>Overview of tasks</p>
+                    {/* Activity and Events */}
+                    <div className="activity-events-container">
+                        <div className="activity">
+                            <h3>Activity</h3>
+                            <p>Most recent to the top</p>
+                        </div>
+                        <div className="events">
+                            <h3>Upcoming Events</h3>
+                            <p>Joined and General</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        
+
+            <div className="right-panel">
+                <div className="dashboard">
+                    <h2>Dashboard</h2>
+                    <p>Overview of completions</p>
+                </div>
+                <div className="tasks">
+                    <h2>Tasks</h2>
+                    <p>Overview of tasks</p>
+                </div>
+            </div>
+        </div>
+
     );
 };
 

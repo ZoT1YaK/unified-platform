@@ -47,7 +47,6 @@ const employeeSchema = new mongoose.Schema({
   },
   data_mind_type: {
     type: String,
-    required: true,
     default: null
   },
   location: { 

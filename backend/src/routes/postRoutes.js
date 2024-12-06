@@ -15,6 +15,9 @@ router.patch("/visibility", verifyToken, postController.updatePostVisibility);
 // Get targeted posts for the logged-in employee
 router.get("/get", verifyToken, postController.getTargetedPosts);
 
+// Create a comment
+router.post("/comments", verifyToken, postController.createComment);
+
 // Get comments for a post
 router.get("/:post_id/comments", verifyToken, postController.getCommentsByPost);
 

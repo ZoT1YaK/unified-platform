@@ -63,12 +63,26 @@ const seedData = async () => {
       location: "Poland",
     });
 
+    const employee2 = await Employee.create({
+      email: "employee2@example.com",
+      password: hashedPassword,
+      f_name: "Employee",
+      l_name: "Three",
+      position: "Developer",
+      hire_date: new Date("2023-01-01"),
+      is_people_leader: false,
+      dep_id: engineeringDepartment._id,
+      people_leader_id: peopleLeader._id,
+      location: "Poland",
+    });
+
     console.log("Seeding teams...");
     const teamAlpha = await Team.create({ name: "Alpha Team" });
 
     console.log("Assigning employees to teams...");
     await TeamEmployee.create({ team_id: teamAlpha._id, emp_id: peopleLeader._id });
     await TeamEmployee.create({ team_id: teamAlpha._id, emp_id: employee._id });
+    await TeamEmployee.create({ team_id: teamAlpha._id, emp_id: employee2._id });
 
     console.log("Seeding notification types...");
     const types = [
@@ -83,7 +97,7 @@ const seedData = async () => {
     console.log("Seeding notification settings...");
     const defaultSettings = [];
 
-    [peopleLeader, employee].forEach((emp) => {
+    [peopleLeader, employee, employee2].forEach((emp) => {
       notificationTypes.forEach((type) => {
         defaultSettings.push({
           emp_id: emp._id,

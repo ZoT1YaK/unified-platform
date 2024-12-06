@@ -1,8 +1,10 @@
+const mongoose = require("mongoose");
 const Post = require("../models/Post");
 const Comment = require("../models/Comment");
 const Employee = require("../models/Employee");
 const TeamEmployee = require("../models/TeamEmployee");
 const Like = require("../models/Like");
+const Team = require("../models/Team");
 const NotificationType = require("../models/NotificationType");
 const NotificationController = require("./notificationController");
 
@@ -22,6 +24,7 @@ exports.createPost = async (req, res) => {
       target_location,
       content,
       file_location,
+      visibility: true,
     });
 
     res.status(201).json({ message: "Post created successfully", post });
@@ -36,8 +39,18 @@ exports.createCongratulatoryPost = async (req, res) => {
   const { id } = req.user;
 
   try {
+    const peopleLeader = await Employee.findById(id);
+    if (!peopleLeader || !peopleLeader.is_people_leader) {
+      return res.status(403).json({ message: "Only people leaders can create congratulatory posts." });
+    }
+
     if (!content || !related_emp_id) {
       return res.status(400).json({ message: "Content and related employee ID are required." });
+    }
+
+    const relatedEmployee = await Employee.findById(related_emp_id);
+    if (!relatedEmployee) {
+      return res.status(404).json({ message: "Related employee not found." });
     }
 
     const post = await Post.create({
@@ -57,12 +70,10 @@ exports.createCongratulatoryPost = async (req, res) => {
     }
 
     await NotificationController.createNotification({
-      body: {
-        recipient_id: related_emp_id,
-        noti_type_id: notificationType._id,
-        related_entity_id: post._id,
-        message: "You've received a congratulatory post. Please set visibility preferences.",
-      },
+      recipient_id: related_emp_id,
+      noti_type_id: notificationType._id,
+      related_entity_id: post._id,
+      message: "You've received a congratulatory post. Please set visibility preferences.",
     });
 
     res.status(201).json({ message: "Congratulatory post created successfully", post });
@@ -97,58 +108,65 @@ exports.updatePostVisibility = async (req, res) => {
 };
 
 exports.getTargetedPosts = async (req, res) => {
-    const { id } = req.user;
-  
-    try {
-      const employee = await Employee.findById( id );
-      if (!employee) {
-        return res.status(404).json({ message: "Employee not found" });
-      }
+  const { id } = req.user;
 
-      const teamIds = (
-        await TeamEmployee.find({ emp_id: id })
-      ).map((teamEmployee) => teamEmployee.team_id);
-  
-      const targetedPosts = await Post.find({
-        $or: [
-          { target_dep_id: employee.dep_id }, // Posts for the employee's department
-          { target_team_id: { $in: teamIds } }, // Posts for the employee's teams
-          { target_location: employee.location }, // Posts for the employee's location
-          { target_dep_id: null, target_team_id: null, target_location: null }, // Posts for all
-        ],
-      })
-      .populate("emp_id", "f_name l_name position dep_id")
-      .populate({
-        path: "emp_id",
-        populate: { path: "dep_id", select: "name" },
-       })
-       .sort({ timestamp: -1 });
-
-        const enrichedPosts = await Promise.all(
-            targetedPosts.map(async (post) => {
-              const teamName = post.target_team_id
-                ? (await Team.findById(post.target_team_id))?.name
-                : null;
-      
-              return {
-                ...post.toObject(),
-                author: {
-                  f_name: post.emp_id?.f_name,
-                  l_name: post.emp_id?.l_name,
-                  position: post.emp_id?.position,
-                  department: post.emp_id?.dep_id?.name,
-                },
-                target_team_name: teamName,
-              };
-            })
-          );
-  
-      res.status(200).json({ posts: enrichedPosts });
-    } catch (error) {
-      console.error("Error fetching targeted posts:", error);
-      res.status(500).json({ message: "Server error" });
+  try {
+    const employee = await Employee.findById( id ).populate("dep_id", "name");;
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
     }
-  };
+
+    const teamIds = (
+      await TeamEmployee.find({ emp_id: id })
+    ).map((teamEmployee) => teamEmployee.team_id);
+
+    const targetedPosts = await Post.find({
+      $or: [
+        { target_dep_id: employee.dep_id, visibility: true }, // Posts for the employee's department
+        { target_team_id: { $in: teamIds }, visibility: true }, // Posts for the employee's teams
+        { target_location: employee.location, visibility: true }, // Posts for the employee's location
+        { target_dep_id: null, target_team_id: null, target_location: null, visibility: true }, // Posts for all
+        { related_emp_id: id }, // Posts explicitly for the employee (congratulatory posts)
+        { emp_id: id }, // Posts created by the employee
+      ],
+    })
+    .populate("emp_id", "f_name l_name position dep_id")
+    .populate({
+      path: "emp_id",
+      populate: { path: "dep_id", select: "name" },
+      })
+      .sort({ timestamp: -1 });
+
+      const enrichedPosts = await Promise.all(
+          targetedPosts.map(async (post) => {
+            const teamName = post.target_team_id
+              ? (await Team.findById(post.target_team_id))?.name
+              : null;
+    
+            return {
+              _id: post._id,
+              content: post.content,
+              likes: post.likes,
+              comments: post.comments,
+              visibility: post.visibility,
+              timestamp: post.timestamp,
+              author: {
+                f_name: post.emp_id?.f_name,
+                l_name: post.emp_id?.l_name,
+                position: post.emp_id?.position,
+                department: post.emp_id?.dep_id?.name,
+              },
+              target_team_name: teamName,
+            };
+          })
+        );
+
+    res.status(200).json({ posts: enrichedPosts });
+  } catch (error) {
+    console.error("Error fetching targeted posts:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 exports.createComment = async (req, res) => {
   const { post_id, content } = req.body;
@@ -173,14 +191,12 @@ exports.createComment = async (req, res) => {
       return res.status(404).json({ message: "Notification type not found" });
     }
 
-    if (String(post.emp_id) !== String(emp_id)) {
+    if (String(post.emp_id) !== String(id)) {
       await NotificationController.createNotification({
-        body: {
-          recipient_id: post.emp_id,
-          noti_type_id: notificationType._id,
-          related_entity_id: post_id,
-          message: `A new comment was added to your post: "${content}"`,
-        },
+        recipient_id: post.emp_id,
+        noti_type_id: notificationType._id,
+        related_entity_id: post_id,
+        message: `A new comment was added to your post: "${content}"`,
       });
     }
 
@@ -195,6 +211,10 @@ exports.getCommentsByPost = async (req, res) => {
   const { post_id } = req.params;
 
   try {
+    if (!mongoose.Types.ObjectId.isValid(post_id)) {
+    return res.status(400).json({ message: "Invalid post ID." });
+    }
+
     const comments = await Comment.find({ post_id })
       .populate("emp_id", "f_name l_name position dep_id") 
       .populate({
@@ -202,12 +222,18 @@ exports.getCommentsByPost = async (req, res) => {
         populate: { path: "dep_id", select: "name" },
       });
 
+    if (!comments.length) {
+      return res.status(404).json({ message: "No comments found for this post." });
+    }
+
     const enrichedComments = await Promise.all(
       comments.map(async (comment) => {
         const team = await TeamEmployee.findOne({ emp_id: comment.emp_id._id }).populate("team_id", "name");
 
         return {
-          ...comment.toObject(),
+          _id: comment._id,
+          content: comment.content,
+          timestamp: comment.timestamp,
           employee: {
             f_name: comment.emp_id.f_name,
             l_name: comment.emp_id.l_name,
@@ -231,6 +257,11 @@ exports.likePost = async (req, res) => {
   const { id } = req.user;
 
   try {
+    const post = await Post.findById(post_id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
     const existingLike = await Like.findOne({ post_id, emp_id: id });
     if (existingLike) {
       return res.status(400).json({ message: "You have already liked this post." });
@@ -252,6 +283,11 @@ exports.unlikePost = async (req, res) => {
   const { id } = req.user;
 
   try {
+    const post = await Post.findById(post_id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    
     const existingLike = await Like.findOne({ post_id, emp_id: id });
     if (!existingLike) {
       return res.status(400).json({ message: "You have not liked this post." });

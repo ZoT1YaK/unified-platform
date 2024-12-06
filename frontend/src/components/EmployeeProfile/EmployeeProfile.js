@@ -9,7 +9,6 @@ import Datamind from '../Datamind/Datamind';
 import Analytics from '../Analytics/Analytics';
 import Activity from '../Activity/Activity';
 import EventCard from '../EventCard/EventCard';
-import TaskStatus from '../TaskStatus/TaskStatus';
 import EmployeeTasks from '../EmployeeTasks/EmployeeTasks';
 
 const EmployeeProfile = () => {
@@ -193,7 +192,6 @@ const EmployeeProfile = () => {
                     </div>
                 </div>
                 <div className="right-panel">
-                    <TaskStatus />
                     <EmployeeTasks />
                 </div>
             </div>

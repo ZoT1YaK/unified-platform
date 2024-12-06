@@ -4,6 +4,7 @@ import TopBar from '../TopBar/TopBar';
 import Header from '../Header/Header';
 import Achievements from '../Achievements/Achievements'; 
 import Milestones from '../Milestones/Milestones'; 
+import EmployeeDetails from '../EmployeeDetails/EmployeeDetails';
 
 
 const EmployeeProfile = () => {
@@ -79,21 +80,12 @@ const EmployeeProfile = () => {
                     />
                 </div>
                 <div className="center-panel">
-                    <div className="employee-user-container">
-                        {/* Green Header Section */}
-                        <div className="employee-user-container-top">
-                            <h2>#IAm{dataMind}DataMind</h2>
-
-                        </div>
-
-                        {/* User Avatar and Details */}
-                        <div className="employee-info">
-                            <img src="/cat.png" alt="User Avatar" className="employee-user-avatar" />
-                            <div className="employee-user-details">
-                                <h2>Bob Bobrovich</h2>
-                                <p>Head of HR | HR Team</p>
-                                <p>Vejle, Region of Southern Denmark, Denmark</p>
-                            </div>
+                         <EmployeeDetails
+                            name="Bob Bobrovich"
+                            position="Head of HR | HR Team"
+                            location="Vejle, Region of Southern Denmark, Denmark"
+                            avatar="/cat.png"
+                        />
 
                             {/* DataMind Controls */}
                             <div className="datamind-controls">
@@ -114,7 +106,7 @@ const EmployeeProfile = () => {
                                 <button onClick={generateRandomDataMind} className="datamind-button">
                                     Generate
                                 </button>
-                            </div>
+                            
                         </div>
 
                         {/* Analytics Section */}
@@ -158,7 +150,7 @@ const EmployeeProfile = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        
     );
 };
 

@@ -52,31 +52,38 @@ const EmployeeTasks = () => {
 
     return (
         <div className="employee-tasks">
-             <TaskStatus
+            <TaskStatus
                 totalTasks={totalTasks}
                 completedTasks={completedTasks}
                 uncompletedTasks={uncompletedTasks}
             />
             <h2>Assigned Tasks</h2>
-                    <div className="search-add-container">
-                         <input
-                            type="text"
-                            className="task-search-bar"
-                            placeholder="Search tasks..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        <button className="add-task-button" onClick={() => openModal()}>
-                        <img
-                            src="more.png"
-                            alt="Add"
-                            className="icon"
-                        />
-                        </button>
-                    </div>
-                <ul className="task-list">
-                    {filteredTasks.map((task) => (
-                        <li key={task.id} className="task-item">
+            <div className="search-add-container">
+                <input
+                    type="text"
+                    className="task-search-bar"
+                    placeholder="Search tasks..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button className="add-task-button" onClick={() => openModal()}>
+                    <img
+                        src="more.png"
+                        alt="Add"
+                        className="icon"
+                    />
+                </button>
+            </div>
+            <ul className="task-list">
+                {filteredTasks.map((task) => {
+                    // Check if the task is overdue
+                    const isOverdue = task.deadline && new Date(task.deadline) < new Date();
+                    // Format the deadline to 'DD.MM.YYYY'
+                    const formattedDeadline = task.deadline
+                        ? new Date(task.deadline).toLocaleDateString('de-DE')
+                        : "No deadline";
+                    return (
+                        <li key={task.id} className={`task-item ${isOverdue ? "overdue" : ""}`}>
                             <button
                                 className="edit-button"
                                 onClick={() => openModal(task)}
@@ -101,10 +108,8 @@ const EmployeeTasks = () => {
                                 }
                             />
                             <span>{task.title}</span>
-                            <span>{task.deadline}</span>
-
+                            <span className="task-deadline">{formattedDeadline}</span>
                             <div className="task-actions">
-
                                 <button
                                     className="delete-button"
                                     onClick={() => handleDeleteTask(task.id)}
@@ -116,22 +121,23 @@ const EmployeeTasks = () => {
                                     />
                                 </button>
                             </div>
-
                         </li>
-                    ))}
-                </ul>
-                {
-        isModalOpen && (
-            <TaskModal
-                task={editingTask}
-                onClose={closeModal}
-                onSave={handleSaveTask}
+                    );
+                })}
+            </ul>
 
-            />
-        )
-    }
-            </div >
-            );
+            {
+                isModalOpen && (
+                    <TaskModal
+                        task={editingTask}
+                        onClose={closeModal}
+                        onSave={handleSaveTask}
+
+                    />
+                )
+            }
+        </div >
+    );
 };
 
 const TaskModal = ({ task, onClose, onSave }) => {

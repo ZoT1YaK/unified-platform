@@ -8,6 +8,8 @@
 .task-list {
     list-style: none;
     padding: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .task-item {
@@ -16,8 +18,18 @@
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid #ddd;
+    background-color: #f9f9f9;
+    border-radius: 8px;gap: 15px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    width: 95%;
+}
+.task-item.overdue {
+    background-color: #ffe6e6; 
 }
 
+.task-item.overdue .task-deadline {
+    color: #f44336; 
+}
 .task-item .edit-button {
     background: none;
     border: none;
@@ -38,8 +50,16 @@
 .task-item span {
     flex-grow: 1;
     margin-left: 5px;
+     
 }
 
+.task-item .task-deadline {
+    margin-left: auto; 
+    white-space: nowrap; 
+    text-align: right; 
+    font-size: 14px;
+    color: #626e74; 
+}
 
 .task-actions button {
     background: none;

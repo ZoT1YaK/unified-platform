@@ -9,6 +9,8 @@ import Datamind from '../Datamind/Datamind';
 import Analytics from '../Analytics/Analytics';
 import Activity from '../Activity/Activity';
 import EventCard from '../EventCard/EventCard';
+import TaskStatus from '../TaskStatus/TaskStatus';
+import EmployeeTasks from '../EmployeeTasks/EmployeeTasks';
 
 const EmployeeProfile = () => {
     const [filter, setFilter] = useState("All");
@@ -163,45 +165,40 @@ const EmployeeProfile = () => {
                         <Activity />
 
                         <div className="events-gray-box">
-                        <div className="events-list">
-                            {sortedMyRegionEvents.map((event, index) => (
-                                <EventCard
-                                    key={index}
-                                    thumbnail={event.thumbnail}
-                                    date={event.date}
-                                    title={event.title}
-                                    description={event.description}
-                                />
-                            ))}
-                        </div>
-                        <hr />
-                        <h2>You might also like ...</h2>
-                        <div className="events-list">
-                            {randomOtherRegionEvents.map((event, index) => (
-                                <EventCard
-                                    key={index}
-                                    thumbnail={event.thumbnail}
-                                    date={event.date}
-                                    title={event.title}
-                                    description={event.description}
-                                />
-                            ))}
+                            <div className="events-list">
+                                {sortedMyRegionEvents.map((event, index) => (
+                                    <EventCard
+                                        key={index}
+                                        thumbnail={event.thumbnail}
+                                        date={event.date}
+                                        title={event.title}
+                                        description={event.description}
+                                    />
+                                ))}
+                            </div>
+                            <hr />
+                            <h2>You might also like ...</h2>
+                            <div className="events-list">
+                                {randomOtherRegionEvents.map((event, index) => (
+                                    <EventCard
+                                        key={index}
+                                        thumbnail={event.thumbnail}
+                                        date={event.date}
+                                        title={event.title}
+                                        description={event.description}
+                                    />
+                                ))}
+                            </div>
                         </div>
                     </div>
-                    </div>
+                </div>
+                <div className="right-panel">
+                    <TaskStatus />
+                    <EmployeeTasks />
                 </div>
             </div>
 
-            <div className="right-panel">
-                <div className="dashboard">
-                    <h2>Dashboard</h2>
-                    <p>Overview of completions</p>
-                </div>
-                <div className="tasks">
-                    <h2>Tasks</h2>
-                    <p>Overview of tasks</p>
-                </div>
-            </div>
+
         </div>
 
     );

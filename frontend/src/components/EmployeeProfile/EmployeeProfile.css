@@ -133,36 +133,6 @@
   }
   
 
-/* Right column*/
-/* Individual Sections (Dashboard and Tasks) */
-.right-panel>div {
-    background-color: #d3d3d3;
-    /* Light gray background */
-    border-radius: 10px;
-    /* Rounded corners */
-    padding: 20px;
-    /* Add some padding for content */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* Subtle shadow for depth */
-    text-align: center;
-    /* Center-align text */
-}
-
-/* Section Headings */
-.right-panel>div h2 {
-    font-size: 18px;
-    font-weight: bold;
-    color: #32444d;
-    margin-bottom: 10px;
-}
-
-/* Section Descriptions */
-.right-panel>div p {
-    font-size: 14px;
-    color: #626e74;
-    margin: 0;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .content-flex {

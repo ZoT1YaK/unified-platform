@@ -173,44 +173,42 @@ const Home = () => {
     });
 
     // Mock posts (to be deleted after connection with BE)
-    const mockPosts = [
-        {
-            user: { name: "Dan Danov", avatar: "/cat.png", position: "Product Designer" },
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.",
-            timeAgo: "1d",
-            likes: 13,
-            comments: [],  // Initialize as an empty array
-            attachments: [
-                "/PaintingEvent.png", "/RecycleEvent.jpeg"
-            ]
-        },
-        {
-            user: { name: "Alice Johnson", avatar: "/cat.png", position: "UX Designer" },
-            description: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea.",
-            timeAgo: "2d",
-            likes: 25,
-            comments: [],  // Initialize as an empty array
-            attachments: [
-                "/UglySweaterEvent.jpg"
-            ]
-        },
-        {
-            user: { name: "Bob Bobrovich", avatar: "/cat.png", position: "Software Engineer" },
-            description: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.",
-            timeAgo: "3d",
-            likes: 40,
-            comments: [],  // Initialize as an empty array
-            attachments: [
-                "/WorkshopEvent.png", "/MarathonEvent.jpg"
-            ]
-        },
-    ];
-
-    // Set posts when component mounts
     useEffect(() => {
-        setPosts(mockPosts);
-    }, [mockPosts]);  // Explicitly include mockPosts in the dependency array
+        const mockPosts = [
+            {
+                user: { name: "Dan Danov", avatar: "/cat.png", position: "Product Designer" },
+                description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.",
+                timeAgo: "1d",
+                likes: 13,
+                comments: [],  // Initialize as an empty array
+                attachments: [
+                    "/PaintingEvent.png", "/RecycleEvent.jpeg"
+                ]
+            },
+            {
+                user: { name: "Alice Johnson", avatar: "/cat.png", position: "UX Designer" },
+                description: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea.",
+                timeAgo: "2d",
+                likes: 25,
+                comments: [],  // Initialize as an empty array
+                attachments: [
+                    "/UglySweaterEvent.jpg"
+                ]
+            },
+            {
+                user: { name: "Bob Bobrovich", avatar: "/cat.png", position: "Software Engineer" },
+                description: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.",
+                timeAgo: "3d",
+                likes: 40,
+                comments: [],  // Initialize as an empty array
+                attachments: [
+                    "/WorkshopEvent.png", "/MarathonEvent.jpg"
+                ]
+            },
+        ];
 
+        setPosts(mockPosts);
+    }, []);  // Empty dependency array ensures it runs once
 
     return (
         <div className="home-page">

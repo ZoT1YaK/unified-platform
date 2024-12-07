@@ -1,14 +1,14 @@
 .task-creator-form {
     display: flex;
-    flex-direction: column; /* Stack rows vertically */
-    gap: 20px; /* Space between rows */
+    flex-direction: column; 
+    gap: 20px; 
 }
 
 .task-creator-form .form-row {
     display: flex;
-    align-items: center; /* Align labels and inputs vertically */
-    gap: 15px; /* Space between label and input */
-    width: 100%; /* Ensure the row spans the full width */
+    align-items: center; 
+    gap: 15px; 
+    width: 100%; 
 }
 
 .task-creator-form label {
@@ -22,25 +22,25 @@
 .task-creator-form input,
 .task-creator-form textarea,
 .task-creator-form select {
-    flex: 2; /* Inputs take 2/3 of the row's width */
+    flex: 2; 
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 14px;
-    width: 100%; /* Ensure inputs span the available space */
-    box-sizing: border-box; /* Include padding in width calculation */
+    width: 100%; 
+    box-sizing: border-box; 
 }
 
 .task-creator-form textarea {
     resize: vertical;
-    min-height: 100px; /* Ensure textarea has enough height */
+    min-height: 100px; 
 }
 
 .task-creator-form .email-input-container {
     display: flex;
     align-items: center;
-    gap: 10px; /* Space between email input and Add button */
-    flex: 2; /* Align with other inputs */
+    gap: 10px; 
+    flex: 2; 
 }
 
 .task-creator-form .email-list {
@@ -48,7 +48,7 @@
     padding: 0;
     margin: 0;
     font-size: 14px;
-    flex: 2; /* Align under input space */
+    flex: 2;
 }
 
 .task-creator-form .email-list li {

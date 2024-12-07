@@ -12,6 +12,8 @@ const AssignedTaskList = ({ tasks, onEdit, onDelete }) => {
         deadline: "",
     });
     const [emailInput, setEmailInput] = useState("");
+    const [hoveredTask, setHoveredTask] = useState(null);
+
 
     // Handle opening the edit modal
     const openEditModal = (task) => {
@@ -86,8 +88,13 @@ const AssignedTaskList = ({ tasks, onEdit, onDelete }) => {
 
             {/* Task List */}
             <ul className="assigned-task-list">
-                {filteredTasks.map((task, index) => (
-                    <li key={index} className="assigned-task-list-item">
+            {filteredTasks.map((task, index) => (
+                    <li
+                        key={index}
+                        className="assigned-task-list-item"
+                        onMouseEnter={() => setHoveredTask(task)}
+                        onMouseLeave={() => setHoveredTask(null)}
+                    >
                         <div className="assigned-task-list-item-content">
                             <h4 className="assigned-task-title">{task.title}</h4>
                             <p className="assigned-task-details">
@@ -113,6 +120,15 @@ const AssignedTaskList = ({ tasks, onEdit, onDelete }) => {
                                 <img src="trash.png" alt="Delete" />
                             </button>
                         </div>
+                         {/* Tooltip for hover details */}
+                         {hoveredTask === task && (
+                            <div className="assigned-task-tooltip">
+                                <h4>Details:</h4>
+                                <p><strong>Description:</strong> {task.description || "No description"}</p>
+                                <p><strong>Badge:</strong> {task.badge || "No badge attached"}</p>
+                                <p><strong>Assigned To:</strong> {task.assignedTo.join(", ")}</p>
+                            </div>
+                        )}
                     </li>
                 ))}
             </ul>

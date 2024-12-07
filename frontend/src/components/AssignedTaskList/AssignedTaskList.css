@@ -3,7 +3,6 @@
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%; /* Full width of the panel */
 }
 
 .assigned-task-list-title {
@@ -209,4 +208,23 @@
 .assigned-task-modal-content,
 .assigned-task-list-item {
     transition: all 0.3s ease;
+}
+
+.assigned-task-tooltip {
+    position: absolute;
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #32444d;
+    z-index: 1000;
+    transform: translateY(-100%);
+    width: 250px;
+    pointer-events: none; /* Avoid tooltip triggering hover */
+}
+
+.assigned-task-list-item {
+    position: relative; /* Ensure tooltip is positioned relative to the task */
 }

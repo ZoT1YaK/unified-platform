@@ -5,6 +5,7 @@ import Header from '../Header/Header';
 import EmployeeDetails from '../EmployeeDetails/EmployeeDetails';
 import TaskCreator from '../TaskCreation/TaskCreation';
 import AssignedTaskList from '../AssignedTaskList/AssignedTaskList';
+import EventCreator from '../EventCreator/EventCreator';
 
 const LeaderHub = () => {
 
@@ -22,6 +23,17 @@ const LeaderHub = () => {
             assignedTo: ["employee3@example.com"],
             badge: "Badge 2",
             description: "Plan the quarterly team-building event.",
+        },
+    ]);
+
+    const [events, setEvents] = useState([
+        {
+            eventName: "Quarterly Meeting",
+            date: "2024-12-15",
+            time: "10:00",
+            location: "Conference Room A",
+            participants: ["employee1@example.com", "employee2@example.com"],
+            description: "Discuss Q4 results and strategies for next year.",
         },
     ]);
 
@@ -44,6 +56,11 @@ const LeaderHub = () => {
         console.log('Deleted task:', taskToDelete);
     };
 
+    // Handle saving a new event
+    const handleSaveEvent = (event) => {
+        setEvents((prevEvents) => [...prevEvents, event]);
+        console.log('Event saved:', event);
+    };
 
     return (
         <div className="leaderhub-page">
@@ -59,6 +76,19 @@ const LeaderHub = () => {
                         onEdit={handleEditTask}
                         onDelete={handleDeleteTask}
                     />
+                    <h3>Scheduled Events</h3>
+                    <ul className="event-list">
+                        {events.map((event, index) => (
+                            <li key={index} className="event-list-item">
+                                <h4>{event.eventName}</h4>
+                                <p>Date: {event.date}</p>
+                                <p>Time: {event.time}</p>
+                                <p>Location: {event.location}</p>
+                                <p>Participants: {event.participants.join(", ")}</p>
+                                <p>Description: {event.description}</p>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
 
                 {/* Center Panel */}
@@ -67,8 +97,13 @@ const LeaderHub = () => {
                     <div className="task-creator-container">
                         <h2>Create a Task</h2>
                         <TaskCreator
-                            badges={["Badge 1", "Badge 2", "Badge 3"]} 
-                            onSave={handleSaveTask} 
+                            badges={["Badge 1", "Badge 2", "Badge 3"]}
+                            onSave={handleSaveTask}
+                        />
+                    </div>
+                    <div className="event-creator-container">
+                        <EventCreator
+                            onSave={handleSaveEvent}
                         />
                     </div>
                 </div>

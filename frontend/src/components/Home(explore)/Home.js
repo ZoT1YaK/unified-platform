@@ -5,7 +5,6 @@ import TopBar from '../TopBar/TopBar';
 import TaskCard from '../TaskCard/TaskCard';
 import Header from '../Header/Header';
 
-
 const Home = () => {
     // Search state for filtering tasks
     const [searchQuery, setSearchQuery] = useState('');
@@ -24,6 +23,40 @@ const Home = () => {
             window.location.href = "/login";
         }
     }, []);
+    const [analytics, setAnalytics] = useState({
+        achievementsCount: 0,
+        postsCount: 0,
+        milestonesCount: 0,
+    });
+
+    useEffect(() => {
+        const fetchAnalytics = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/analytics/analytics`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch analytics");
+                }
+
+                const data = await response.json();
+                setAnalytics({
+                    achievementsCount: data.achievementsCount || 0,
+                    postsCount: data.postsCount || 0,
+                    milestonesCount: data.milestonesCount || 0,
+                });
+            } catch (error) {
+                console.error(error.message);
+            }
+        };
+
+        fetchAnalytics();
+    }, []);
+
 
     const achievements = [
         "Ach-badge1", "Ach-badge2", "Ach-badge3", "Ach-badge4", "Ach-badge5"
@@ -87,8 +120,8 @@ const Home = () => {
     // Randomly display some other region events
     const randomOtherRegionEvents = sortedOtherRegionEvents.slice(0, 2);
 
-     // Task search handler
-     const handleSearchChange = (e) => {
+    // Task search handler
+    const handleSearchChange = (e) => {
         setSearchQuery(e.target.value); // Update search query state
     };
     // Mock tasks (to be replaced by backend data later)
@@ -162,13 +195,13 @@ const Home = () => {
                         </div>
                         <div className="stats">
                             <div className="stat">
-                                24 <span className="stat-description">Achievements</span>
+                                {analytics.achievementsCount} <span className="stat-description">Achievements</span>
                             </div>
                             <div className="stat">
-                                15 <span className="stat-description">Posts</span>
+                                {analytics.postsCount} <span className="stat-description">Posts</span>
                             </div>
                             <div className="stat">
-                                5 <span className="stat-description">Milestones</span>
+                                {analytics.milestonesCount} <span className="stat-description">Milestones</span>
                             </div>
                         </div>
                     </div>

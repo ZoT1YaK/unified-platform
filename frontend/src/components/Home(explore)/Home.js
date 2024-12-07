@@ -8,7 +8,6 @@ import PostCreation from '../PostCreation/PostCreation';
 import PostComponent from "../PostComponent/Post";
 
 const Home = () => {
-    // Search state for filtering tasks
     const [searchQuery, setSearchQuery] = useState('');
     const [user, setUser] = useState({});
     const [posts, setPosts] = useState([]);
@@ -27,6 +26,7 @@ const Home = () => {
             window.location.href = "/login";
         }
     }, []);
+
     const [analytics, setAnalytics] = useState({
         achievementsCount: 0,
         postsCount: 0,
@@ -60,7 +60,6 @@ const Home = () => {
 
         fetchAnalytics();
     }, []);
-
 
     const achievements = [
         "Ach-badge1", "Ach-badge2", "Ach-badge3", "Ach-badge4", "Ach-badge5"
@@ -128,6 +127,7 @@ const Home = () => {
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value); // Update search query state
     };
+
     // Mock tasks (to be replaced by backend data later)
     const tasks = [
         {
@@ -176,30 +176,30 @@ const Home = () => {
     const mockPosts = [
         {
             user: { name: "Dan Danov", avatar: "/cat.png", position: "Product Designer" },
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.",
             timeAgo: "1d",
             likes: 13,
-            comments: 3,
+            comments: [],  // Initialize as an empty array
             attachments: [
                 "/PaintingEvent.png", "/RecycleEvent.jpeg"
             ]
         },
         {
             user: { name: "Alice Johnson", avatar: "/cat.png", position: "UX Designer" },
-            description: "Consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+            description: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea.",
             timeAgo: "2d",
             likes: 25,
-            comments: 7,
+            comments: [],  // Initialize as an empty array
             attachments: [
                 "/UglySweaterEvent.jpg"
             ]
         },
         {
             user: { name: "Bob Bobrovich", avatar: "/cat.png", position: "Software Engineer" },
-            description: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            description: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.",
             timeAgo: "3d",
             likes: 40,
-            comments: 10,
+            comments: [],  // Initialize as an empty array
             attachments: [
                 "/WorkshopEvent.png", "/MarathonEvent.jpg"
             ]
@@ -209,7 +209,8 @@ const Home = () => {
     // Set posts when component mounts
     useEffect(() => {
         setPosts(mockPosts);
-    }, []);
+    }, [mockPosts]);  // Explicitly include mockPosts in the dependency array
+
 
     return (
         <div className="home-page">
@@ -288,7 +289,6 @@ const Home = () => {
 
                 </div>
 
-
                 <div className="post-column">
                     {/* Post Creation and Feed boxes */}
                     <div className="post-creation-gray-box">
@@ -305,7 +305,6 @@ const Home = () => {
                         ))}
                     </div>
                 </div>
-
 
                 <div className="tasks-column">
                     {/* Tasks and Events boxes */}
@@ -326,7 +325,6 @@ const Home = () => {
 
                         {/* Tasks assigned by the people's leader */}
                         <div className="tasks-box">
-
                             {/* Tasks assigned by the people's leader */}
                             {filteredTasks.filter(task => task.isAssignedByLeader).map((task, index) => (
                                 <TaskCard

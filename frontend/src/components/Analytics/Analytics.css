@@ -1,29 +1,32 @@
 .analytics-container {
     display: flex;
-    justify-content: space-around;
+    justify-content: center; 
+    gap: 20px; 
     margin-top: 20px;
     padding: 10px 0;
-    border-top: 1px solid #e0e0e0;
-
 }
 
-.analytics-stat {
+.analytics-item {
     flex: 1;
+    max-width: 120px;
     text-align: center;
+    background-color: #f9f9f9; 
+    border: 1px solid #e0e0e0;
+    border-radius: 8px; 
+    padding: 10px 0; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
 }
 
-.analytics-stat p {
-    font-size: 36px;
-   
+.analytics-item p {
+    font-size: 36px; 
     font-weight: bold;
     margin: 0;
     color: #32444D;
 }
 
-.analytics-stat span {
+.analytics-item span {
     display: block;
     font-size: 16px;
-  
     color: #626E74;
     margin-top: 5px;
 }

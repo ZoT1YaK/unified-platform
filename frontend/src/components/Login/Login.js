@@ -12,20 +12,28 @@ const Login = () => {
         e.preventDefault();
         setError("");
         setMessage("");
+      
         try {
-            // Send login request to backend
-            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/employees/login`, { email, password });
-            
-            localStorage.setItem("token", response.data.token);
-            localStorage.setItem("employee", JSON.stringify(response.data.employee));
-            setMessage("Login successful!");
-            setTimeout(() => {
-                window.location.href = "/dashboard";
-            }, 1000);
+          const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/employees/login`, {
+            email,
+            password,
+          });
+      
+          const { token, employee } = response.data;
+      
+          // Store token and employee profile in localStorage
+          localStorage.setItem("token", token);
+          localStorage.setItem("employee", JSON.stringify(employee));
+      
+          setMessage("Login successful!");
+          setTimeout(() => {
+            window.location.href = "/dashboard";
+          }, 1000);
         } catch (err) {
-            setError(err.response?.data?.message || "An error occurred.");
+          setError(err.response?.data?.message || "An error occurred.");
         }
-    };
+      }
+    
 
     return (
         <div className="login-page"> {/* Add the login-page class here */}
@@ -58,4 +66,6 @@ const Login = () => {
     );
 };
 
+
 export default Login;
+

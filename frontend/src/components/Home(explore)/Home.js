@@ -1,19 +1,62 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import './Home.css';
 import EventCard from './../EventCard/EventCard';
 import TopBar from '../TopBar/TopBar';
 import TaskCard from '../TaskCard/TaskCard';
 import Header from '../Header/Header';
 
-
 const Home = () => {
     // Search state for filtering tasks
     const [searchQuery, setSearchQuery] = useState('');
+    const [user, setUser] = useState({});
+    useEffect(() => {
+        try {
+            const storedEmployee = localStorage.getItem("employee");
+            if (storedEmployee) {
+                setUser(JSON.parse(storedEmployee));
+            } else {
+                console.warn("No employee data found in localStorage.");
+                window.location.href = "/login"; // Redirect to login if not authenticated
+            }
+        } catch (error) {
+            console.error("Failed to parse employee data:", error);
+            window.location.href = "/login";
+        }
+    }, []);
+    const [analytics, setAnalytics] = useState({
+        achievementsCount: 0,
+        postsCount: 0,
+        milestonesCount: 0,
+    });
 
-    const handleSearchChange = (e) => {
-        setSearchQuery(e.target.value);
-    };
+    useEffect(() => {
+        const fetchAnalytics = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/analytics/analytics`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch analytics");
+                }
+
+                const data = await response.json();
+                setAnalytics({
+                    achievementsCount: data.achievementsCount || 0,
+                    postsCount: data.postsCount || 0,
+                    milestonesCount: data.milestonesCount || 0,
+                });
+            } catch (error) {
+                console.error(error.message);
+            }
+        };
+
+        fetchAnalytics();
+    }, []);
+
 
     const achievements = [
         "Ach-badge1", "Ach-badge2", "Ach-badge3", "Ach-badge4", "Ach-badge5"
@@ -77,6 +120,10 @@ const Home = () => {
     // Randomly display some other region events
     const randomOtherRegionEvents = sortedOtherRegionEvents.slice(0, 2);
 
+    // Task search handler
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value); // Update search query state
+    };
     // Mock tasks (to be replaced by backend data later)
     const tasks = [
         {
@@ -135,20 +182,26 @@ const Home = () => {
                         <div className='profile-container-top'></div>
                         <img src="/cat.png" alt="icon8" className="avatar" />
                         <div className="user-details">
-                            <h2>Bob Bobrovich</h2>
-                            <p>Head of HR | HR Team</p>
-                            <p>bob.bobrovich@stibo.com</p>
+                            <h2>
+                                {user.f_name && user.l_name
+                                    ? `${user.f_name} ${user.l_name}`
+                                    : "User"}
+                            </h2>
+                            <p>
+                                {user.position || "Role"} | {user.dep_id?.name || "Team"}
+                            </p>
+                            <p>{user.location || "Location"}</p>
                             <p className="message">I am #XDataMind</p>
                         </div>
                         <div className="stats">
                             <div className="stat">
-                                24 <span className="stat-description">Achievements</span>
+                                {analytics.achievementsCount} <span className="stat-description">Achievements</span>
                             </div>
                             <div className="stat">
-                                15 <span className="stat-description">Posts</span>
+                                {analytics.postsCount} <span className="stat-description">Posts</span>
                             </div>
                             <div className="stat">
-                                5 <span className="stat-description">Milestones</span>
+                                {analytics.milestonesCount} <span className="stat-description">Milestones</span>
                             </div>
                         </div>
                     </div>

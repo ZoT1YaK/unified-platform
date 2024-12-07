@@ -10,7 +10,7 @@ exports.loginEmployee = async (req, res) => {
       return res.status(400).json({ message: "Email and password are required" });
     }
 
-    const employee = await Employee.findOne({ email });
+    const employee = await Employee.findOne({ email }).populate("dep_id", "number name");
 
     if (!employee) {
       return res.status(404).json({ message: "Employee not found" });
@@ -27,15 +27,33 @@ exports.loginEmployee = async (req, res) => {
       { expiresIn: "1h" }
     );
 
+    // Sanitize sensitive fields
+    const sanitizedEmployee = {
+      _id: employee._id,
+      email: employee.email,
+      f_name: employee.f_name,
+      l_name: employee.l_name,
+      position: employee.position,
+      hire_date: employee.hire_date,
+      location: employee.location,
+      is_admin: employee.is_admin,
+      is_people_leader: employee.is_people_leader,
+      preferred_language: employee.preferred_language,
+      dep_id: employee.dep_id ? { number: employee.dep_id.number, name: employee.dep_id.name } : null,
+      people_leader_id: employee.people_leader_id,
+    };
+
     res.status(200).json({
       message: "Login successful",
       token,
+      employee: sanitizedEmployee,
     });
   } catch (error) {
     console.error("Error logging in employee:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 exports.getProfile = async (req, res) => {
   const { id } = req.user;

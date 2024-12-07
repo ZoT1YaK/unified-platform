@@ -1,0 +1,228 @@
+.post-creation-component {
+    /* width: 548px;
+    height: 319px; */
+    background-color: white;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.post-creation-box {
+    width: 100%;
+    height: 100%;
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.post-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.post-prompt {
+    font-size: 20px;
+    margin-left: 5px;
+    font-weight: bold;
+    color: hsla(200, 21%, 25%, 0.5);
+}
+
+.post-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.post-dialog {
+    width: 885px;
+    height: 485px;
+    background-color: white;
+    border-radius: 10px;
+    position: relative;
+    padding: 20px;
+}
+
+.post-dialogue-header {
+    display: flex;
+    /* align-items: center;
+    justify-content: space-between; */
+}
+
+.post-dialogue-close-bttn {
+    /* margin-right: 20px; */
+    width: 20px;
+    height: 20px;
+    margin-bottom: 35px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    height: 25px;
+}
+
+.user-info h2 {
+    margin-top: 10px;
+    margin-bottom: 0px;
+    width: 500px;
+}
+
+.user-info p {
+    margin-top: 0px;
+    width: 500px;
+}
+
+.post-textarea-contents {
+    display: flex;
+    flex-direction: column;
+    /* position: relative; */
+}
+
+.post-textarea {
+    font-family: 'Noto', sans-serif;
+    color: hsla(200, 21%, 25%, 0.5);
+    /* width: 100%; */
+    height: 225px;
+    margin-top: 20px;
+    padding: 10px;
+    /* border-radius: 5px; */
+    border: none;
+    resize: none;
+    font-size: 20px;
+}
+
+.post-dialogue-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: end; */
+    /* margin-top: 10px; */
+    /* position: relative; */
+    /* To avoid overlapping */
+}
+
+.post-dialogue-footer hr {
+    width: 100%;
+    color: hsla(200, 21%, 25%, 0.5);
+}
+
+.attachment-btn {
+    background-color: #82ED9B;
+    /* padding: 5px 15px; */
+    border-radius: 50px;
+    cursor: pointer;
+    border: none;
+    width: 40px;
+    height: 40px;
+    margin-top: 10px;
+    /* position: relative;
+    z-index: 10; */
+}
+
+/* Attachment options container (hidden by default) */
+/* .attachment-options {
+    display: none; */
+    /* Hidden by default */
+    /* position: absolute;
+    top: 45px; */
+    /* Position the options below the button */
+    /* left: 0;
+    width: 100%; */
+    /* Make sure it takes the full width of the parent */
+    /* background-color: #f2f2f2; */
+    /* Background color for the attachment options */
+    /* padding: 10px;
+    border-radius: 10px;
+    z-index: 1; */
+    /* Ensure it's above other content */
+    /* transition: all 0.3s ease; */
+    /* Smooth animation */
+    /* opacity: 0; */
+    /* Start with opacity 0 */
+    /* transform: translateY(-20px); */
+    /* Start with it hidden above */
+/* } */
+
+/* When hovering over the attachment button, show the attachment options */
+/* .attachment-btn:hover+.attachment-options {
+    display: block; */
+    /* Show the options when hovered */
+    /* opacity: 1; */
+    /* Make it visible */
+    /* transform: translateY(0); */
+    /* Slide it into place */
+/* } */
+
+/* Each attachment option inside the dropdown */
+/* .attachment-option {
+    display: inline-block;
+    margin-right: 10px;
+    cursor: pointer;
+    font-size: 24px; */
+    /* Larger icons */
+/* } */
+
+/* Styling the icons inside the attachment options */
+/* .attachment-option img {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.2s ease;
+} */
+
+/* .attachment-option:hover img {
+    transform: scale(1.1); */
+    /* Slightly increase size on hover */
+/* } */
+
+.attachment-btn img {
+    width: 20px;
+    height: 20px;
+}
+
+/* .attachment-btn.active {
+    background-color: #82ED9B;
+    border: none;
+} */
+
+.post-btn {
+    background-color: #f0f0f0;
+    padding: 5px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: not-allowed;
+    opacity: 0.5;
+    margin-left: 750px;
+    width: 80px;
+    height: 35px;
+    font-size: 18px;
+    font-family: "Noto", sans-serif;
+    font-weight: bold;
+    z-index: 5;
+    /* Ensure it's on top of other elements */
+}
+
+.post-btn.active {
+    background-color: #82ED9B;
+    cursor: pointer;
+    opacity: 1;
+    border: none;
+    border-radius: 5px;
+}
+
+.close-btn {
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 220px;
+}

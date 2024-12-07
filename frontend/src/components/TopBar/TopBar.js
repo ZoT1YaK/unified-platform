@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './TopBar.css';
 
 const TopBar = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [view, setView] = useState('Leader Hub');
     const [isLeader, setIsLeader] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -27,7 +27,11 @@ const TopBar = () => {
     };
 
     const toggleView = () => {
-        setView((prevView) => (prevView === 'Leader Hub' ? 'Profile' : 'Leader Hub'));
+        if (location.pathname === '/leaderhub') {
+            navigate('/profile'); 
+        } else {
+            navigate('/leaderhub'); 
+        }
     };
 
     const toggleDropdown = () => {
@@ -135,7 +139,7 @@ const TopBar = () => {
                 {isLeader && (
                     <button className="leader-button" onClick={toggleView}>
                         <img src="spin.png" alt="switch-button" className="switch-button" />
-                        {view}
+                        {location.pathname === '/leaderhub' ? 'Profile' : 'Leader Hub'}
                     </button>
                 )}
             </div>

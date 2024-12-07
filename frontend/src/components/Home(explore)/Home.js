@@ -5,11 +5,14 @@ import TopBar from '../TopBar/TopBar';
 import TaskCard from '../TaskCard/TaskCard';
 import Header from '../Header/Header';
 import PostCreation from '../PostCreation/PostCreation';
+import PostComponent from "../PostComponent/Post";
 
 const Home = () => {
     // Search state for filtering tasks
     const [searchQuery, setSearchQuery] = useState('');
     const [user, setUser] = useState({});
+    const [posts, setPosts] = useState([]);
+
     useEffect(() => {
         try {
             const storedEmployee = localStorage.getItem("employee");
@@ -169,6 +172,44 @@ const Home = () => {
         return task.title.toLowerCase().includes(searchQuery.toLowerCase());
     });
 
+    // Mock posts (to be deleted after connection with BE)
+    const mockPosts = [
+        {
+            user: { name: "Dan Danov", avatar: "/cat.png", position: "Product Designer" },
+            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            timeAgo: "1d",
+            likes: 13,
+            comments: 3,
+            attachments: [
+                "/PaintingEvent.png", "/RecycleEvent.jpeg"
+            ]
+        },
+        {
+            user: { name: "Alice Johnson", avatar: "/cat.png", position: "UX Designer" },
+            description: "Consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+            timeAgo: "2d",
+            likes: 25,
+            comments: 7,
+            attachments: [
+                "/UglySweaterEvent.jpg"
+            ]
+        },
+        {
+            user: { name: "Bob Bobrovich", avatar: "/cat.png", position: "Software Engineer" },
+            description: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            timeAgo: "3d",
+            likes: 40,
+            comments: 10,
+            attachments: [
+                "/WorkshopEvent.png", "/MarathonEvent.jpg"
+            ]
+        },
+    ];
+
+    // Set posts when component mounts
+    useEffect(() => {
+        setPosts(mockPosts);
+    }, []);
 
     return (
         <div className="home-page">
@@ -254,7 +295,15 @@ const Home = () => {
                         <PostCreation user={{ name: "Bob Bobrovich", avatar: "/cat.png" }} />
                     </div>
 
-                    <div className="post-feed-gray-box"></div>
+                    <div className="post-feed-gray-box">
+                        {posts.map((post, index) => (
+                            <PostComponent
+                                key={index}
+                                user={post.user}
+                                post={post}
+                            />
+                        ))}
+                    </div>
                 </div>
 
 

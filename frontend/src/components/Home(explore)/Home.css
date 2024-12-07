@@ -10,7 +10,6 @@
   margin: 0;
 }
 
-
 /* Other Home-specific styles */
 .profile-container {
   margin-left: 123px;
@@ -143,7 +142,7 @@
 }
 
 .post-feed-gray-box {
-  background-color: #D3D3D3;
+  background-color: transparent;
   border-radius: 10px;
   flex-shrink: 0;
 }
@@ -304,8 +303,10 @@
 
 .post-feed-gray-box {
   /*positioned right bellow the post creation box, at a distance of 5 px*/
+  box-sizing: border-box;
   width: 885px;
-  height: 458px;
+  height: auto;
+  max-height: 100%;
   margin-top: 5px;
   order: 4;
 }

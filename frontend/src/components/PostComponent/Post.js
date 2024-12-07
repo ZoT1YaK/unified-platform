@@ -2,19 +2,32 @@ import React, { useState } from 'react';
 import './Post.css';
 
 const PostComponent = ({ user, post }) => {
-    // const [comments, setComments] = useState(post.comments || []);
+    const [likes, setLikes] = useState(post.likes);  // Manage likes state
     const [newComment, setNewComment] = useState('');
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    // const handleAddComment = () => {
-    //     if (newComment.trim()) {
-    //         setComments([...comments, { user: 'Bob Bobrovich', text: newComment }]);
-    //         setNewComment('');
-    //     }
-    // };
+    // Ensure comments is always an array, even if it's initially a number
+    const [comments, setComments] = useState(Array.isArray(post.comments) ? post.comments : []);
 
-    const toggleDialog = () => {
-        setIsDialogOpen(!isDialogOpen);
+    const [isCommentButtonVisible, setIsCommentButtonVisible] = useState(false); // Show/Hide button
+
+    // Toggle like functionality
+    const handleLikeClick = () => {
+        setLikes(likes === post.likes ? likes + 1 : likes - 1); // Toggle likes
+    };
+
+    // Handle comment change and show/hide the post button
+    const handleCommentChange = (e) => {
+        setNewComment(e.target.value);
+        setIsCommentButtonVisible(e.target.value.trim() !== ''); // Button visibility
+    };
+
+    // Handle adding a comment
+    const handlePostComment = () => {
+        if (newComment.trim()) {
+            setComments([...comments, { user: 'Bob Bobrovich', text: newComment }]);
+            setNewComment(''); // Clear the comment input
+            setIsCommentButtonVisible(false); // Hide button after posting
+        }
     };
 
     return (
@@ -31,7 +44,7 @@ const PostComponent = ({ user, post }) => {
             <div className="post-description">
                 <p>{post.description}</p>
                 <div className="post-attachments">
-                    {post.attachments.map((attachment, index) => (
+                    {post.attachments && post.attachments.map((attachment, index) => (
                         <img key={index} src={attachment} alt={`Attachment ${index}`} className="post-attachment" />
                     ))}
                 </div>
@@ -39,57 +52,42 @@ const PostComponent = ({ user, post }) => {
 
             <div className="post-footer">
                 <div className="likes-section">
-                    <img src="/like.png" alt="Like icon" className="like-icon" />
-                    <span>{post.likes}</span>
+                    <button onClick={handleLikeClick} className="like-button">
+                        <img src="/like.png" alt="Like icon" className="like-icon" />
+                    </button>
+                    <span>{likes}</span>
                 </div>
-                <div className="comments-section" onClick={toggleDialog}>
+                <div className="comments-section">
                     <img src="/comment.png" alt="Comment icon" className="comment-icon" />
-                    {/* <span>{comments.length}</span> */}
+                    <span>{comments.length}</span>
                 </div>
             </div>
 
             <hr />
 
-            <div className="comment-area" onClick={toggleDialog}>
+            <div className="comment-area">
                 <input
                     type="text"
                     placeholder={`Write a comment on ${user.name}'s post...`}
                     value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
+                    onChange={handleCommentChange}
                 />
+                {isCommentButtonVisible && (
+                    <button className="post-comment-btn" onClick={handlePostComment}>
+                        <img src='/send-message.png' alt='Post comment bttn' className='post-comment-to-feed-bttn'/>
+                    </button>
+                )}
             </div>
 
-            {/* {isDialogOpen && (
-                <CommentDialog comments={comments} addComment={handleAddComment} closeDialog={toggleDialog} />
-            )} */}
+            <div className="comments-list">
+                {comments && comments.map((comment, index) => (
+                    <div key={index} className="comment">
+                        <strong>{comment.user}:</strong> {comment.text}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
-
-// const CommentDialog = ({ comments, addComment, closeDialog }) => {
-//     return (
-//         <div className="comment-dialog-overlay" onClick={closeDialog}>
-//             <div className="comment-dialog" onClick={(e) => e.stopPropagation()}>
-//                 <div className="comment-dialog-header">
-//                     <h3>Comments</h3>
-//                     <button className="close-btn" onClick={closeDialog}>Close</button>
-//                 </div>
-//                 <div className="comments-list">
-//                     {comments.map((comment, index) => (
-//                         <div key={index} className="comment">
-//                             <p><strong>{comment.user}:</strong> {comment.text}</p>
-//                         </div>
-//                     ))}
-//                 </div>
-//                 <textarea
-//                     placeholder="Write a comment..."
-//                     className="comment-textarea"
-//                     onChange={(e) => addComment(e.target.value)}
-//                 />
-//                 <button className="post-comment-btn" onClick={addComment}>Post Comment</button>
-//             </div>
-//         </div>
-//     );
-// };
 
 export default PostComponent;

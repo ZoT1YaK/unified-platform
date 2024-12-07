@@ -142,7 +142,6 @@
   /* Allow the content to grow naturally */
 }
 
-.post-creation-gray-box,
 .post-feed-gray-box {
   background-color: #D3D3D3;
   border-radius: 10px;
@@ -235,8 +234,72 @@
   /*positioned at the right of the profile overview, at a distance of 25px, at the same hight*/
   width: 885px;
   height: 107px;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   /* margin-left: 25px; */
   order: 3;
+}
+
+.post-creation-component {
+  background-color: white;
+  /* Set the background color to white */
+  width: 100%;
+  /* Make sure the component fills the available width */
+  height: 100%;
+  /* Allow it to take full height */
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* padding: 10px; */
+}
+
+.post-prompt {
+  font-size: 16px;
+  color: #32444D;
+}
+
+.post-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.post-dialog {
+  width: 885px;
+  height: 485px;
+  background-color: white;
+  border-radius: 10px;
+  position: relative;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Adjust the area containing the buttons and text fields */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.post-btn {
+  background-color: #f0f0f0;
+  padding: 5px 15px;
+  border-radius: 5px;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.post-btn.active {
+  background-color: #82ED9B;
+  cursor: pointer;
+  opacity: 1;
 }
 
 .post-feed-gray-box {

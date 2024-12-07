@@ -4,6 +4,7 @@ import EventCard from './../EventCard/EventCard';
 import TopBar from '../TopBar/TopBar';
 import TaskCard from '../TaskCard/TaskCard';
 import Header from '../Header/Header';
+import PostCreation from '../PostCreation/PostCreation';
 
 const Home = () => {
     // Search state for filtering tasks
@@ -249,7 +250,10 @@ const Home = () => {
 
                 <div className="post-column">
                     {/* Post Creation and Feed boxes */}
-                    <div className="post-creation-gray-box"></div>
+                    <div className="post-creation-gray-box">
+                        <PostCreation user={{ name: "Bob Bobrovich", avatar: "/cat.png" }} />
+                    </div>
+
                     <div className="post-feed-gray-box"></div>
                 </div>
 

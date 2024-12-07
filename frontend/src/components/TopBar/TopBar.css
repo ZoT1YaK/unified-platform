@@ -68,3 +68,35 @@
     gap: 20px;
     align-items: center;
 }
+
+/* Leader Button */
+.leader-button {
+    display: flex;
+    align-items: center; 
+    gap: 8px;
+    background-color: #6adb99;
+    color: #32444d;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 150px; 
+    min-width: 150px; 
+    height: 40px;
+    box-sizing: border-box;
+    text-align: center;
+    padding-left: 20px;
+}
+
+.leader-button:hover {
+    background-color: #5bc488;
+}
+
+.switch-button {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}

@@ -95,15 +95,26 @@ const LeaderHub = () => {
                 <div className="center-panel">
                     <EmployeeDetails />
                     <div className="task-creator-container">
-                        <h2>Create a Task</h2>
+                        <h2><img
+                            src="clipboard.png"
+                            alt="Clipboard Icon"
+                            className="task-creator-title-icon"
+                        />Create a Task</h2>
                         <TaskCreator
                             badges={["Badge 1", "Badge 2", "Badge 3"]}
                             onSave={handleSaveTask}
                         />
                     </div>
                     <div className="event-creator-container">
+                        <h2><img
+                            src="calendar-check.png"
+                            alt="Clipboard Icon"
+                            className="event-creator-title-icon"
+                        />Create an Event</h2>
                         <EventCreator
                             onSave={handleSaveEvent}
+                            departments={["Engineering", "HR", "Marketing"]}
+                            locations={["New York", "London", "Tokyo"]}
                         />
                     </div>
                 </div>

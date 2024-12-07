@@ -97,3 +97,17 @@
     border-radius: 5px;
     cursor: pointer;
 }
+/*Targets*/
+/* Grouping Checkboxes */
+.event-creator-checkbox-group {
+    display: flex;
+    gap: 10px; 
+}
+
+.event-creator-checkbox-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #32444d;
+}
+

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./EventCreator.css";
 
-const EventCreator = ({ onSave }) => {
+const EventCreator = ({ onSave, departments, locations }) => {
     const [formData, setFormData] = useState({
         eventName: "",
         description: "",
@@ -9,6 +9,8 @@ const EventCreator = ({ onSave }) => {
         time: "",
         location: "",
         participants: [],
+        targetDepartments: [],
+        targetLocations: [],
     });
     const [emailInput, setEmailInput] = useState("");
 
@@ -48,12 +50,35 @@ const EventCreator = ({ onSave }) => {
             time: "",
             location: "",
             participants: [],
+            targetDepartments: [],
+            targetLocations: [],
         });
+    };
+
+    // Handle department selection
+    const handleDepartmentChange = (e) => {
+        const { value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            targetDepartments: prev.targetDepartments.includes(value)
+                ? prev.targetDepartments.filter((dept) => dept !== value)
+                : [...prev.targetDepartments, value],
+        }));
+    };
+
+    // Handle location selection
+    const handleLocationChange = (e) => {
+        const { value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            targetLocations: prev.targetLocations.includes(value)
+                ? prev.targetLocations.filter((loc) => loc !== value)
+                : [...prev.targetLocations, value],
+        }));
     };
 
     return (
         <div className="event-creator-container">
-            <h2>Create an Event</h2>
             <form className="event-creator-form" onSubmit={handleSubmit}>
                 {/* Event Name */}
                 <div className="event-creator-form-row">
@@ -119,6 +144,42 @@ const EventCreator = ({ onSave }) => {
                         value={formData.location}
                         onChange={handleInputChange}
                     />
+                </div>
+
+                {/* Target Departments */}
+                <div className="event-creator-form-row">
+                    <label>Target Departments</label>
+                    <div className="event-creator-checkbox-group">
+                        {departments.map((dept) => (
+                            <div key={dept} className="event-creator-checkbox-item">
+                                <input
+                                    type="checkbox"
+                                    value={dept}
+                                    checked={formData.targetDepartments.includes(dept)}
+                                    onChange={handleDepartmentChange}
+                                />
+                                <span>{dept}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Target Locations */}
+                <div className="event-creator-form-row">
+                    <label>Target Locations</label>
+                    <div className="event-creator-checkbox-group">
+                        {locations.map((loc) => (
+                            <div key={loc} className="event-creator-checkbox-item">
+                                <input
+                                    type="checkbox"
+                                    value={loc}
+                                    checked={formData.targetLocations.includes(loc)}
+                                    onChange={handleLocationChange}
+                                />
+                                <span>{loc}</span>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Add Participants */}

@@ -36,7 +36,7 @@ const TopBar = () => {
 
     const handleViewProfile = () => {
         navigate('/profile');
-        setIsDropdownOpen(false); 
+        setIsDropdownOpen(false);
     };
 
     const handleLogout = () => {
@@ -47,10 +47,20 @@ const TopBar = () => {
         navigate('/login'); // Redirect to login
     };
 
+    const handleNavigateToDashboard = () => {
+        navigate('/dashboard');
+    };
+
     return (
         <div className="top-bar">
             {/* Left Icons */}
             <div className="left-icons">
+                <img
+                    src="/home-icon.png"
+                    alt="Home Icon"
+                    className="icon"
+                    onClick={handleNavigateToDashboard} // Navigate to Dashboard
+                />
                 <img src="/Screenshot_1.png" alt="icon1" className="icon-peakon" />
                 <img src="/Udemy-Emblem.png" alt="icon2" className="icon" />
                 <img src="/5019634-middle.png" alt="icon3" className="icon" />
@@ -75,7 +85,7 @@ const TopBar = () => {
                 <img src="/notification.png" alt="icon7" className="icon" />
                 <div className="dropdown-user-container">
                     <img
-                        src= "/cat.png"
+                        src="/cat.png"
                         alt="User Avatar"
                         className="dropdown-user-avatar"
                         onClick={toggleDropdown}
@@ -109,9 +119,9 @@ const TopBar = () => {
                             <hr />
                             <hr />
                             <div className="dropdown-links">
-                            <span className="dropdown-link">Settings</span>
-                            <span className="dropdown-link">Help</span>
-                            <span
+                                <span className="dropdown-link">Settings</span>
+                                <span className="dropdown-link">Help</span>
+                                <span
                                     className="dropdown-link logout-link"
                                     onClick={handleLogout}
                                 >

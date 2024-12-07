@@ -3,8 +3,14 @@ import './LeaderHub.css';
 import TopBar from '../TopBar/TopBar';
 import Header from '../Header/Header';
 import EmployeeDetails from '../EmployeeDetails/EmployeeDetails';
+import TaskCreator from '../TaskCreation/TaskCreation';
 
 const LeaderHub = () => {
+
+    const handleSaveTask = (task) => {
+        console.log('Task saved:', task);
+    };
+
     return (
         <div className="leaderhub-page">
             <TopBar />
@@ -20,6 +26,13 @@ const LeaderHub = () => {
                 {/* Center Panel */}
                 <div className="center-panel">
                     <EmployeeDetails />
+                    <div className="task-creator-container">
+                        <h2>Create a Task</h2>
+                        <TaskCreator
+                            badges={["Badge 1", "Badge 2", "Badge 3"]} 
+                            onSave={handleSaveTask} 
+                        />
+                    </div>
                 </div>
 
                 {/* Right Panel */}

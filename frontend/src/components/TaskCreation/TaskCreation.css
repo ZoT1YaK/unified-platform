@@ -1,0 +1,113 @@
+.task-creator-form {
+    display: flex;
+    flex-direction: column; /* Stack rows vertically */
+    gap: 20px; /* Space between rows */
+}
+
+.task-creator-form .form-row {
+    display: flex;
+    align-items: center; /* Align labels and inputs vertically */
+    gap: 15px; /* Space between label and input */
+    width: 100%; /* Ensure the row spans the full width */
+}
+
+.task-creator-form label {
+    margin-right: 10px;
+    font-size: 14px;
+    color: #32444d;
+    flex: 0 0 150px;
+    text-align: left;
+}
+
+.task-creator-form input,
+.task-creator-form textarea,
+.task-creator-form select {
+    flex: 2; /* Inputs take 2/3 of the row's width */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 100%; /* Ensure inputs span the available space */
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+.task-creator-form textarea {
+    resize: vertical;
+    min-height: 100px; /* Ensure textarea has enough height */
+}
+
+.task-creator-form .email-input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between email input and Add button */
+    flex: 2; /* Align with other inputs */
+}
+
+.task-creator-form .email-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    flex: 2; /* Align under input space */
+}
+
+.task-creator-form .email-list li {
+    display: flex;
+    justify-content: space-between;
+    background: #f2f2f2;
+    padding: 5px;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.task-creator-form .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.task-creator-form .cancel-button,
+.task-creator-form .save-button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.task-creator-form .cancel-button {
+    background: #f44336;
+    color: white;
+}
+
+.task-creator-form .save-button {
+    background: #4caf50;
+    color: white;
+}
+.email-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column; /* Stack emails vertically */
+    gap: 5px; /* Space between email items */
+}
+
+.email-list li {
+    display: flex;
+    justify-content: space-between; /* Align email and remove button */
+    background: #f9f9f9;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+.remove-email-button {
+    background: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}

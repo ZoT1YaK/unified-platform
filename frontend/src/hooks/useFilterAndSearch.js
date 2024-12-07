@@ -9,6 +9,11 @@ export const useFilterAndSearch = (items, filter, searchQuery) => {
                 if (filter === "Hidden") return !item.visible;
                 return true;
             })
-            .filter((item) => item.title.toLowerCase().includes(searchQuery.toLowerCase()));
-    }, [items, filter, searchQuery]); // Recompute only when these dependencies change
+            .filter((item) => {
+                // Safeguard against undefined properties
+                const title = item.title || ''; // Fallback to an empty string
+                const query = searchQuery || ''; // Fallback to an empty string
+                return title.toLowerCase().includes(query.toLowerCase());
+            });
+    }, [items, filter, searchQuery]);
 };

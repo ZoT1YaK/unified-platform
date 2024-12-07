@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Milestones.css';
+import { useFilterAndSearch } from '../../hooks/useFilterAndSearch';
 
-const Milestones = ({ filter, searchQuery, setFilter, setSearchQuery }) => {
+const Milestones = ({ simpleMode = false, onMilestonesFetched }) => {
     const [milestones, setMilestones] = useState([]);
+    const [filter, setFilter] = useState('All');
+    const [searchQuery, setSearchQuery] = useState('');
+
+    // Call useFilterAndSearch unconditionally
+    const filteredMilestones = useFilterAndSearch(milestones, filter, searchQuery);
 
     useEffect(() => {
         const fetchMilestones = async () => {
@@ -19,21 +25,28 @@ const Milestones = ({ filter, searchQuery, setFilter, setSearchQuery }) => {
                 }
 
                 const data = await response.json();
-                setMilestones(
-                    data.milestones.map((milestone) => ({
-                        ...milestone,
-                        badge: "Mil-badge1.png", 
-                    }))
-                );
+
+                // Filter milestones if `simpleMode` is true
+                const fetchedMilestones = simpleMode
+                    ? data.milestones.filter((milestone) => milestone.visibility)
+                    : data.milestones;
+
+                setMilestones(fetchedMilestones);
+
+                if (onMilestonesFetched) {
+                    onMilestonesFetched(fetchedMilestones);
+                }
             } catch (error) {
                 console.error("Error fetching milestones:", error.message);
             }
         };
 
         fetchMilestones();
-    }, []);
+    }, [simpleMode, onMilestonesFetched]);
 
     const toggleVisibility = async (id) => {
+        if (simpleMode) return; // No visibility toggle in simpleMode
+
         try {
             const token = localStorage.getItem("token");
             const milestone = milestones.find((m) => m._id === id);
@@ -66,50 +79,54 @@ const Milestones = ({ filter, searchQuery, setFilter, setSearchQuery }) => {
         }
     };
 
-    const filteredMilestones = milestones
-        .filter((milestone) => {
-            if (filter === "Visible") return milestone.visibility;
-            if (filter === "Hidden") return !milestone.visibility;
-            return true; 
-        })
-        .filter((milestone) =>
-            milestone.name.toLowerCase().includes(searchQuery?.toLowerCase()|| "")
+    if (simpleMode) {
+        return (
+            <div className="milestones-section">
+                <h2>Milestones</h2>
+                {filteredMilestones.length > 0 ? (
+                    <ul className="milestones-list">
+                        {filteredMilestones.map((milestone) => (
+                            <li key={milestone._id} className="milestone-item">
+                                {milestone.name}
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No milestones available.</p>
+                )}
+            </div>
         );
+    }
 
     return (
         <div className="milestones-section">
             <h2>Milestones</h2>
-            <div className="milestones-header">
+            <div className='milestones-header'>
                 <p>You've gained {milestones.length} milestones</p>
                 <div className="milestones-filters">
-                    <button onClick={() => setFilter("All")} className={filter === "All" ? "active" : ""}>
-                        All
-                    </button>
-                    <button onClick={() => setFilter("Visible")} className={filter === "Visible" ? "active" : ""}>
-                        Visible
-                    </button>
-                    <button onClick={() => setFilter("Hidden")} className={filter === "Hidden" ? "active" : ""}>
-                        Hidden
-                    </button>
-                    <div className="search-bar">
-                        <input
-                            type="text"
-                            placeholder="Search"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                        <img src="/magnifying-glass 2.png" alt="Search" />
-                    </div>
+                <button onClick={() => setFilter('All')} className={filter === 'All' ? 'active' : ''}>
+                    All
+                </button>
+                <button onClick={() => setFilter('Visible')} className={filter === 'Visible' ? 'active' : ''}>
+                    Visible
+                </button>
+                <button onClick={() => setFilter('Hidden')} className={filter === 'Hidden' ? 'active' : ''}>
+                    Hidden
+                </button>
+                <div className="search-bar">
+                    <input
+                        type="text"
+                        placeholder="Search milestones..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <img src="/magnifying-glass 2.png" alt="Search" />
+                </div>
                 </div>
             </div>
             <div className="milestones-list">
                 {filteredMilestones.map((milestone) => (
                     <div key={milestone._id} className="milestone-row">
-                        <img
-                            src={`/assets/images/${milestone.badge}`}
-                            alt={`Milestone ${milestone.name}`}
-                            className="milestone-badge"
-                        />
                         <div className="milestone-details">
                             <h3>{milestone.name}</h3>
                             <p>{milestone.description}</p>
@@ -117,10 +134,12 @@ const Milestones = ({ filter, searchQuery, setFilter, setSearchQuery }) => {
                         <img
                             className="visibility-icon"
                             src={milestone.visibility ? "/eye-icon.png" : "/eye-off-icon.png"}
-                            alt="Visibility toggle"
+                            alt="Toggle visibility"
                             onClick={() => toggleVisibility(milestone._id)}
                         />
-                        <p className="milestone-date">Unlocked on {new Date(milestone.date_unlocked).toLocaleDateString()}</p>
+                        <p className="milestone-date">
+                            Unlocked on {new Date(milestone.date_unlocked).toLocaleDateString()}
+                        </p>
                     </div>
                 ))}
                 {filteredMilestones.length === 0 && <p>No milestones found.</p>}

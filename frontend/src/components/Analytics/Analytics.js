@@ -1,23 +1,25 @@
 import React from "react";
 import "./Analytics.css";
+import useAnalytics from "../../hooks/useAnalytics"; 
 
-const Analytics = ({ achievementsCount, postsCount, milestonesCount }) => {
+const Analytics = () => {
+    const analytics = useAnalytics();
+
     return (
         <div className="analytics-container">
             <div className="analytics-item">
-                <p>{achievementsCount}</p>
+                <p>{analytics.achievementsCount}</p>
                 <span>Achievements</span>
             </div>
             <div className="analytics-item">
-                <p>{postsCount}</p>
+                <p>{analytics.postsCount}</p>
                 <span>Posts</span>
             </div>
             <div className="analytics-item">
-                <p>{milestonesCount}</p>
+                <p>{analytics.milestonesCount}</p>
                 <span>Milestones</span>
             </div>
         </div>
     );
 };
-
 export default Analytics;

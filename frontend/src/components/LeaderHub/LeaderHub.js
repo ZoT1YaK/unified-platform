@@ -19,12 +19,7 @@ const LeaderHub = () => {
 
                 {/* Center Panel */}
                 <div className="center-panel">
-                    <EmployeeDetails 
-                        name="Bob Bobrovich"
-                        position="Head of HR | HR Team"
-                        location="Vejle, Region of Southern Denmark, Denmark"
-                        avatar="/path-to-avatar.jpg" 
-                    />
+                    <EmployeeDetails />
                 </div>
 
                 {/* Right Panel */}

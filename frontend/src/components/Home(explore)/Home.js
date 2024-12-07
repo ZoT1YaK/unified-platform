@@ -6,11 +6,18 @@ import TaskCard from '../TaskCard/TaskCard';
 import Header from '../Header/Header';
 import PostCreation from '../PostCreation/PostCreation';
 import PostComponent from "../PostComponent/Post";
+import Milestones from "../Milestones/Milestones";
 
 const Home = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [user, setUser] = useState({});
     const [posts, setPosts] = useState([]);
+    const [milestones, setMilestones] = useState([]);
+
+    const handleMilestonesFetched = (milestoneData) => {
+        // Extract milestone names from the fetched data
+        setMilestones(milestoneData.map((milestone) => milestone.name));
+    };
 
     useEffect(() => {
         try {
@@ -65,7 +72,7 @@ const Home = () => {
         "Ach-badge1", "Ach-badge2", "Ach-badge3", "Ach-badge4", "Ach-badge5"
     ];
 
-    const milestones = ["Mil-badge1", "Mil-badge2", "Mil-badge3"];
+    /*const milestones = ["Mil-badge1", "Mil-badge2", "Mil-badge3"];*/
 
     // Mock data for events (to be replaced by backend data later)
     const events = [
@@ -266,21 +273,20 @@ const Home = () => {
                         </div>
                     </div>
 
-                    {/* Milestones Overview */}
+                    {/* Milestones Overview */} 
                     <div className="milestones-container">
                         <h2>Milestones</h2>
+                        <Milestones
+                            onMilestonesFetched={handleMilestonesFetched} // /*Change after images are added
+                        />
                         <div className="milestones-box">
                             <p className="milestones-count">You've gained {milestones.length} milestones</p>
                             <div className="milestones-row">
                                 {milestones.map((milestone, index) => (
-                                    <img
-                                        key={index}
-                                        src={`/${milestone}.png`}
-                                        alt={`Milestone ${index + 1}`}
-                                        className="milestone-icon"
-                                    />
+                                    <li key={index} className="milestone-item">
+                                        {milestone}
+                                    </li>
                                 ))}
-                                {milestones.length > 10 && <img src="/plus.png" alt="Plus" className="plus-icon" />}
                             </div>
                         </div>
                     </div>

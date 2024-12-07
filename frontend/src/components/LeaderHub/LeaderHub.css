@@ -1,0 +1,45 @@
+.task-creator-container,
+.event-creator-container {
+    background: white;
+    max-width: 795px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.task-creator-container h2,
+.event-creator-container h2 {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #32444d;
+    text-align: left;
+}
+.event-list {
+    list-style: none;
+    padding: 0;
+}
+
+.event-list-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f9f9f9;
+}
+
+.event-list-item h4 {
+    margin: 0 0 5px;
+}
+
+.event-list-item p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+.event-creator-title-icon,
+.task-creator-title-icon{
+    width: 35px; 
+    height: 35px; 
+    object-fit: contain; 
+}

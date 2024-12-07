@@ -4,7 +4,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./components/Login/Login";
 import Home from "./components/Home(explore)/Home";
 import EmployeeProfile from "./components/EmployeeProfile/EmployeeProfile";
-import TopBar from "./components/TopBar/TopBar";
+/*import TopBar from "./components/TopBar/TopBar";*/
+import LeaderHub from "./components/LeaderHub/LeaderHub";
 
 const App = () => {
   return (
@@ -19,8 +20,7 @@ const App = () => {
           element={
             <ProtectedRoute
               component={() => (
-                <>
-                  <TopBar />
+                <> 
                   <Home />
                 </>
               )}
@@ -33,8 +33,20 @@ const App = () => {
             <ProtectedRoute
               component={() => (
                 <>
-                  <TopBar />
                   <EmployeeProfile />
+                </>
+              )}
+            />
+          }
+        />
+
+        <Route
+          path="/leaderhub"
+          element={
+            <ProtectedRoute
+              component={() => (
+                <>
+                  <LeaderHub />
                 </>
               )}
             />

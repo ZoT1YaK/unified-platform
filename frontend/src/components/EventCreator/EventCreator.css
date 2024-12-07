@@ -1,0 +1,113 @@
+.event-creator-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.event-creator-form-row {
+    display: flex;
+    align-items: center; 
+    gap: 15px; 
+    width: 100%; 
+}
+
+.event-creator-form-row label {
+    margin-right: 10px;
+    font-size: 14px;
+    color: #32444d;
+    flex: 0 0 150px;
+    text-align: left;
+}
+
+.event-creator-form-row input,
+.event-creator-form-row textarea {
+    flex: 2; 
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 100%; 
+    box-sizing: border-box; 
+}
+
+.event-creator-form-row textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.event-creator-email-input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+    flex: 2; 
+}
+
+.event-creator-email-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    flex: 2;
+}
+
+.event-creator-email-list li {
+    display: flex;
+    justify-content: space-between;
+    background: #f2f2f2;
+    padding: 5px;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.event-creator-add-participant-button,
+.event-creator-remove-participant-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.event-creator-remove-participant-button {
+    background-color: #f44336;
+}
+
+.event-creator-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.event-creator-cancel-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.event-creator-save-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+/*Targets*/
+/* Grouping Checkboxes */
+.event-creator-checkbox-group {
+    display: flex;
+    gap: 10px; 
+}
+
+.event-creator-checkbox-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #32444d;
+}
+

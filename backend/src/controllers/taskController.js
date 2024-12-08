@@ -86,7 +86,7 @@ exports.getLeaderAssignedTasks = async (req, res) => {
 };
 
 exports.completeTask = async (req, res) => {
-  const { task_id } = req.body;
+  const { task_id, status } = req.body;
   const { id } = req.user;
   
   try {
@@ -104,11 +104,8 @@ exports.completeTask = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized to complete this task." });
     }
 
-    if (task.status === "Completed") {
-      return res.status(400).json({ message: "Task is already completed." });
-    }
 
-    task.status = "Completed";
+    task.status = status;
     task.completion_date = new Date();
     await task.save();
 

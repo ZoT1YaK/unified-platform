@@ -123,7 +123,7 @@ const Home = () => {
         setSearchQuery(e.target.value); // Update search query state
     };
 
-    // Mock tasks (to be replaced by backend data later)
+    /*// Mock tasks (to be replaced by backend data later)
     const tasks = [
         {
             title: "Order necessary hardware through Tango",
@@ -160,12 +160,12 @@ const Home = () => {
             isChecked: true,
             isAssignedByLeader: false,
         }
-    ];
+    ];*/
 
-    // Filter tasks based on the search query
+   /* // Filter tasks based on the search query
     const filteredTasks = tasks.filter((task) => {
         return task.title.toLowerCase().includes(searchQuery.toLowerCase());
-    });
+    });*/
 
     /*// Mock posts (to be deleted after connection with BE)
     useEffect(() => {
@@ -310,32 +310,7 @@ const Home = () => {
 
                         {/* Tasks assigned by the people's leader */}
                         <div className="tasks-box">
-                            {/* Tasks assigned by the people's leader */}
-                            {filteredTasks.filter(task => task.isAssignedByLeader).map((task, index) => (
-                                <TaskCard
-                                    key={index}
-                                    title={task.title}
-                                    deadline={task.deadline}
-                                    resources={task.resources}
-                                    isChecked={task.isChecked}
-                                    isAssignedByLeader={task.isAssignedByLeader}
-                                />
-                            ))}
-
-                            {/* Horizontal line between task sections */}
-                            <hr />
-
-                            {/* Tasks created by the employee */}
-                            {filteredTasks.filter(task => !task.isAssignedByLeader).map((task, index) => (
-                                <TaskCard
-                                    key={index}
-                                    title={task.title}
-                                    deadline={task.deadline}
-                                    resources={task.resources}
-                                    isChecked={task.isChecked}
-                                    isAssignedByLeader={task.isAssignedByLeader}
-                                />
-                            ))}
+                        <TaskCard searchQuery={searchQuery} />
                         </div>
                     </div>
 

@@ -26,6 +26,50 @@ const LeaderHub = () => {
         },
     ]);
 
+    const employees = [
+        {
+            id: 1,
+            name: 'Ivan Ivanov',
+            avatar: 'https://via.placeholder.com/50',
+            tasks: 6,
+            completedTasks: 2,
+            achievements: 12,
+            milestones: 2,
+            team: 'HR Team',
+        },
+        {
+            id: 2,
+            name: 'Aiga Kalneja',
+            avatar: 'https://via.placeholder.com/50',
+            tasks: 8,
+            completedTasks: 6,
+            achievements: 10,
+            milestones: 3,
+            team: 'HR Team',
+        },
+        {
+            id: 3,
+            name: 'Roberts Zustars',
+            avatar: 'https://via.placeholder.com/50',
+            tasks: 5,
+            completedTasks: 3,
+            achievements: 8,
+            milestones: 2,
+            team: 'HR Team',
+        },
+        {
+            id: 4,
+            name: 'Diana Antoniuc',
+            avatar: 'https://via.placeholder.com/50',
+            tasks: 4,
+            completedTasks: 1,
+            achievements: 5,
+            milestones: 1,
+            team: 'HR Team',
+        },
+    ];
+    
+
     const [events, setEvents] = useState([
         {
             id: 1,
@@ -117,66 +161,97 @@ const LeaderHub = () => {
                             ))}
                         </div>
                     </div>
-                        {/* Event Modal */}
-                        {selectedEvent && (
-                            <div className="events-modal-overlay">
-                                <div className="events-modal-content">
-                                    <h2>Edit Event</h2>
-                                    <EventCreator
-                                        onSave={(updatedEvent) => handleSaveEvent({ ...selectedEvent, ...updatedEvent })}
-                                        departments={["Engineering", "HR", "Marketing"]}
-                                        locations={["New York", "London", "Tokyo"]}
-                                        teams={["UX Team", "Sales Team"]}
-                                        existingEvent={selectedEvent}
-                                    />
-                                    <div className="events-modal-actions">
-                                        <button onClick={() => handleDeleteEvent(selectedEvent.id)}>Delete Event</button>
-                                        <button onClick={() => setSelectedEvent(null)}>Close</button>
-                                    </div>
+                    {/* Event Modal */}
+                    {selectedEvent && (
+                        <div className="events-modal-overlay">
+                            <div className="events-modal-content">
+                                <h2>Edit Event</h2>
+                                <EventCreator
+                                    onSave={(updatedEvent) => handleSaveEvent({ ...selectedEvent, ...updatedEvent })}
+                                    departments={["Engineering", "HR", "Marketing"]}
+                                    locations={["New York", "London", "Tokyo"]}
+                                    teams={["UX Team", "Sales Team"]}
+                                    existingEvent={selectedEvent}
+                                />
+                                <div className="events-modal-actions">
+                                    <button onClick={() => handleDeleteEvent(selectedEvent.id)}>Delete Event</button>
+                                    <button onClick={() => setSelectedEvent(null)}>Close</button>
                                 </div>
                             </div>
-                        )}
+                        </div>
+                    )}
+                </div>
+
+                {/* Center Panel */}
+                <div className="center-panel">
+                    <EmployeeDetails />
+                    <div className="task-creator-container">
+                        <h2>
+                            <img
+                                src="clipboard.png"
+                                alt="Clipboard Icon"
+                                className="task-creator-title-icon"
+                            />
+                            Create a Task
+                        </h2>
+                        <TaskCreator
+                            badges={["Badge 1", "Badge 2", "Badge 3"]}
+                            onSave={handleSaveTask}
+                        />
+                    </div>
+                    <div className="event-creator-container">
+                        <h2>
+                            <img
+                                src="calendar-check.png"
+                                alt="Clipboard Icon"
+                                className="event-creator-title-icon"
+                            />
+                            Create an Event
+                        </h2>
+                        <EventCreator
+                            onSave={handleSaveEvent}
+                            departments={["Engineering", "HR", "Marketing"]}
+                            locations={["New York", "London", "Tokyo"]}
+                            teams={["UX Team", "Sales Team"]}
+                        />
+                    </div>
+                </div>
+
+                {/* Right Panel */}
+                <div className="right-panel">
+                    {/* Power BI Placeholder */}
+                    <div className="power-bi-placeholder">
+                        <h3>Employee Metrics</h3>
+                        <img
+                            src="https://via.placeholder.com/300x150"
+                            alt="Power BI Placeholder"
+                            className="power-bi-report"
+                        />
                     </div>
 
-                    {/* Center Panel */}
-                    <div className="center-panel">
-                        <EmployeeDetails />
-                        <div className="task-creator-container">
-                            <h2>
-                                <img
-                                    src="clipboard.png"
-                                    alt="Clipboard Icon"
-                                    className="task-creator-title-icon"
-                                />
-                                Create a Task
-                            </h2>
-                            <TaskCreator
-                                badges={["Badge 1", "Badge 2", "Badge 3"]}
-                                onSave={handleSaveTask}
-                            />
-                        </div>
-                        <div className="event-creator-container">
-                            <h2>
-                                <img
-                                    src="calendar-check.png"
-                                    alt="Clipboard Icon"
-                                    className="event-creator-title-icon"
-                                />
-                                Create an Event
-                            </h2>
-                            <EventCreator
-                                onSave={handleSaveEvent}
-                                departments={["Engineering", "HR", "Marketing"]}
-                                locations={["New York", "London", "Tokyo"]}
-                                teams={["UX Team", "Sales Team"]}
-                            />
-                        </div>
+                    {/* Employee Statistics */}
+                    <div className="employee-statistics">
+                        <h4>Team 10 | HR Team</h4>
+                        <ul className="employee-list">
+                            {employees.map((employee) => (
+                                <li key={employee.id} className="employee-item">
+                                    <img
+                                        src={employee.avatar}
+                                        alt={`${employee.name}'s Avatar`}
+                                        className="employee-avatar"
+                                    />
+                                    <div className="employee-details">
+                                        <h5>{employee.name}</h5>
+                                        <p>Tasks: {employee.tasks} ({employee.completedTasks} done)</p>
+                                        <p>Achievements: {employee.achievements}</p>
+                                        <p>Milestones: {employee.milestones}</p>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
+                </div>
 
-                    {/* Right Panel */}
-                    <div className="right-panel">
-                        <p>Right Panel Content</p>
-                    </div>
                 </div>
             </div>
             );

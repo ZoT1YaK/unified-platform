@@ -2,46 +2,58 @@ import React, { useEffect, useState } from "react";
 import "./Achievements.css";
 import { useFilterAndSearch } from "../../hooks/useFilterAndSearch";
 
+let fetchTimeout; // Declare fetchTimeout globally to persist across renders
+
 const Achievements = ({ simpleMode = false, onAchievementsFetched }) => {
     const [achievements, setAchievements] = useState([]);
     const [filter, setFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
 
-    const filteredAchievements = useFilterAndSearch(achievements, filter, searchQuery);
+    const filteredAchievements = useFilterAndSearch(achievements, filter, searchQuery, "visible", "badge_id.name");
 
     useEffect(() => {
         const fetchAchievements = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/achievements/get`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch achievements");
-                }
-
-                const data = await response.json();
-
-                // Filter achievements if `simpleMode` is true
-                const fetchedAchievements = simpleMode
-                    ? data.achievements.filter((achievement) => achievement.visibility)
-                    : data.achievements;
-
-                setAchievements(fetchedAchievements);
-
-                if (onAchievementsFetched) {
-                    onAchievementsFetched(fetchedAchievements);
-                }
-            } catch (error) {
-                console.error("Error fetching achievements:", error.message);
+            const token = localStorage.getItem("token");
+            if (!token) {
+                console.error("No token found. Skipping fetch.");
+                return;
             }
+
+            // Throttle the fetch request
+            if (fetchTimeout) clearTimeout(fetchTimeout);
+
+            fetchTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/achievements/get`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch achievements");
+                    }
+
+                    const data = await response.json();
+
+                    // Filter achievements if `simpleMode` is true
+                    const fetchedAchievements = simpleMode
+                        ? data.achievements.filter((achievement) => achievement.visibility)
+                        : data.achievements;
+
+                    setAchievements(fetchedAchievements);
+
+                    if (onAchievementsFetched) {
+                        onAchievementsFetched(fetchedAchievements);
+                    }
+                } catch (error) {
+                    console.error("Error fetching achievements:", error.message);
+                }
+            }, 300); // Throttle fetch calls with 300ms delay
         };
 
         fetchAchievements();
-    }, [simpleMode, onAchievementsFetched]);
+    }, [simpleMode, onAchievementsFetched]); // Dependencies remain the same
 
     const toggleVisibility = async (id) => {
         if (simpleMode) return;
@@ -77,7 +89,7 @@ const Achievements = ({ simpleMode = false, onAchievementsFetched }) => {
             console.error("Error updating achievement visibility:", error.message);
         }
     };
-    
+
     if (simpleMode) {
         // Render simplified layout in simpleMode
         return (

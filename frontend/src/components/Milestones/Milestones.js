@@ -2,47 +2,55 @@ import React, { useEffect, useState } from 'react';
 import './Milestones.css';
 import { useFilterAndSearch } from '../../hooks/useFilterAndSearch';
 
+let fetchTimeout; 
+
 const Milestones = ({ simpleMode = false, onMilestonesFetched }) => {
     const [milestones, setMilestones] = useState([]);
     const [filter, setFilter] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
 
-    // Call useFilterAndSearch unconditionally
-    const filteredMilestones = useFilterAndSearch(milestones, filter, searchQuery);
+    const filteredMilestones = useFilterAndSearch(milestones, filter, searchQuery, "visibility", "name");
 
     useEffect(() => {
         const fetchMilestones = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/milestones/get`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch milestones");
-                }
-
-                const data = await response.json();
-
-                // Filter milestones if `simpleMode` is true
-                const fetchedMilestones = simpleMode
-                    ? data.milestones.filter((milestone) => milestone.visibility)
-                    : data.milestones;
-
-                setMilestones(fetchedMilestones);
-
-                if (onMilestonesFetched) {
-                    onMilestonesFetched(fetchedMilestones);
-                }
-            } catch (error) {
-                console.error("Error fetching milestones:", error.message);
+            const token = localStorage.getItem("token");
+            if (!token) {
+                console.error("No token found. Skipping fetch.");
+                return;
             }
+
+            if (fetchTimeout) clearTimeout(fetchTimeout);
+
+            fetchTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/milestones/get`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch milestones");
+                    }
+
+                    const data = await response.json();
+                    const fetchedMilestones = simpleMode
+                        ? data.milestones.filter((milestone) => milestone.visibility)
+                        : data.milestones;
+
+                    setMilestones(fetchedMilestones);
+
+                    if (onMilestonesFetched) {
+                        onMilestonesFetched(fetchedMilestones);
+                    }
+                } catch (error) {
+                    console.error("Error fetching milestones:", error.message);
+                }
+            }, 300); // Throttle API calls (300ms delay)
         };
 
         fetchMilestones();
-    }, [simpleMode, onMilestonesFetched]);
+    }, [simpleMode, onMilestonesFetched]); // Dependencies remain unchanged
 
     const toggleVisibility = async (id) => {
         if (simpleMode) return; // No visibility toggle in simpleMode
@@ -104,24 +112,24 @@ const Milestones = ({ simpleMode = false, onMilestonesFetched }) => {
             <div className='milestones-header'>
                 <p>You've gained {milestones.length} milestones</p>
                 <div className="milestones-filters">
-                <button onClick={() => setFilter('All')} className={filter === 'All' ? 'active' : ''}>
-                    All
-                </button>
-                <button onClick={() => setFilter('Visible')} className={filter === 'Visible' ? 'active' : ''}>
-                    Visible
-                </button>
-                <button onClick={() => setFilter('Hidden')} className={filter === 'Hidden' ? 'active' : ''}>
-                    Hidden
-                </button>
-                <div className="search-bar">
-                    <input
-                        type="text"
-                        placeholder="Search milestones..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <img src="/magnifying-glass 2.png" alt="Search" />
-                </div>
+                    <button onClick={() => setFilter('All')} className={filter === 'All' ? 'active' : ''}>
+                        All
+                    </button>
+                    <button onClick={() => setFilter('Visible')} className={filter === 'Visible' ? 'active' : ''}>
+                        Visible
+                    </button>
+                    <button onClick={() => setFilter('Hidden')} className={filter === 'Hidden' ? 'active' : ''}>
+                        Hidden
+                    </button>
+                    <div className="search-bar">
+                        <input
+                            type="text"
+                            placeholder="Search milestones..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <img src="/magnifying-glass 2.png" alt="Search" />
+                    </div>
                 </div>
             </div>
             <div className="milestones-list">

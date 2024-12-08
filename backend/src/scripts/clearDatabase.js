@@ -12,6 +12,8 @@ const Badge = require("../models/Badge");
 const Post = require("../models/Post");
 const Comment = require("../models/Comment");
 const Like = require("../models/Like");
+const Task = require("../models/Task");
+const Achievement = require("../models/Achievement");
 require("dotenv").config();
 
 const clearDatabase = async () => {
@@ -35,6 +37,8 @@ const clearDatabase = async () => {
     await Comment.deleteMany({});
     await Like.deleteMany({});
     await Post.deleteMany({});
+    await Task.deleteMany({});
+    await Achievement.deleteMany({});
     console.log("Database cleared.");
     process.exit();
   } catch (error) {

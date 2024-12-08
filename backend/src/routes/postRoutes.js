@@ -12,7 +12,7 @@ router.post("/congratulatory", verifyToken, postController.createCongratulatoryP
 // Update visibility of a congratulatory post
 router.patch("/visibility", verifyToken, postController.updatePostVisibility);
 
-// Get targeted posts for the logged-in employee
+// Get targeted posts
 router.get("/get", verifyToken, postController.getTargetedPosts);
 
 // Create a comment

@@ -13,7 +13,11 @@ router.get("/profile", verifyToken, employeeController.getProfile);
 // Update preffered language
 router.put("/language", verifyToken, employeeController.updateLanguage);
 
+// Get all employees
+router.get("/all", verifyToken, employeeController.getAllEmployees);
+
 // Update data mind type
 router.put("/data-mind-type", verifyToken, employeeController.updateDataMindType);
 
 module.exports = router;
+

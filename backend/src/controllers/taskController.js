@@ -126,38 +126,42 @@ exports.completeTask = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }    
 };
-
 exports.editAssignedTask = async (req, res) => {
-  const { task_id, title, deadline, description, badge_id } = req.body;
+  const { task_id, title, deadline, description, badge_id, assigned_to_id } = req.body; // Include assigned_to_id if relevant
   const { id } = req.user;
-  
+
   try {
+    // Validate task_id
     if (!mongoose.Types.ObjectId.isValid(task_id)) {
       return res.status(400).json({ message: "Invalid task ID" });
     }
-  
+
+    // Find the task with the provided ID that was created by the leader
     const task = await Task.findOne({ _id: task_id, created_by_id: id, assigned_to_id: { $ne: null } });
-  
+
     if (!task) {
       return res.status(404).json({ message: "Task not found or not authorized to edit" });
     }
-  
+
+    // Update fields if they are provided
     if (title !== undefined) task.title = title;
     if (deadline !== undefined) task.deadline = deadline;
     if (description !== undefined) task.description = description;
     if (badge_id !== undefined) task.badge_id = badge_id;
-  
+    if (assigned_to_id !== undefined) task.assigned_to_id = assigned_to_id;
+
+    // Save the updated task
     const updatedTask = await task.save();
-  
+
     res.status(200).json({
       message: "Task updated successfully",
       task: updatedTask,
     });
   } catch (error) {
-    console.error("Error editing task:", error);
+    console.error("Error editing assigned task:", error);
     res.status(500).json({ message: "Server error" });
   }
-};  
+};
 
 exports.editOwnCreatedTask = async (req, res) => {
   const { task_id, title, deadline, description } = req.body;

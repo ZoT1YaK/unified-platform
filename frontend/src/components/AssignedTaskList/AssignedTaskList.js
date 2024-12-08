@@ -1,75 +1,179 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./AssignedTaskList.css";
 
-const AssignedTaskList = ({ tasks, onEdit, onDelete }) => {
+const AssignedTaskList = () => {
+    const [tasks, setTasks] = useState([]);
+    const [availableBadges, setAvailableBadges] = useState([]);
+    const [availableEmployees, setAvailableEmployees] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [editingTask, setEditingTask] = useState(null);
+    const [hoveredTask, setHoveredTask] = useState(null);
     const [formData, setFormData] = useState({
         title: "",
-        assignedTo: [],
+        assignedTo: "",
         badge: "",
         description: "",
         deadline: "",
     });
-    const [emailInput, setEmailInput] = useState("");
-    const [hoveredTask, setHoveredTask] = useState(null);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
 
-    // Handle opening the edit modal
-    const openEditModal = (task) => {
-        setEditingTask(task);
-        setFormData({ ...task }); // Pre-fill the form with the selected task
+                // Fetch tasks, badges, and employees
+                const [tasksRes, badgesRes, employeesRes] = await Promise.all([
+                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/leader`, {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
+                    }),
+                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/badges/get`, {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
+                    }),
+                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/employees/all`, {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
+                    }),
+                ]);
+
+                setTasks(tasksRes.data.tasks || []);
+                setAvailableBadges(badgesRes.data.badges || []);
+                setAvailableEmployees(employeesRes.data.employees || []);
+            } catch (err) {
+                console.error("Error fetching data:", err);
+                setError("Failed to fetch data. Please try again later.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // Handle closing the modal
+    const openEditModal = (task) => {
+        setEditingTask(task);
+        setFormData({
+            title: task.title,
+            assignedTo: task.assigned_to_id?.email || "",
+            badge: availableBadges.find((b) => b._id === task.badge_id)?.name || "",
+            description: task.description || "",
+            deadline: task.deadline ? task.deadline.split("T")[0] : "",
+        });
+    };
+
     const closeEditModal = () => {
         setEditingTask(null);
         setFormData({
             title: "",
-            assignedTo: [],
+            assignedTo: "",
             badge: "",
             description: "",
             deadline: "",
         });
     };
 
-    // Handle form input changes
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    // Handle adding an email
-    const handleAddEmail = () => {
-        if (emailInput.trim() && !formData.assignedTo.includes(emailInput.trim())) {
-            setFormData((prev) => ({
-                ...prev,
-                assignedTo: [...prev.assignedTo, emailInput.trim()],
-            }));
-        }
-        setEmailInput("");
-    };
-
-    // Handle removing an email
-    const handleRemoveEmail = (email) => {
-        setFormData((prev) => ({
-            ...prev,
-            assignedTo: prev.assignedTo.filter((e) => e !== email),
-        }));
-    };
-
-    // Handle saving the updated task
-    const handleSaveTask = (e) => {
+    const handleSaveTask = async (e) => {
         e.preventDefault();
-        onEdit({ ...editingTask, ...formData }); // Call the parent onEdit function with updated task
-        closeEditModal();
+
+        // Map the form data to the backend payload structure
+        const badge_id = availableBadges.find((b) => b.name === formData.badge)?._id || null;
+
+        // Prepare the updated task payload
+        const updatedTask = {
+            task_id: editingTask._id, // Ensure task_id is explicitly sent
+            title: formData.title,
+            description: formData.description,
+            deadline: formData.deadline || null,
+            badge_id: badge_id || null, // Include null if no badge is selected
+        };
+
+        try {
+            setLoading(true);
+
+            // Log the payload for debugging
+            console.log("Payload being sent to /edit-assigned:", updatedTask);
+
+            // Send the update to the backend
+            const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/edit-assigned`, updatedTask, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+
+            // Handle successful update
+            alert("Task updated successfully!");
+            console.log("Response from backend:", response.data);
+
+            // Close the edit modal
+            closeEditModal();
+
+            // Refresh the tasks list
+            const tasksRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/leader`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+            setTasks(tasksRes.data.tasks || []);
+        } catch (err) {
+            console.error("Error updating task:", err.response?.data || err.message);
+            setError(err.response?.data?.message || "Failed to update task. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDeleteTask = async (task) => {
+        if (!window.confirm(`Are you sure you want to delete the task "${task.title}"?`)) {
+            return; // Exit if user cancels
+        }
+
+        try {
+            setLoading(true);
+
+            // Call the delete API
+            await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/delete`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                data: { task_id: task._id }, // Axios requires `data` field for DELETE body
+            });
+
+            alert("Task deleted successfully!");
+
+            // Refresh the task list
+            const tasksRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/leader`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+            setTasks(tasksRes.data.tasks || []);
+        } catch (err) {
+            console.error("Error deleting task:", err.response?.data || err.message);
+            setError(err.response?.data?.message || "Failed to delete task. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
 
-    // Filter tasks based on the search query
     const filteredTasks = tasks.filter((task) =>
         task.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
 
     return (
         <div className="assigned-task-list-container">
@@ -85,12 +189,14 @@ const AssignedTaskList = ({ tasks, onEdit, onDelete }) => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
             </div>
+            {loading && <p>Loading tasks...</p>}
+            {error && <p className="error-message">{error}</p>}
 
             {/* Task List */}
             <ul className="assigned-task-list">
-            {filteredTasks.map((task, index) => (
+                {filteredTasks.map((task) => (
                     <li
-                        key={index}
+                        key={task._id}
                         className="assigned-task-list-item"
                         onMouseEnter={() => setHoveredTask(task)}
                         onMouseLeave={() => setHoveredTask(null)}
@@ -98,10 +204,10 @@ const AssignedTaskList = ({ tasks, onEdit, onDelete }) => {
                         <div className="assigned-task-list-item-content">
                             <h4 className="assigned-task-title">{task.title}</h4>
                             <p className="assigned-task-details">
-                                {task.deadline
-                                    ? `Deadline: ${new Date(task.deadline).toLocaleDateString()}`
-                                    : "No deadline"} | Assigned: {task.assignedTo.length}{" "}
-                                {task.assignedTo.length > 1 ? "people" : "person"}
+                                Deadline: {task.deadline ? new Date(task.deadline).toLocaleDateString() : "No deadline"}
+                            </p>
+                            <p className="assigned-task-details">
+                                Assigned to: {task.assigned_to_id?.f_name} {task.assigned_to_id?.l_name}
                             </p>
                         </div>
                         <div className="assigned-task-list-item-actions">
@@ -111,22 +217,25 @@ const AssignedTaskList = ({ tasks, onEdit, onDelete }) => {
                                 title="Edit Task"
                             >
                                 <img src="/edit.png" alt="Edit" />
+
                             </button>
                             <button
                                 className="assigned-delete-task-button"
-                                onClick={() => onDelete(task)}
+                                onClick={() => handleDeleteTask(task)}
                                 title="Delete Task"
                             >
                                 <img src="trash.png" alt="Delete" />
                             </button>
+
                         </div>
-                         {/* Tooltip for hover details */}
-                         {hoveredTask === task && (
+
+                        {/* Tooltip on hover */}
+                        {hoveredTask === task && (
                             <div className="assigned-task-tooltip">
                                 <h4>Details:</h4>
                                 <p><strong>Description:</strong> {task.description || "No description"}</p>
-                                <p><strong>Badge:</strong> {task.badge || "No badge attached"}</p>
-                                <p><strong>Assigned To:</strong> {task.assignedTo.join(", ")}</p>
+                                <p><strong>Badge:</strong> {availableBadges.find((b) => b._id === task.badge_id)?.name || "No badge attached"}</p>
+                                <p><strong>Assigned To:</strong> {task.assigned_to_id?.email || "Unassigned"}</p>
                             </div>
                         )}
                     </li>
@@ -139,50 +248,34 @@ const AssignedTaskList = ({ tasks, onEdit, onDelete }) => {
                         <h3>Edit Task</h3>
                         <form onSubmit={handleSaveTask}>
                             <div className="assigned-task-form-row">
-                                <label htmlFor="title">
-                                    Title <span className="required">*</span>
-                                </label>
+                                <label htmlFor="title">Title</label>
                                 <input
                                     id="title"
                                     type="text"
                                     name="title"
-                                    placeholder="Enter task title"
                                     value={formData.title}
                                     onChange={handleInputChange}
                                     required
                                 />
                             </div>
-
                             <div className="assigned-task-form-row">
                                 <label htmlFor="assignedTo">Assigned To</label>
-                                <div className="email-input-container">
-                                    <input
-                                        type="email"
-                                        placeholder="Enter email"
-                                        value={emailInput}
-                                        onChange={(e) => setEmailInput(e.target.value)}
-                                    />
-                                    <button type="button" onClick={handleAddEmail}>
-                                        Add
-                                    </button>
-                                </div>
-                                <ul className="assigned-task-email-list">
-                                    {formData.assignedTo.map((email, index) => (
-                                        <li key={index}>
-                                            {email}
-                                            <button
-                                                type="button"
-                                                onClick={() => handleRemoveEmail(email)}
-                                            >
-                                                Remove
-                                            </button>
-                                        </li>
+                                <select
+                                    id="assignedTo"
+                                    name="assignedTo"
+                                    value={formData.assignedTo}
+                                    onChange={handleInputChange}
+                                >
+                                    <option value="">Choose an employee</option>
+                                    {availableEmployees.map((emp) => (
+                                        <option key={emp._id} value={emp.email}>
+                                            {emp.f_name} {emp.l_name} ({emp.email})
+                                        </option>
                                     ))}
-                                </ul>
+                                </select>
                             </div>
-
                             <div className="assigned-task-form-row">
-                                <label htmlFor="badge">Attach a Badge</label>
+                                <label htmlFor="badge">Badge</label>
                                 <select
                                     id="badge"
                                     name="badge"
@@ -190,43 +283,37 @@ const AssignedTaskList = ({ tasks, onEdit, onDelete }) => {
                                     onChange={handleInputChange}
                                 >
                                     <option value="">Choose a badge</option>
-                                    {["Badge 1", "Badge 2", "Badge 3"].map((badge, index) => (
-                                        <option key={index} value={badge}>
-                                            {badge}
+                                    {availableBadges.map((badge) => (
+                                        <option key={badge._id} value={badge.name}>
+                                            {badge.name}
                                         </option>
                                     ))}
                                 </select>
                             </div>
-
                             <div className="assigned-task-form-row">
                                 <label htmlFor="description">Description</label>
                                 <textarea
                                     id="description"
                                     name="description"
-                                    placeholder="Task description"
                                     value={formData.description}
                                     onChange={handleInputChange}
-                                ></textarea>
+                                />
                             </div>
-
                             <div className="assigned-task-form-row">
                                 <label htmlFor="deadline">Deadline</label>
                                 <input
-                                    type="date"
                                     id="deadline"
+                                    type="date"
                                     name="deadline"
                                     value={formData.deadline}
                                     onChange={handleInputChange}
                                 />
                             </div>
-
                             <div className="assigned-task-form-actions">
                                 <button type="button" onClick={closeEditModal} className="assigned-task-cancel-button">
                                     Cancel
                                 </button>
-                                <button type="submit" className="assigned-task-save-button">
-                                    Save
-                                </button>
+                                <button type="submit" className="assigned-task-save-button">Save</button>
                             </div>
                         </form>
                     </div>

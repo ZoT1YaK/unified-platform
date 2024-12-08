@@ -1,22 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./EmployeeTasks.css";
 import TaskStatus from "../TaskStatus/TaskStatus";
 
 const EmployeeTasks = () => {
-    const [tasks, setTasks] = useState([
-        { id: 1, title: "Order necessary hardware through Tango", description: "Resources >", deadline: "12/12/2024", completed: false },
-        { id: 2, title: "Request access to necessary additional software", description: "Resources >", deadline: "12/12/2024", completed: false },
-        { id: 3, title: "Complete the learning path for the first month", description: "Resources >", deadline: "12/12/2024", completed: false },
-        { id: 4, title: "Join the mandatory onboarding events", description: "Resources >", deadline: "12/12/2024", completed: true },
-    ]);
-
-    const totalTasks = tasks.length;
-    const completedTasks = tasks.filter((task) => task.completed).length;
-    const uncompletedTasks = totalTasks - completedTasks;
-
+    const [tasks, setTasks] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    // Fetch tasks from the backend
+    useEffect(() => {
+        const fetchTasks = async () => {
+            try {
+                setLoading(true);
+                const response = await axios.get(
+                    `${process.env.REACT_APP_BACKEND_URL}/api/tasks/employee`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
+                    }
+                );
+                const { assignedTasks, ownTasks } = response.data;
+                setTasks([...assignedTasks, ...ownTasks]);
+            } catch (err) {
+                console.error("Error fetching tasks:", err);
+                setError("Failed to fetch tasks. Please try again.");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchTasks();
+    }, []);
+
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter((task) => task.status === "Completed").length;
+    const uncompletedTasks = totalTasks - completedTasks;
 
     const openModal = (task = null) => {
         setEditingTask(task);
@@ -28,27 +50,112 @@ const EmployeeTasks = () => {
         setIsModalOpen(false);
     };
 
-    const handleSaveTask = (task) => {
-        if (editingTask) {
-            setTasks((prevTasks) =>
-                prevTasks.map((t) => (t.id === editingTask.id ? task : t))
-            );
-        } else {
-            setTasks((prevTasks) => [
-                ...prevTasks,
-                { ...task, id: prevTasks.length + 1 },
-            ]);
+    const handleSaveTask = async (task) => {
+        try {
+            setLoading(true);
+            if (editingTask) {
+                // Edit existing task
+                await axios.put(
+                    `${process.env.REACT_APP_BACKEND_URL}/api/tasks/edit-own`,
+                    {
+                        task_id: editingTask._id,
+                        title: task.title,
+                        description: task.description,
+                        deadline: task.deadline,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
+                    }
+                );
+                setTasks((prevTasks) =>
+                    prevTasks.map((t) =>
+                        t._id === editingTask._id ? { ...t, ...task } : t
+                    )
+                );
+            } else {
+                // Add new task
+                const response = await axios.post(
+                    `${process.env.REACT_APP_BACKEND_URL}/api/tasks/create`,
+                    {
+                        title: task.title,
+                        description: task.description,
+                        deadline: task.deadline,
+                        type: "Self-Created",
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
+                    }
+                );
+                setTasks((prevTasks) => [...prevTasks, response.data.task]);
+            }
+        } catch (err) {
+            console.error("Error saving task:", err);
+            setError("Failed to save task. Please try again.");
+        } finally {
+            setLoading(false);
+            closeModal();
         }
-        closeModal();
     };
 
-    const handleDeleteTask = (id) => {
-        setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+    const handleDeleteTask = async (taskId) => {
+        if (!window.confirm("Are you sure you want to delete this task?")) return;
+        try {
+            setLoading(true);
+            await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/delete`, {
+                data: { task_id: taskId },
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+            setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+        } catch (err) {
+            console.error("Error deleting task:", err);
+            setError("Failed to delete task. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
+
+    const toggleTaskStatus = async (taskId, currentStatus) => {
+        const newStatus = currentStatus === "Completed" ? "Pending" : "Completed";
+        try {
+            const response = await axios.put(
+                `${process.env.REACT_APP_BACKEND_URL}/api/tasks/complete`,
+                { task_id: taskId, status: newStatus },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                }
+            );
+    
+            setTasks((prevTasks) =>
+                prevTasks.map((task) =>
+                    task._id === taskId ? { ...task, status: newStatus } : task
+                )
+            );
+    
+            // Notify user if a badge is awarded
+            if (newStatus === "Completed" && response.data.task.badge_id) {
+                alert("Congratulations! You’ve earned a new achievement!");
+            }
+        } catch (err) {
+            console.error("Error toggling task status:", err);
+            setError("Failed to update task status. Please try again.");
+        }
+    };
+    
 
     const filteredTasks = tasks.filter((task) =>
         task.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    if (loading) return <p>Loading tasks...</p>;
+    if (error) return <p className="error-message">{error}</p>;
 
     return (
         <div className="employee-tasks">
@@ -67,76 +174,51 @@ const EmployeeTasks = () => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <button className="add-task-button" onClick={() => openModal()}>
-                    <img
-                        src="more.png"
-                        alt="Add"
-                        className="icon"
-                    />
+                    <img src="more.png" alt="Add" className="icon" />
                 </button>
             </div>
             <ul className="task-list">
-                {filteredTasks.map((task) => {
-                    // Check if the task is overdue
-                    const isOverdue = task.deadline && new Date(task.deadline) < new Date();
-                    // Format the deadline to 'DD.MM.YYYY'
-                    const formattedDeadline = task.deadline
-                        ? new Date(task.deadline).toLocaleDateString('de-DE')
-                        : "No deadline";
-                    return (
-                        <li key={task.id} className={`task-item ${isOverdue ? "overdue" : ""}`}>
+                {filteredTasks.map((task) => (
+                    <li key={task._id} className="task-item">
+                        {task.type === "Self-Created" && (
                             <button
                                 className="edit-button"
                                 onClick={() => openModal(task)}
                             >
-                                <img
-                                    src="edit.png"
-                                    alt="Edit"
-                                    className="icon"
-                                />
+                                <img src="edit.png" alt="Edit" className="icon" />
                             </button>
-                            <input
-                                type="checkbox"
-                                checked={task.completed}
-                                onChange={() =>
-                                    setTasks((prevTasks) =>
-                                        prevTasks.map((t) =>
-                                            t.id === task.id
-                                                ? { ...t, completed: !t.completed }
-                                                : t
-                                        )
-                                    )
-                                }
-                            />
-                            <span>{task.title}</span>
-                            <span className="task-deadline">{formattedDeadline}</span>
-                            <div className="task-actions">
-                                <button
-                                    className="delete-button"
-                                    onClick={() => handleDeleteTask(task.id)}
-                                >
-                                    <img
-                                        src="trash.png"
-                                        alt="Delete"
-                                        className="icon"
-                                    />
-                                </button>
-                            </div>
-                        </li>
-                    );
-                })}
+                        )}
+                        <input
+                            type="checkbox"
+                            checked={task.status === "Completed"}
+                            onChange={() => toggleTaskStatus(task._id, task.status)}
+                        />
+                        <span>{task.title}</span>
+                        <span className="task-deadline">
+                            {task.deadline
+                                ? new Date(task.deadline).toLocaleDateString("de-DE")
+                                : "No deadline"}
+                        </span>
+                        
+                        {task.type === "Self-Created" && (
+                            <button
+                                className="employee-task-delete-button"
+                                onClick={() => handleDeleteTask(task._id)}
+                            >
+                                <img src="trash.png" alt="Delete" className="icon" />
+                            </button>
+                        )}
+                    </li>
+                ))}
             </ul>
-
-            {
-                isModalOpen && (
-                    <TaskModal
-                        task={editingTask}
-                        onClose={closeModal}
-                        onSave={handleSaveTask}
-
-                    />
-                )
-            }
-        </div >
+            {isModalOpen && (
+                <TaskModal
+                    task={editingTask}
+                    onClose={closeModal}
+                    onSave={handleSaveTask}
+                />
+            )}
+        </div>
     );
 };
 
@@ -165,7 +247,6 @@ const TaskModal = ({ task, onClose, onSave }) => {
                         <input
                             type="text"
                             name="title"
-                            placeholder="Enter a name for your task"
                             value={formData.title}
                             onChange={handleChange}
                             required
@@ -175,7 +256,6 @@ const TaskModal = ({ task, onClose, onSave }) => {
                         Description & resources
                         <textarea
                             name="description"
-                            placeholder="Enter details about your task, resources, etc..."
                             value={formData.description}
                             onChange={handleChange}
                         />
@@ -187,7 +267,6 @@ const TaskModal = ({ task, onClose, onSave }) => {
                             name="deadline"
                             value={formData.deadline}
                             onChange={handleChange}
-
                         />
                     </label>
                     <div className="form-actions">

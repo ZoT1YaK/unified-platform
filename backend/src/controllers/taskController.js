@@ -13,18 +13,14 @@ exports.createTask = async (req, res) => {
     if (!title || !type) {
       return res.status(400).json({ message: "Title and type are required." });
     }
-
-    if (badge_id) {
-      const badge = await Badge.findById(badge_id);
-      if (!badge) {
-        return res.status(404).json({ message: "Badge not found." });
-      }
+    if (type === "Self-Created" && badge_id) {
+      return res.status(400).json({ message: "Self-created tasks cannot have badges." });
     }
-
+  
     const task = await Task.create({
       created_by_id: id,
       assigned_to_id,
-      badge_id,
+      badge_id: type === "Leader-Assigned" ? badge_id : null,
       title,
       deadline,
       type,
@@ -32,7 +28,7 @@ exports.createTask = async (req, res) => {
     });
 
     if (assigned_to_id) {
-      const notificationType = await NotificationType.findOne({type_name: "Task Assignment"});
+      const notificationType = await NotificationType.findOne({ type_name: "Task Assignment" });
       if (!notificationType) {
         return res.status(404).json({ message: "Notification type not found" });
       }
@@ -54,13 +50,13 @@ exports.createTask = async (req, res) => {
 
 exports.getEmployeeTasks = async (req, res) => {
   const { id } = req.user;
-  
+
   try {
     const assignedTasks = await Task.find({ assigned_to_id: id })
       .sort({ deadline: 1 });
-  
+
     const ownTasks = await Task.find({ created_by_id: id, assigned_to_id: null });
-  
+
     res.status(200).json({
       assignedTasks,
       ownTasks,
@@ -69,15 +65,15 @@ exports.getEmployeeTasks = async (req, res) => {
     console.error("Error fetching employee tasks:", error);
     res.status(500).json({ message: "Server error" });
   }
-};  
+};
 
 exports.getLeaderAssignedTasks = async (req, res) => {
   const { id } = req.user;
-  
+
   try {
     const tasks = await Task.find({ created_by_id: id, assigned_to_id: { $ne: null } })
       .populate("assigned_to_id", "f_name l_name position");
-  
+
     res.status(200).json({ tasks });
   } catch (error) {
     console.error("Error fetching leader-assigned tasks:", error);
@@ -88,7 +84,7 @@ exports.getLeaderAssignedTasks = async (req, res) => {
 exports.completeTask = async (req, res) => {
   const { task_id, status } = req.body;
   const { id } = req.user;
-  
+
   try {
     if (!mongoose.Types.ObjectId.isValid(task_id)) {
       return res.status(400).json({ message: "Invalid task ID" });
@@ -106,22 +102,44 @@ exports.completeTask = async (req, res) => {
 
 
     task.status = status;
-    task.completion_date = new Date();
+    if (status === "Completed") {
+      task.completion_date = new Date();
+    } else {
+      task.completion_date = null;
+    }
     await task.save();
 
+    // If task is marked as completed and has a badge, create an achievement
     if (task.badge_id) {
-      await Achievement.create({
-        emp_id: id,
-        badge_id: task.badge_id,
-        task_id: task._id,
-      });
-    }
+      if (status === "Completed") {
+          // Add badge as an achievement
+          const achievementExists = await Achievement.findOne({
+              emp_id: id,
+              badge_id: task.badge_id,
+          });
 
+          if (!achievementExists) {
+              await Achievement.create({
+                  emp_id: id,
+                  badge_id: task.badge_id,
+                  task_id: task._id,
+                  created_at: new Date(),
+              });
+          }
+      } else if (status === "Pending") {
+          // Revoke the badge if status is reverted to "Pending"
+          await Achievement.findOneAndDelete({
+              emp_id: id,
+              badge_id: task.badge_id,
+              task_id: task._id,
+          });
+      }
+  }
     res.status(200).json({ message: "Task marked as completed.", task });
   } catch (error) {
     console.error("Error completing task:", error);
     res.status(500).json({ message: "Server error" });
-  }    
+  }
 };
 exports.editAssignedTask = async (req, res) => {
   const { task_id, title, deadline, description, badge_id, assigned_to_id } = req.body; // Include assigned_to_id if relevant
@@ -189,23 +207,23 @@ exports.editOwnCreatedTask = async (req, res) => {
     console.error("Error editing self-created task:", error);
     res.status(500).json({ message: "Server error" });
   }
-};  
+};
 
 exports.deleteTask = async (req, res) => {
   const { task_id } = req.body;
   const { id } = req.user;
-  
+
   try {
     if (!mongoose.Types.ObjectId.isValid(task_id)) {
       return res.status(400).json({ message: "Invalid task ID" });
     }
-  
+
     const task = await Task.findOneAndDelete({ _id: task_id, created_by_id: id });
-  
+
     if (!task) {
       return res.status(404).json({ message: "Task not found or not authorized to delete" });
     }
-  
+
     res.status(200).json({ message: "Task deleted successfully", task });
   } catch (error) {
     console.error("Error deleting task:", error);

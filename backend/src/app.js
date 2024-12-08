@@ -11,6 +11,7 @@ const badgeRoutes = require("./routes/badgeRoutes");
 const postRoutes = require("./routes/postRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const achievementRoutes = require("./routes/achievementRoutes");
+const eventRoutes = require("./routes/eventRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 
@@ -31,6 +32,8 @@ app.use("/api/badges", badgeRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/achievements", achievementRoutes);
+app.use("/api/events", eventRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-app.use("/api/analytics",analyticsRoutes)
+app.use("/api/analytics",analyticsRoutes);
+
 module.exports = app;

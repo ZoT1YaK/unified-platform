@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./EventCreator.css";
 
-const EventCreator = ({ onSave, departments, locations, teams }) => {
+const EventCreator = ({ onSave, departments, locations, teams, existingEvent  }) => {
     const [formData, setFormData] = useState({
         eventName: "",
         description: "",
@@ -14,6 +14,23 @@ const EventCreator = ({ onSave, departments, locations, teams }) => {
         targetTeams:[]
     });
     const [emailInput, setEmailInput] = useState("");
+
+    // Populate form when editing
+    useEffect(() => {
+        if (existingEvent) {
+            setFormData({
+                eventName: existingEvent.title,
+                description: existingEvent.description,
+                date: existingEvent.date,
+                time: existingEvent.time || "",
+                location: existingEvent.location || "",
+                participants: existingEvent.participants || [],
+                targetDepartments: existingEvent.targetDepartments || [],
+                targetLocations: existingEvent.targetLocations || [],
+                targetTeams: existingEvent.targetTeams || [],
+            });
+        }
+    }, [existingEvent]);
 
     // Handle input changes
     const handleInputChange = (e) => {

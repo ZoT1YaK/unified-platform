@@ -1,9 +1,9 @@
 import React from 'react';
 import './EventCard.css';
 
-const EventCard = ({ thumbnail, date, title, description }) => {
+const EventCard = ({ thumbnail, date, title, description, onClick }) => {
     return (
-        <div className="event-card">
+        <div className="event-card" onClick={onClick}>
             <div className="event-thumbnail">
                 <img src={thumbnail} alt={title} />
                 <div className="event-date">{date}</div>

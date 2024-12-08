@@ -126,38 +126,59 @@ exports.completeTask = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }    
 };
+const handleSaveTask = async (e) => {
+  e.preventDefault();
 
-exports.editAssignedTask = async (req, res) => {
-  const { task_id, title, deadline, description, badge_id } = req.body;
-  const { id } = req.user;
-  
+  // Map the form data to the backend payload structure
+  const badge_id = availableBadges.find((b) => b.name === formData.badge)?._id || null;
+  const assigned_to_id = availableEmployees.find((emp) => emp.email === formData.assignedTo)?._id || null;
+
+  // Prepare the updated task payload
+  const updatedTask = {
+      task_id: editingTask._id, // Ensure task_id is explicitly sent
+      title: formData.title,
+      description: formData.description,
+      deadline: formData.deadline || null,
+      badge_id: badge_id || null, // Include null if no badge is selected
+      assigned_to_id: assigned_to_id || null, // Include null if no employee is selected
+  };
+
   try {
-    if (!mongoose.Types.ObjectId.isValid(task_id)) {
-      return res.status(400).json({ message: "Invalid task ID" });
-    }
-  
-    const task = await Task.findOne({ _id: task_id, created_by_id: id, assigned_to_id: { $ne: null } });
-  
-    if (!task) {
-      return res.status(404).json({ message: "Task not found or not authorized to edit" });
-    }
-  
-    if (title !== undefined) task.title = title;
-    if (deadline !== undefined) task.deadline = deadline;
-    if (description !== undefined) task.description = description;
-    if (badge_id !== undefined) task.badge_id = badge_id;
-  
-    const updatedTask = await task.save();
-  
-    res.status(200).json({
-      message: "Task updated successfully",
-      task: updatedTask,
-    });
-  } catch (error) {
-    console.error("Error editing task:", error);
-    res.status(500).json({ message: "Server error" });
+      setLoading(true);
+
+      // Log the payload for debugging
+      console.log("Payload being sent to /edit-assigned:", updatedTask);
+
+      // Send the update to the backend
+      const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/edit-assigned`, updatedTask, {
+          headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+      });
+
+      // Handle successful update
+      alert("Task updated successfully!");
+      console.log("Response from backend:", response.data);
+
+      // Close the edit modal
+      closeEditModal();
+
+      // Refresh the tasks list
+      const tasksRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/leader`, {
+          headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+      });
+      setTasks(tasksRes.data.tasks || []);
+  } catch (err) {
+      console.error("Error updating task:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Failed to update task. Please try again.");
+  } finally {
+      setLoading(false);
   }
-};  
+};
+
 
 exports.editOwnCreatedTask = async (req, res) => {
   const { task_id, title, deadline, description } = req.body;

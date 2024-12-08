@@ -13,4 +13,8 @@ router.get("/profile", verifyToken, employeeController.getProfile);
 // Update preffered language
 router.put("/language", verifyToken, employeeController.updateLanguage);
 
+// Get all employees
+router.get("/all", verifyToken, employeeController.getAllEmployees);
+
+
 module.exports = router;

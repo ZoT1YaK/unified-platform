@@ -106,3 +106,13 @@ exports.updateLanguage = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+exports.getAllEmployees = async (req, res) => {
+  try {
+      const employees = await Employee.find({}, "f_name l_name email position");
+      res.status(200).json({ employees });
+  } catch (error) {
+      console.error("Error fetching employees:", error);
+      res.status(500).json({ message: "Server error" });
+  }
+};
+

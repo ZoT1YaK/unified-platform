@@ -9,22 +9,7 @@ import EventCreator from '../EventCreator/EventCreator';
 import EventCard from '../EventCard/EventCard';
 
 const LeaderHub = () => {
-    const [tasks, setTasks] = useState([
-        {
-            title: "Order necessary hardware",
-            deadline: "2024-12-12",
-            assignedTo: ["employee1@example.com", "employee2@example.com"],
-            badge: "Badge 1",
-            description: "Order laptops and monitors for new hires.",
-        },
-        {
-            title: "Plan team event",
-            deadline: "2024-12-20",
-            assignedTo: ["employee3@example.com"],
-            badge: "Badge 2",
-            description: "Plan the quarterly team-building event.",
-        },
-    ]);
+
 
     const employees = [
         {
@@ -96,22 +81,7 @@ const LeaderHub = () => {
 
     const [selectedEvent, setSelectedEvent] = useState(null);
 
-    // Task Handlers
-    const handleSaveTask = (task) => {
-        setTasks((prevTasks) => [...prevTasks, task]);
-        console.log('Task saved:', task);
-    };
-
-    const handleEditTask = (taskToEdit) => {
-        console.log('Edit task:', taskToEdit);
-    };
-
-    const handleDeleteTask = (taskToDelete) => {
-        setTasks((prevTasks) =>
-            prevTasks.filter((task) => task.title !== taskToDelete.title)
-        );
-        console.log('Deleted task:', taskToDelete);
-    };
+ 
 
     // Event Handlers
     const handleEditEvent = (event) => {
@@ -142,9 +112,6 @@ const LeaderHub = () => {
                 {/* Left Panel */}
                 <div className="left-panel">
                     <AssignedTaskList
-                        tasks={tasks}
-                        onEdit={handleEditTask}
-                        onDelete={handleDeleteTask}
                     />
                     <div className="scheduled-event-container">
                         <h3 className="scheduled-event-title">Scheduled Events</h3>
@@ -195,8 +162,7 @@ const LeaderHub = () => {
                             Create a Task
                         </h2>
                         <TaskCreator
-                            badges={["Badge 1", "Badge 2", "Badge 3"]}
-                            onSave={handleSaveTask}
+                           
                         />
                     </div>
                     <div className="event-creator-container">

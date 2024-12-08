@@ -87,33 +87,40 @@ const AssignedTaskList = () => {
     const handleSaveTask = async (e) => {
         e.preventDefault();
 
+        // Map the form data to the backend payload structure
         const badge_id = availableBadges.find((b) => b.name === formData.badge)?._id || null;
-        const assigned_to_id = availableEmployees.find((emp) => emp.email === formData.assignedTo)?._id || null;
 
+        // Prepare the updated task payload
         const updatedTask = {
-            ...editingTask,
+            task_id: editingTask._id, // Ensure task_id is explicitly sent
             title: formData.title,
             description: formData.description,
-            deadline: formData.deadline,
-            badge_id,
-            assigned_to_id,
+            deadline: formData.deadline || null,
+            badge_id: badge_id || null, // Include null if no badge is selected
         };
 
         try {
             setLoading(true);
 
-            // Send update to the backend
-            await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/edit-assigned`, updatedTask, {
+            // Log the payload for debugging
+            console.log("Payload being sent to /edit-assigned:", updatedTask);
+
+            // Send the update to the backend
+            const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/edit-assigned`, updatedTask, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
             });
 
+            // Handle successful update
             alert("Task updated successfully!");
+            console.log("Response from backend:", response.data);
+
+            // Close the edit modal
             closeEditModal();
 
-            // Refresh tasks
+            // Refresh the tasks list
             const tasksRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/leader`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -121,18 +128,53 @@ const AssignedTaskList = () => {
             });
             setTasks(tasksRes.data.tasks || []);
         } catch (err) {
-            console.error("Error updating task:", err);
-            setError("Failed to update task. Please try again.");
+            console.error("Error updating task:", err.response?.data || err.message);
+            setError(err.response?.data?.message || "Failed to update task. Please try again.");
         } finally {
             setLoading(false);
         }
     };
 
+    const handleDeleteTask = async (task) => {
+        if (!window.confirm(`Are you sure you want to delete the task "${task.title}"?`)) {
+            return; // Exit if user cancels
+        }
+
+        try {
+            setLoading(true);
+
+            // Call the delete API
+            await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/delete`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                data: { task_id: task._id }, // Axios requires `data` field for DELETE body
+            });
+
+            alert("Task deleted successfully!");
+
+            // Refresh the task list
+            const tasksRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/leader`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+            setTasks(tasksRes.data.tasks || []);
+        } catch (err) {
+            console.error("Error deleting task:", err.response?.data || err.message);
+            setError(err.response?.data?.message || "Failed to delete task. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     const filteredTasks = tasks.filter((task) =>
         task.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    
-   
+
+
     return (
         <div className="assigned-task-list-container">
             <h3 className="assigned-task-list-title">Assigned Tasks</h3>
@@ -175,8 +217,16 @@ const AssignedTaskList = () => {
                                 title="Edit Task"
                             >
                                 <img src="/edit.png" alt="Edit" />
-            
+
                             </button>
+                            <button
+                                className="assigned-delete-task-button"
+                                onClick={() => handleDeleteTask(task)}
+                                title="Delete Task"
+                            >
+                                <img src="trash.png" alt="Delete" />
+                            </button>
+
                         </div>
 
                         {/* Tooltip on hover */}

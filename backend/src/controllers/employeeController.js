@@ -116,3 +116,31 @@ exports.getAllEmployees = async (req, res) => {
   }
 };
 
+exports.updateDataMindType = async (req, res) => {
+  const { data_mind_type } = req.body;
+  const { id } = req.user;
+
+  try {
+    if (!data_mind_type) {
+      return res.status(400).json({ message: "Data mind type is required." });
+    }
+
+    const updatedEmployee = await Employee.findByIdAndUpdate(
+      { _id: id },
+      { data_mind_type },
+      { new: true }
+    );
+
+    if (!updatedEmployee) {
+      return res.status(404).json({ message: "Employee not found." });
+    }
+
+    res.status(200).json({
+      message: "Data mind type updated successfully.",
+      data_mind_type
+    });
+  } catch (error) {
+    console.error("Error updating data mind type:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

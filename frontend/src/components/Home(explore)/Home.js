@@ -6,11 +6,15 @@ import TaskCard from '../TaskCard/TaskCard';
 import Header from '../Header/Header';
 import PostCreation from '../PostCreation/PostCreation';
 import PostComponent from "../PostComponent/Post";
+import Milestones from "../Milestones/Milestones";
+import Achievements from "../Achievements/Achievements";
+import useAnalytics from "../../hooks/useAnalytics";
 
 const Home = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [user, setUser] = useState({});
     const [posts, setPosts] = useState([]);
+    const analytics = useAnalytics();
 
     useEffect(() => {
         try {
@@ -27,45 +31,36 @@ const Home = () => {
         }
     }, []);
 
-    const [analytics, setAnalytics] = useState({
-        achievementsCount: 0,
-        postsCount: 0,
-        milestonesCount: 0,
-    });
-
     useEffect(() => {
-        const fetchAnalytics = async () => {
+        const fetchPosts = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/analytics/analytics`, {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/posts/get`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
 
                 if (!response.ok) {
-                    throw new Error("Failed to fetch analytics");
+                    throw new Error("Failed to fetch posts");
                 }
 
                 const data = await response.json();
-                setAnalytics({
-                    achievementsCount: data.achievementsCount || 0,
-                    postsCount: data.postsCount || 0,
-                    milestonesCount: data.milestonesCount || 0,
-                });
+                setPosts(data.posts); 
             } catch (error) {
-                console.error(error.message);
+                console.error("Error fetching posts:", error.message);
             }
         };
 
-        fetchAnalytics();
-    }, []);
+        fetchPosts();
+    }, []); 
 
-    const achievements = [
+
+   /* const achievements = [
         "Ach-badge1", "Ach-badge2", "Ach-badge3", "Ach-badge4", "Ach-badge5"
-    ];
+    ];*/
 
-    const milestones = ["Mil-badge1", "Mil-badge2", "Mil-badge3"];
+    /*const milestones = ["Mil-badge1", "Mil-badge2", "Mil-badge3"];*/
 
     // Mock data for events (to be replaced by backend data later)
     const events = [
@@ -172,7 +167,7 @@ const Home = () => {
         return task.title.toLowerCase().includes(searchQuery.toLowerCase());
     });
 
-    // Mock posts (to be deleted after connection with BE)
+    /*// Mock posts (to be deleted after connection with BE)
     useEffect(() => {
         const mockPosts = [
             {
@@ -208,7 +203,7 @@ const Home = () => {
         ];
 
         setPosts(mockPosts);
-    }, []);  // Empty dependency array ensures it runs once
+    }, []);  // Empty dependency array ensures it runs once*/
 
     return (
         <div className="home-page">
@@ -250,39 +245,13 @@ const Home = () => {
                     {/* Achievements Overview */}
                     <div className="achievements-container">
                         <h2>Achievements</h2>
-                        <div className="achievements-box">
-                            <p className="achievements-count">You've gained {achievements.length} achievements</p>
-                            <div className="achievements-row">
-                                {achievements.slice(0, 10).map((achievement, index) => (
-                                    <img
-                                        key={index}
-                                        src={`/${achievement}.png`}
-                                        alt={`Achievement ${index + 1}`}
-                                        className="achievement-icon"
-                                    />
-                                ))}
-                                {achievements.length > 10 && <img src="/plus.png" alt="Plus" className="plus-icon" />}
-                            </div>
-                        </div>
+                        <Achievements simpleMode />
                     </div>
 
                     {/* Milestones Overview */}
                     <div className="milestones-container">
                         <h2>Milestones</h2>
-                        <div className="milestones-box">
-                            <p className="milestones-count">You've gained {milestones.length} milestones</p>
-                            <div className="milestones-row">
-                                {milestones.map((milestone, index) => (
-                                    <img
-                                        key={index}
-                                        src={`/${milestone}.png`}
-                                        alt={`Milestone ${index + 1}`}
-                                        className="milestone-icon"
-                                    />
-                                ))}
-                                {milestones.length > 10 && <img src="/plus.png" alt="Plus" className="plus-icon" />}
-                            </div>
-                        </div>
+                        <Milestones simpleMode />
                     </div>
 
                 </div>
@@ -290,17 +259,35 @@ const Home = () => {
                 <div className="post-column">
                     {/* Post Creation and Feed boxes */}
                     <div className="post-creation-gray-box">
-                        <PostCreation user={{ name: "Bob Bobrovich", avatar: "/cat.png" }} />
-                    </div>
+                    <PostCreation
+                            user={{
+                                name: `${user.f_name || "User"} ${user.l_name || ""}`,
+                                avatar: user.avatar || "/cat.png",
+                            }}
+                        />                    </div>
 
                     <div className="post-feed-gray-box">
-                        {posts.map((post, index) => (
-                            <PostComponent
-                                key={index}
-                                user={post.user}
-                                post={post}
-                            />
-                        ))}
+                        {posts.length > 0 ? (
+                            posts.map((post, index) => (
+                                <PostComponent
+                                    key={index}
+                                    user={{
+                                        name: `${post.author.f_name} ${post.author.l_name}`,
+                                        avatar: "/cat.png", // Placeholder avatar
+                                        position: post.author.position,
+                                    }}
+                                    post={{
+                                        description: post.content,
+                                        likes: post.likes,
+                                        comments: post.comments || [], // Ensure comments is an array
+                                        timeAgo: new Date(post.timestamp).toLocaleDateString(),
+                                        attachments: [], // Adjust if your API provides attachments
+                                    }}
+                                />
+                            ))
+                        ) : (
+                            <p>No posts available.</p>
+                        )}
                     </div>
                 </div>
 

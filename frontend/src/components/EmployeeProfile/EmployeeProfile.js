@@ -15,6 +15,10 @@ const EmployeeProfile = () => {
     const [filter, setFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState('');
     const [dataMind, setDataMind] = useState("Curious");
+    const [milestones, setMilestones] = useState([]);
+    const [achievements, setAchievements] = useState([]);
+
+
 
     const dataMindOptions = ["Curious", "Creative", "Innovative", "Resilient", "Collaborative"];
 
@@ -27,36 +31,14 @@ const EmployeeProfile = () => {
         setDataMind(event.target.value);
     };
 
-
-    const [achievements, setAchievements] = useState([
+    /*const [achievements, setAchievements] = useState([
         { id: 1, title: "Ach-badge1", description: "Complete the annual biking contest", date: "12/12/2024", visible: true },
         { id: 2, title: "Ach-badge2", description: "Run the yearly marathon", date: "12/12/2024", visible: true },
         { id: 3, title: "Ach-badge3", description: "Recycle 50kg of paper waste", date: "12/12/2024", visible: true },
         { id: 4, title: "Ach-badge4", description: "Join the group cooking activity", date: "12/12/2024", visible: true },
         { id: 5, title: "Ach-badge5", description: "Build bird nests for the coming season", date: "12/12/2024", visible: false },
-    ]);
+    ]);*/
 
-    const [milestones, setMilestones] = useState([
-        { id: 1, badge: "5", title: "Mil-badge1", description: "You've been with us for a whole 5 years!", date: "12/12/2024", visible: true },
-        { id: 2, badge: "1", title: "Mil-badge2", description: "You've been with us for a whole year!", date: "12/12/2024", visible: true },
-        { id: 3, badge: "0.5", title: "Mil-badge3", description: "You've been with us for a whole 6 months!", date: "12/12/2024", visible: true },
-    ]);
-
-    const toggleVisibility = (id, type) => {
-        if (type === "achievement") {
-            setAchievements((prevAchievements) =>
-                prevAchievements.map((item) =>
-                    item.id === id ? { ...item, visible: !item.visible } : item
-                )
-            );
-        } else if (type === "milestone") {
-            setMilestones((prevMilestones) =>
-                prevMilestones.map((item) =>
-                    item.id === id ? { ...item, visible: !item.visible } : item
-                )
-            );
-        }
-    };
     // Mock data for events (to be replaced by backend data later)
     const events = [
         {
@@ -113,7 +95,6 @@ const EmployeeProfile = () => {
     // Randomly display some other region events
     const randomOtherRegionEvents = sortedOtherRegionEvents.slice(0, 2);
 
-
     return (
         <div className="employee-profile-page">
             <TopBar />
@@ -121,30 +102,32 @@ const EmployeeProfile = () => {
             {/* Main Content */}
             <div className="content-flex">
                 <div className="left-panel">
+                    {/* Achievements Section */}
                     <Achievements
-                        achievements={achievements}
-                        filter={filter}
-                        searchQuery={searchQuery}
-                        toggleVisibility={toggleVisibility}
-                        setFilter={setFilter}
-                        setSearchQuery={setSearchQuery}
+                         achievements={achievements}
+                         filter={filter}
+                         searchQuery={searchQuery}
+                         setFilter={setFilter}
+                         setSearchQuery={setSearchQuery}
+                         onAchievementsFetched={(achievementData) =>
+                             setAchievements(achievementData)
+                         }
                     />
+
+                    {/* Milestones Section */}
                     <Milestones
-                        milestones={milestones}
                         filter={filter}
                         searchQuery={searchQuery}
-                        toggleVisibility={toggleVisibility}
                         setFilter={setFilter}
                         setSearchQuery={setSearchQuery}
+                        onMilestonesFetched={(milestoneData) =>
+                            setMilestones(milestoneData.map((milestone) => milestone.name)) 
+                        }
                     />
                 </div>
                 <div className="center-panel">
-                    <EmployeeDetails
-                        name="Bob Bobrovich"
-                        position="Head of HR | HR Team"
-                        location="Vejle, Region of Southern Denmark, Denmark"
-                        avatar="/cat.png"
-                    >
+                    {/* Employee Details Section */}
+                    <EmployeeDetails>
                         <Datamind
                             dataMind={dataMind}
                             dataMindOptions={dataMindOptions}
@@ -153,10 +136,11 @@ const EmployeeProfile = () => {
                         />
                     </EmployeeDetails>
 
+                    {/* Analytics Section */}
                     <Analytics
                         achievementsCount={achievements.length}
                         postsCount={15}
-                        milestonesCount={milestones.length}
+                        milestonesCount={milestones.length} 
                     />
 
                     {/* Activity and Events */}
@@ -195,10 +179,7 @@ const EmployeeProfile = () => {
                     <EmployeeTasks />
                 </div>
             </div>
-
-
         </div>
-
     );
 };
 

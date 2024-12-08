@@ -1,4 +1,4 @@
-const Badge = require("../models/Badge");
+const Achievement = require("../models/Achievement")
 const Milestone = require("../models/Milestone");
 const Post = require("../models/Post");
 
@@ -6,8 +6,8 @@ exports.getEmployeeAnalytics = async (req, res) => {
   const { id } = req.user; // Assume `id` is from the verified JWT token
 
   try {
-    // Count achievements (badges)
-    const achievementsCount = await Badge.countDocuments({ created_by_id: id });
+     // Count achievements
+     const achievementsCount = await Achievement.countDocuments({ emp_id: id });
 
     // Count posts
     const postsCount = await Post.countDocuments({ created_by_id: id });

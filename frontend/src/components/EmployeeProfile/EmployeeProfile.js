@@ -16,6 +16,8 @@ const EmployeeProfile = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [dataMind, setDataMind] = useState("Curious");
     const [milestones, setMilestones] = useState([]);
+    const [achievements, setAchievements] = useState([]);
+
 
 
     const dataMindOptions = ["Curious", "Creative", "Innovative", "Resilient", "Collaborative"];
@@ -29,13 +31,13 @@ const EmployeeProfile = () => {
         setDataMind(event.target.value);
     };
 
-    const [achievements, setAchievements] = useState([
+    /*const [achievements, setAchievements] = useState([
         { id: 1, title: "Ach-badge1", description: "Complete the annual biking contest", date: "12/12/2024", visible: true },
         { id: 2, title: "Ach-badge2", description: "Run the yearly marathon", date: "12/12/2024", visible: true },
         { id: 3, title: "Ach-badge3", description: "Recycle 50kg of paper waste", date: "12/12/2024", visible: true },
         { id: 4, title: "Ach-badge4", description: "Join the group cooking activity", date: "12/12/2024", visible: true },
         { id: 5, title: "Ach-badge5", description: "Build bird nests for the coming season", date: "12/12/2024", visible: false },
-    ]);
+    ]);*/
 
     // Mock data for events (to be replaced by backend data later)
     const events = [
@@ -102,18 +104,14 @@ const EmployeeProfile = () => {
                 <div className="left-panel">
                     {/* Achievements Section */}
                     <Achievements
-                        achievements={achievements}
-                        filter={filter}
-                        searchQuery={searchQuery}
-                        toggleVisibility={(id) =>
-                            setAchievements((prev) =>
-                                prev.map((item) =>
-                                    item.id === id ? { ...item, visible: !item.visible } : item
-                                )
-                            )
-                        }
-                        setFilter={setFilter}
-                        setSearchQuery={setSearchQuery}
+                         achievements={achievements}
+                         filter={filter}
+                         searchQuery={searchQuery}
+                         setFilter={setFilter}
+                         setSearchQuery={setSearchQuery}
+                         onAchievementsFetched={(achievementData) =>
+                             setAchievements(achievementData)
+                         }
                     />
 
                     {/* Milestones Section */}

@@ -7,6 +7,7 @@ import Header from '../Header/Header';
 import PostCreation from '../PostCreation/PostCreation';
 import PostComponent from "../PostComponent/Post";
 import Milestones from "../Milestones/Milestones";
+import Achievements from "../Achievements/Achievements";
 import useAnalytics from "../../hooks/useAnalytics";
 
 const Home = () => {
@@ -55,9 +56,9 @@ const Home = () => {
     }, []); 
 
 
-    const achievements = [
+   /* const achievements = [
         "Ach-badge1", "Ach-badge2", "Ach-badge3", "Ach-badge4", "Ach-badge5"
-    ];
+    ];*/
 
     /*const milestones = ["Mil-badge1", "Mil-badge2", "Mil-badge3"];*/
 
@@ -244,20 +245,7 @@ const Home = () => {
                     {/* Achievements Overview */}
                     <div className="achievements-container">
                         <h2>Achievements</h2>
-                        <div className="achievements-box">
-                            <p className="achievements-count">You've gained {achievements.length} achievements</p>
-                            <div className="achievements-row">
-                                {achievements.slice(0, 10).map((achievement, index) => (
-                                    <img
-                                        key={index}
-                                        src={`/${achievement}.png`}
-                                        alt={`Achievement ${index + 1}`}
-                                        className="achievement-icon"
-                                    />
-                                ))}
-                                {achievements.length > 10 && <img src="/plus.png" alt="Plus" className="plus-icon" />}
-                            </div>
-                        </div>
+                        <Achievements simpleMode />
                     </div>
 
                     {/* Milestones Overview */}

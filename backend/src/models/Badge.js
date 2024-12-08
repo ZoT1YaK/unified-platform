@@ -13,10 +13,12 @@ const badgeSchema = new mongoose.Schema({
   },
   description: {
     type: String,
+    required: true,
     trim: true,
   },
   img_link: {
     type: String,
+    required: true,
     trim: true,
   },
   created_at: {

@@ -11,20 +11,6 @@ const postSchema = new mongoose.Schema({
     ref: "Employee", 
     required: false 
   },
-  target_dep_id: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: "Department", 
-    required: false 
-  },
-  target_team_id: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: "Team", 
-    required: false 
-  },
-  target_location: { 
-    type: String, 
-    required: false 
-  },
   content: { 
     type: String, 
     required: true 

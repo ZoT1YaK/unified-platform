@@ -27,4 +27,7 @@ router.post("/like", verifyToken, postController.likePost);
 // Unlike a post
 router.post("/unlike", verifyToken, postController.unlikePost);
 
+// Get all resources for post creation
+router.get("/resources", verifyToken, postController.getPostResources);
+
 module.exports = router;

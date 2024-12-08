@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./EventCreator.css";
 
-const EventCreator = ({ onSave, departments, locations }) => {
+const EventCreator = ({ onSave, departments, locations, teams }) => {
     const [formData, setFormData] = useState({
         eventName: "",
         description: "",
@@ -11,6 +11,7 @@ const EventCreator = ({ onSave, departments, locations }) => {
         participants: [],
         targetDepartments: [],
         targetLocations: [],
+        targetTeams:[]
     });
     const [emailInput, setEmailInput] = useState("");
 
@@ -77,6 +78,18 @@ const EventCreator = ({ onSave, departments, locations }) => {
         }));
     };
 
+    // Handle teams selection
+    const handleTeamsChange = (e) => {
+        const { value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            targetTeams: prev.targetTeams.includes(value)
+                ? prev.targetTeams.filter((loc) => loc !== value)
+                : [...prev.targetTeams, value],
+        }));
+    };
+
+
     return (
         <div className="event-creator-container">
             <form className="event-creator-form" onSubmit={handleSubmit}>
@@ -135,7 +148,7 @@ const EventCreator = ({ onSave, departments, locations }) => {
 
                 {/* Location */}
                 <div className="event-creator-form-row">
-                    <label htmlFor="location">Location</label>
+                    <label htmlFor="location">Meeting Place</label>
                     <input
                         id="location"
                         type="text"
@@ -175,6 +188,24 @@ const EventCreator = ({ onSave, departments, locations }) => {
                                     value={loc}
                                     checked={formData.targetLocations.includes(loc)}
                                     onChange={handleLocationChange}
+                                />
+                                <span>{loc}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                
+                  {/* Target Locations */}
+                <div className="event-creator-form-row">
+                    <label>Target Teams</label>
+                    <div className="event-creator-checkbox-group">
+                        {teams.map((loc) => (
+                            <div key={loc} className="event-creator-checkbox-item">
+                                <input
+                                    type="checkbox"
+                                    value={loc}
+                                    checked={formData.targetTeams.includes(loc)}
+                                    onChange={handleTeamsChange}
                                 />
                                 <span>{loc}</span>
                             </div>

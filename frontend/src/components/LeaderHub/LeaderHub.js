@@ -31,7 +31,7 @@ const LeaderHub = () => {
             eventName: "Quarterly Meeting",
             date: "2024-12-15",
             time: "10:00",
-            location: "Conference Room A",
+            meetingplace: "Conference Room A",
             participants: ["employee1@example.com", "employee2@example.com"],
             description: "Discuss Q4 results and strategies for next year.",
         },
@@ -83,7 +83,7 @@ const LeaderHub = () => {
                                 <h4>{event.eventName}</h4>
                                 <p>Date: {event.date}</p>
                                 <p>Time: {event.time}</p>
-                                <p>Location: {event.location}</p>
+                                <p>Meeting Place: {event.location}</p>
                                 <p>Participants: {event.participants.join(", ")}</p>
                                 <p>Description: {event.description}</p>
                             </li>
@@ -115,6 +115,7 @@ const LeaderHub = () => {
                             onSave={handleSaveEvent}
                             departments={["Engineering", "HR", "Marketing"]}
                             locations={["New York", "London", "Tokyo"]}
+                            teams={["UX Team", "Sales Team"]}
                         />
                     </div>
                 </div>

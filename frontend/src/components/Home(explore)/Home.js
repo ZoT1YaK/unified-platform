@@ -30,6 +30,30 @@ const Home = () => {
         }
     }, []);
 
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/posts/get`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch posts");
+                }
+
+                const data = await response.json();
+                setPosts(data.posts); 
+            } catch (error) {
+                console.error("Error fetching posts:", error.message);
+            }
+        };
+
+        fetchPosts();
+    }, []); 
+
 
     const achievements = [
         "Ach-badge1", "Ach-badge2", "Ach-badge3", "Ach-badge4", "Ach-badge5"
@@ -142,7 +166,7 @@ const Home = () => {
         return task.title.toLowerCase().includes(searchQuery.toLowerCase());
     });
 
-    // Mock posts (to be deleted after connection with BE)
+    /*// Mock posts (to be deleted after connection with BE)
     useEffect(() => {
         const mockPosts = [
             {
@@ -178,7 +202,7 @@ const Home = () => {
         ];
 
         setPosts(mockPosts);
-    }, []);  // Empty dependency array ensures it runs once
+    }, []);  // Empty dependency array ensures it runs once*/
 
     return (
         <div className="home-page">
@@ -247,17 +271,35 @@ const Home = () => {
                 <div className="post-column">
                     {/* Post Creation and Feed boxes */}
                     <div className="post-creation-gray-box">
-                        <PostCreation user={{ name: "Bob Bobrovich", avatar: "/cat.png" }} />
-                    </div>
+                    <PostCreation
+                            user={{
+                                name: `${user.f_name || "User"} ${user.l_name || ""}`,
+                                avatar: user.avatar || "/cat.png",
+                            }}
+                        />                    </div>
 
                     <div className="post-feed-gray-box">
-                        {posts.map((post, index) => (
-                            <PostComponent
-                                key={index}
-                                user={post.user}
-                                post={post}
-                            />
-                        ))}
+                        {posts.length > 0 ? (
+                            posts.map((post, index) => (
+                                <PostComponent
+                                    key={index}
+                                    user={{
+                                        name: `${post.author.f_name} ${post.author.l_name}`,
+                                        avatar: "/cat.png", // Placeholder avatar
+                                        position: post.author.position,
+                                    }}
+                                    post={{
+                                        description: post.content,
+                                        likes: post.likes,
+                                        comments: post.comments || [], // Ensure comments is an array
+                                        timeAgo: new Date(post.timestamp).toLocaleDateString(),
+                                        attachments: [], // Adjust if your API provides attachments
+                                    }}
+                                />
+                            ))
+                        ) : (
+                            <p>No posts available.</p>
+                        )}
                     </div>
                 </div>
 

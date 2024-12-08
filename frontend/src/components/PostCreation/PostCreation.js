@@ -27,10 +27,41 @@ const PostCreation = ({ user }) => {
 const PostDialog = ({ user, closeDialog }) => {
     const [postText, setPostText] = useState('');
     const [isActive, setIsActive] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
         setPostText(e.target.value);
         setIsActive(e.target.value.trim() !== '');
+    };
+
+    const handlePost = async () => {
+        if (!postText.trim()) return;
+
+        try {
+            setIsLoading(true);
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/posts/create`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ content: postText }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to create post");
+            }
+
+            const data = await response.json();
+            console.log("Post created:", data);
+            closeDialog(); // Close the dialog after posting
+        } catch (error) {
+            console.error("Error creating post:", error.message);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -53,35 +84,25 @@ const PostDialog = ({ user, closeDialog }) => {
                         placeholder={`What's on your mind, ${user.name}?`}
                         value={postText}
                         onChange={handleChange}
+                        disabled={isLoading} // Disable input while posting
                     />
-                    <button className={`attachment-btn ${isActive ? 'active' : ''}`}>
+                    <button className={`attachment-btn ${isActive ? 'active' : ''}`} disabled={isLoading}>
                         <img src='/attach.png' alt="Attachment button" />
                     </button>
-
-
-                    {/* Attachment options that appear when hovering over the button */}
-                    {/* <div className="attachment-options">
-                        <div className="attachment-option">
-                            <img src="/external-link.png" alt="att-Link" />
-                        </div>
-                        <div className="attachment-option">
-                            <img src="/image-.png" alt="att-Image" />
-                        </div>
-                        <div className="attachment-option">
-                            <img src="/microphone.png" alt="att-Microphone" />
-                        </div>
-                        <div className="attachment-option">
-                            <img src="/video.png" alt="att-Video" />
-                        </div>
-                    </div> */}
                 </div>
 
                 <div className="post-dialogue-footer">
                     <hr />
-                    <button className={`post-btn ${isActive ? 'active' : 'inactive'}`} disabled={!isActive}>Post</button>
+                    <button
+                        className={`post-btn ${isActive ? 'active' : 'inactive'}`}
+                        onClick={handlePost}
+                        disabled={!isActive || isLoading} // Disable button while loading
+                    >
+                        {isLoading ? "Posting..." : "Post"}
+                    </button>
                 </div>
             </div>
-        </div >
+        </div>
     );
 };
 

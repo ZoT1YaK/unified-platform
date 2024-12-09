@@ -40,6 +40,13 @@ exports.createEvent = async (req, res) => {
 
     const event = await Event.create(eventData);
 
+    // Add the event creator as a participant 
+    await EventEmployee.create({
+      event_id: event._id,
+      emp_id: id,
+      response: "Accepted", // Automatically set to "Accepted"
+    });
+
     // Handle target_departments
     if (target_departments?.includes("ALL")) {
       const allDepartments = await Department.find().select("_id");
@@ -170,9 +177,24 @@ exports.getEventsForEmployee = async (req, res) => {
       ]),
     ];
 
-    const events = await Event.find({ _id: { $in: eventIds } }).sort({ date: 1 });
+    const events = await Event.find({ _id: { $in: eventIds } })
+      .sort({ date: 1 })
+      .lean();
 
-    res.status(200).json({ events });
+    // Map the response field for direct events
+    const eventsWithResponse = events.map((event) => {
+      const directEvent = directEvents.find((e) => e.event_id.toString() === event._id.toString());
+      return {
+        ...event,
+        response: directEvent
+          ? directEvent.response
+          : event.created_by_id.toString() === id.toString()
+          ? "Pending" // Default to "Pending" for creator if no response exists
+          : null,
+      };
+    });
+
+    res.status(200).json({ events: eventsWithResponse });
   } catch (error) {
     console.error("Error fetching events:", error);
     res.status(500).json({ message: "Server error" });

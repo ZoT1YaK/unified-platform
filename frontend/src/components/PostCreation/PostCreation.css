@@ -88,6 +88,65 @@
     /* position: relative; */
 }
 
+/* Button for selecting audience */
+.audience-dropdown-btn {
+    cursor: pointer;
+    font-size: 16px;
+    background-color: transparent;
+    border: none;
+    color: #007BFF;
+    padding: 5px;
+    margin-left: 10px;
+}
+
+/* Dropdown container for audience */
+.audience-dropdown {
+    position: absolute;
+    top: 65px;
+    /* Adjust based on where you want it to appear */
+    left: 160px;
+    /* Adjust to align with the button */
+    background-color: white;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+/* Button for media attachment */
+.attachment-btn {
+    background-color: #82ED9B;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    width: 40px;
+    height: 40px;
+    margin-top: 10px;
+}
+
+/* Dropdown container for media types */
+.media-dropdown {
+    position: absolute;
+    top: 375px;
+    /* Adjust position relative to attachment button */
+    left: 70px;
+    /* Align it properly */
+    background-color: white;
+    border-radius: 5px;
+    z-index: 10;
+    width: 100px;
+}
+
+/* Styling the select options within the dropdown */
+select {
+    font-size: 14px;
+    padding: 5px;
+    width: 150px;
+}
+
+.attachment-btn img {
+    width: 20px;
+    height: 20px;
+}
+
 .post-textarea {
     font-family: 'Noto', sans-serif;
     color: hsla(200, 21%, 25%, 0.5);
@@ -114,79 +173,6 @@
 .post-dialogue-footer hr {
     width: 100%;
     color: hsla(200, 21%, 25%, 0.5);
-}
-
-.attachment-btn {
-    background-color: #82ED9B;
-    /* padding: 5px 15px; */
-    border-radius: 50px;
-    cursor: pointer;
-    border: none;
-    width: 40px;
-    height: 40px;
-    margin-top: 10px;
-    /* position: relative;
-    z-index: 10; */
-}
-
-/* Attachment options container (hidden by default) */
-/* .attachment-options {
-    display: none; */
-    /* Hidden by default */
-    /* position: absolute;
-    top: 45px; */
-    /* Position the options below the button */
-    /* left: 0;
-    width: 100%; */
-    /* Make sure it takes the full width of the parent */
-    /* background-color: #f2f2f2; */
-    /* Background color for the attachment options */
-    /* padding: 10px;
-    border-radius: 10px;
-    z-index: 1; */
-    /* Ensure it's above other content */
-    /* transition: all 0.3s ease; */
-    /* Smooth animation */
-    /* opacity: 0; */
-    /* Start with opacity 0 */
-    /* transform: translateY(-20px); */
-    /* Start with it hidden above */
-/* } */
-
-/* When hovering over the attachment button, show the attachment options */
-/* .attachment-btn:hover+.attachment-options {
-    display: block; */
-    /* Show the options when hovered */
-    /* opacity: 1; */
-    /* Make it visible */
-    /* transform: translateY(0); */
-    /* Slide it into place */
-/* } */
-
-/* Each attachment option inside the dropdown */
-/* .attachment-option {
-    display: inline-block;
-    margin-right: 10px;
-    cursor: pointer;
-    font-size: 24px; */
-    /* Larger icons */
-/* } */
-
-/* Styling the icons inside the attachment options */
-/* .attachment-option img {
-    width: 20px;
-    height: 20px;
-    transition: transform 0.2s ease;
-} */
-
-/* .attachment-option:hover img {
-    transform: scale(1.1); */
-    /* Slightly increase size on hover */
-/* } */
-
-.attachment-btn img {
-    width: 20px;
-    height: 20px;
 }
 
 /* .attachment-btn.active {

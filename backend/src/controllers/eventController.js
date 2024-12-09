@@ -24,17 +24,31 @@ exports.createEvent = async (req, res) => {
       return res.status(400).json({ message: "Title and date are required." });
     }
 
-    const event = await Event.create({
+    const eventData = {
       created_by_id: id,
       title,
       description,
       date,
       time,
       location,
-      badge_id
-    });
+    };
 
-    if (target_departments?.length) {
+    // Only include badge_id if provided
+    if (badge_id) {
+      eventData.badge_id = badge_id;
+    }
+
+    const event = await Event.create(eventData);
+
+    // Handle target_departments
+    if (target_departments?.includes("ALL")) {
+      const allDepartments = await Department.find().select("_id");
+      const departmentData = allDepartments.map((dep) => ({
+        event_id: event._id,
+        dep_id: dep._id,
+      }));
+      await EventDepartment.insertMany(departmentData);
+    } else if (target_departments?.length) {
       const departmentData = target_departments.map((dep_id) => ({
         event_id: event._id,
         dep_id,
@@ -42,7 +56,15 @@ exports.createEvent = async (req, res) => {
       await EventDepartment.insertMany(departmentData);
     }
 
-    if (target_teams?.length) {
+    // Handle target_teams
+    if (target_teams?.includes("ALL")) {
+      const allTeams = await Team.find().select("_id");
+      const teamData = allTeams.map((team) => ({
+        event_id: event._id,
+        team_id: team._id,
+      }));
+      await EventTeam.insertMany(teamData);
+    } else if (target_teams?.length) {
       const teamData = target_teams.map((team_id) => ({
         event_id: event._id,
         team_id,
@@ -50,7 +72,15 @@ exports.createEvent = async (req, res) => {
       await EventTeam.insertMany(teamData);
     }
 
-    if (target_locations?.length) {
+    // Handle target_locations
+    if (target_locations?.includes("ALL")) {
+      const allLocations = await Employee.distinct("location", { location: { $ne: null } });
+      const locationData = allLocations.map((loc) => ({
+        event_id: event._id,
+        location: loc,
+      }));
+      await EventLocation.insertMany(locationData);
+    } else if (target_locations?.length) {
       const locationData = target_locations.map((loc) => ({
         event_id: event._id,
         location: loc,
@@ -58,7 +88,30 @@ exports.createEvent = async (req, res) => {
       await EventLocation.insertMany(locationData);
     }
 
-    if (target_employees?.length) {
+    // Handle target_employees
+    if (target_employees?.includes("ALL")) {
+      const allEmployees = await Employee.find().select("_id");
+      const employeeData = allEmployees.map((emp) => ({
+        event_id: event._id,
+        emp_id: emp._id,
+        response: "Pending",
+      }));
+      await EventEmployee.insertMany(employeeData);
+
+      const notificationType = await NotificationType.findOne({ type_name: "Event Invitation" });
+      if (!notificationType) {
+        return res.status(404).json({ message: "Notification type not found" });
+      }
+
+      for (const emp of allEmployees) {
+        await NotificationController.createNotification({
+          recipient_id: emp._id,
+          noti_type_id: notificationType._id,
+          related_entity_id: event._id,
+          message: `You have been invited to an event: ${title}`,
+        });
+      }
+    } else if (target_employees?.length) {
       const employeeData = target_employees.map((emp_id) => ({
         event_id: event._id,
         emp_id,
@@ -66,7 +119,7 @@ exports.createEvent = async (req, res) => {
       }));
       await EventEmployee.insertMany(employeeData);
 
-      const notificationType = await NotificationType.findOne({type_name: "Event Invitation"});
+      const notificationType = await NotificationType.findOne({ type_name: "Event Invitation" });
       if (!notificationType) {
         return res.status(404).json({ message: "Notification type not found" });
       }
@@ -88,24 +141,25 @@ exports.createEvent = async (req, res) => {
   }
 };
 
+
 exports.getEventsForEmployee = async (req, res) => {
   const { id } = req.user;
-  
+
   try {
     const employee = await Employee.findById(id).populate("dep_id", "name");
     if (!employee) {
       return res.status(404).json({ message: "Employee not found." });
     }
-  
+
     const teams = await TeamEmployee.find({ emp_id: id }).select("team_id");
     const teamIds = teams.map((team) => team.team_id);
-  
+
     const departmentEvents = await EventDepartment.find({ dep_id: employee.dep_id });
     const teamEvents = await EventTeam.find({ team_id: { $in: teamIds } });
     const locationEvents = await EventLocation.find({ location: employee.location });
     const directEvents = await EventEmployee.find({ emp_id: id });
     const leaderCreatedEvents = await Event.find({ created_by_id: id });
-  
+
     const eventIds = [
       ...new Set([
         ...departmentEvents.map((event) => event.event_id),
@@ -115,9 +169,9 @@ exports.getEventsForEmployee = async (req, res) => {
         ...leaderCreatedEvents.map((event) => event._id),
       ]),
     ];
-  
+
     const events = await Event.find({ _id: { $in: eventIds } }).sort({ date: 1 });
-  
+
     res.status(200).json({ events });
   } catch (error) {
     console.error("Error fetching events:", error);
@@ -128,22 +182,22 @@ exports.getEventsForEmployee = async (req, res) => {
 exports.updateEventResponse = async (req, res) => {
   const { event_id, response } = req.body;
   const { id } = req.user;
-  
+
   try {
     if (!["Accepted", "Declined", "Pending"].includes(response)) {
       return res.status(400).json({ message: "Invalid response value." });
     }
-  
+
     const eventEmployee = await EventEmployee.findOneAndUpdate(
       { event_id, emp_id: id },
       { response },
       { new: true }
     );
-  
+
     if (!eventEmployee) {
       return res.status(404).json({ message: "Event or invitation not found." });
     }
-  
+
     res.status(200).json({ message: "Response updated successfully", eventEmployee });
   } catch (error) {
     console.error("Error updating event response:", error);

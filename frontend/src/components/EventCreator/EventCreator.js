@@ -1,36 +1,64 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./EventCreator.css";
 
-const EventCreator = ({ onSave, departments, locations, teams, existingEvent  }) => {
+const EventCreator = ({ onSave, departments, locations, teams, existingEvent }) => {
     const [formData, setFormData] = useState({
-        eventName: "",
+        title: "", // Updated from eventName
         description: "",
         date: "",
         time: "",
         location: "",
-        participants: [],
-        targetDepartments: [],
-        targetLocations: [],
-        targetTeams:[]
+        target_departments: [],
+        target_teams: [],
+        target_locations: [],
+        target_employees: [],
+        badge_id: "", // Updated from badge
     });
-    const [emailInput, setEmailInput] = useState("");
+
+    const [availableEmployees, setAvailableEmployees] = useState([]);
+    const [availableBadges, setAvailableBadges] = useState([]);
 
     // Populate form when editing
     useEffect(() => {
         if (existingEvent) {
             setFormData({
-                eventName: existingEvent.title,
+                title: existingEvent.title, // Updated from eventName
                 description: existingEvent.description,
                 date: existingEvent.date,
                 time: existingEvent.time || "",
                 location: existingEvent.location || "",
-                participants: existingEvent.participants || [],
-                targetDepartments: existingEvent.targetDepartments || [],
-                targetLocations: existingEvent.targetLocations || [],
-                targetTeams: existingEvent.targetTeams || [],
+                target_departments: existingEvent.target_departments || [],
+                target_teams: existingEvent.target_teams || [],
+                target_locations: existingEvent.target_locations || [],
+                target_employees: existingEvent.target_employees || [],
+                badge_id: existingEvent.badge_id || "",
             });
         }
     }, [existingEvent]);
+
+    // Fetch employees and badges
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [employeesRes, badgesRes] = await Promise.all([
+                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/employees/all`, {
+                        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                    }),
+                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/badges/get`, {
+                        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                    }),
+                ]);
+
+                setAvailableEmployees(employeesRes.data.employees || []);
+                setAvailableBadges(badgesRes.data.badges || []);
+            } catch (err) {
+                console.error("Error fetching data:", err);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     // Handle input changes
     const handleInputChange = (e) => {
@@ -38,89 +66,71 @@ const EventCreator = ({ onSave, departments, locations, teams, existingEvent  })
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // Handle adding participants by email
-    const handleAddParticipant = () => {
-        if (emailInput.trim() && !formData.participants.includes(emailInput.trim())) {
-            setFormData((prev) => ({
-                ...prev,
-                participants: [...prev.participants, emailInput.trim()],
-            }));
-        }
-        setEmailInput("");
-    };
-
-    // Handle removing participants
-    const handleRemoveParticipant = (email) => {
-        setFormData((prev) => ({
-            ...prev,
-            participants: prev.participants.filter((e) => e !== email),
-        }));
-    };
-
     // Handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        onSave(formData); // Pass form data to parent component
-        setFormData({
-            eventName: "",
-            description: "",
-            date: "",
-            time: "",
-            location: "",
-            participants: [],
-            targetDepartments: [],
-            targetLocations: [],
-        });
-    };
 
-    // Handle department selection
-    const handleDepartmentChange = (e) => {
-        const { value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            targetDepartments: prev.targetDepartments.includes(value)
-                ? prev.targetDepartments.filter((dept) => dept !== value)
-                : [...prev.targetDepartments, value],
-        }));
-    };
+        const payload = {
+            title: formData.title,
+            description: formData.description,
+            date: formData.date,
+            time: formData.time,
+            location: formData.location,
+            target_departments: formData.target_departments,
+            target_teams: formData.target_teams,
+            target_locations: formData.target_locations,
+            target_employees: formData.target_employees,
+            badge_id: formData.badge_id,
+        };
 
-    // Handle location selection
-    const handleLocationChange = (e) => {
-        const { value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            targetLocations: prev.targetLocations.includes(value)
-                ? prev.targetLocations.filter((loc) => loc !== value)
-                : [...prev.targetLocations, value],
-        }));
-    };
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_BACKEND_URL}/api/events/create`,
+                payload,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                }
+            );
 
-    // Handle teams selection
-    const handleTeamsChange = (e) => {
-        const { value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            targetTeams: prev.targetTeams.includes(value)
-                ? prev.targetTeams.filter((loc) => loc !== value)
-                : [...prev.targetTeams, value],
-        }));
-    };
+            console.log("Event created successfully:", response.data);
 
+            setFormData({
+                title: "",
+                description: "",
+                date: "",
+                time: "",
+                location: "",
+                target_departments: [],
+                target_teams: [],
+                target_locations: [],
+                target_employees: [],
+                badge_id: "",
+            });
+
+            onSave(response.data);
+        } catch (error) {
+            console.error("Error creating event:", error.response?.data || error.message);
+            alert("Failed to create the event. Please try again.");
+        }
+    };
 
     return (
         <div className="event-creator-container">
             <form className="event-creator-form" onSubmit={handleSubmit}>
-                {/* Event Name */}
+                {/* Event Title */}
                 <div className="event-creator-form-row">
-                    <label htmlFor="eventName">
+                    <label htmlFor="title">
                         Event Name <span className="required">*</span>
                     </label>
                     <input
-                        id="eventName"
+                        id="title"
                         type="text"
-                        name="eventName"
+                        name="title"
                         placeholder="Enter event name"
-                        value={formData.eventName}
+                        value={formData.title}
                         onChange={handleInputChange}
                         required
                     />
@@ -176,93 +186,49 @@ const EventCreator = ({ onSave, departments, locations, teams, existingEvent  })
                     />
                 </div>
 
-                {/* Target Departments */}
+                {/* Badge Selector */}
                 <div className="event-creator-form-row">
-                    <label>Target Departments</label>
-                    <div className="event-creator-checkbox-group">
-                        {departments.map((dept) => (
-                            <div key={dept} className="event-creator-checkbox-item">
-                                <input
-                                    type="checkbox"
-                                    value={dept}
-                                    checked={formData.targetDepartments.includes(dept)}
-                                    onChange={handleDepartmentChange}
-                                />
-                                <span>{dept}</span>
-                            </div>
+                    <label htmlFor="badge">Attach a Badge</label>
+                    <select
+                        id="badge"
+                        name="badge_id"
+                        value={formData.badge_id}
+                        onChange={handleInputChange}
+                    >
+                        <option value="">Choose a badge</option>
+                        {availableBadges.map((badge) => (
+                            <option key={badge._id} value={badge._id}>
+                                {badge.name}
+                            </option>
                         ))}
-                    </div>
+                    </select>
                 </div>
 
-                {/* Target Locations */}
+                {/* Employees */}
                 <div className="event-creator-form-row">
-                    <label>Target Locations</label>
+                    <label>Employees</label>
                     <div className="event-creator-checkbox-group">
-                        {locations.map((loc) => (
-                            <div key={loc} className="event-creator-checkbox-item">
+                        {availableEmployees.map((emp) => (
+                            <div key={emp._id} className="event-creator-checkbox-item">
                                 <input
                                     type="checkbox"
-                                    value={loc}
-                                    checked={formData.targetLocations.includes(loc)}
-                                    onChange={handleLocationChange}
+                                    value={emp._id}
+                                    checked={(formData.target_employees || []).includes(emp._id)}
+                                    onChange={() =>
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            target_employees: (prev.target_employees || []).includes(emp._id)
+                                                ? (prev.target_employees || []).filter((id) => id !== emp._id)
+                                                : [...(prev.target_employees || []), emp._id],
+                                        }))
+                                    }
                                 />
-                                <span>{loc}</span>
+                                <span>
+                                    {emp.f_name} {emp.l_name} ({emp.email})
+                                </span>
                             </div>
                         ))}
                     </div>
-                </div>
-                
-                  {/* Target Locations */}
-                <div className="event-creator-form-row">
-                    <label>Target Teams</label>
-                    <div className="event-creator-checkbox-group">
-                        {teams.map((loc) => (
-                            <div key={loc} className="event-creator-checkbox-item">
-                                <input
-                                    type="checkbox"
-                                    value={loc}
-                                    checked={formData.targetTeams.includes(loc)}
-                                    onChange={handleTeamsChange}
-                                />
-                                <span>{loc}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Add Participants */}
-                <div className="event-creator-form-row">
-                    <label htmlFor="participants">Add Participants</label>
-                    <div className="event-creator-email-input-container">
-                        <input
-                            id="participants"
-                            type="email"
-                            placeholder="Enter participant's email"
-                            value={emailInput}
-                            onChange={(e) => setEmailInput(e.target.value)}
-                        />
-                        <button
-                            type="button"
-                            className="event-creator-add-participant-button"
-                            onClick={handleAddParticipant}
-                        >
-                            Add
-                        </button>
-                    </div>
-                    <ul className="event-creator-email-list">
-                        {formData.participants.map((email, index) => (
-                            <li key={index}>
-                                {email}
-                                <button
-                                    type="button"
-                                    className="event-creator-remove-participant-button"
-                                    onClick={() => handleRemoveParticipant(email)}
-                                >
-                                    Remove
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
                 </div>
 
                 {/* Actions */}
@@ -272,8 +238,6 @@ const EventCreator = ({ onSave, departments, locations, teams, existingEvent  })
                 </div>
             </form>
         </div>
-
-
     );
 };
 

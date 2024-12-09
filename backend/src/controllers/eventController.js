@@ -11,7 +11,7 @@ const NotificationType = require("../models/NotificationType");
 const NotificationController = require("./notificationController");
 
 exports.createEvent = async (req, res) => {
-  const { title, description, date, time, location, target_departments, target_teams, target_locations, target_employees } = req.body;
+  const { title, description, date, time, location, target_departments, target_teams, target_locations, target_employees, badge_id } = req.body;
   const { id } = req.user;
 
   try {
@@ -31,6 +31,7 @@ exports.createEvent = async (req, res) => {
       date,
       time,
       location,
+      badge_id
     });
 
     if (target_departments?.length) {
@@ -166,5 +167,34 @@ exports.getEventResources = async (req, res) => {
   } catch (error) {
     console.error("Error fetching event resources:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.completeEvent = async (eventId) => {
+  try {
+    const event = await Event.findById(eventId).populate("badge_id");
+    if (!event || !event.badge_id) {
+      console.log("No badge associated with this event.");
+      return;
+    }
+
+    const eventEmployees = await EventEmployee.find({ event_id: eventId, response: "Accepted" });
+    for (const eventEmployee of eventEmployees) {
+      const achievementExists = await Achievement.findOne({
+        emp_id: eventEmployee.emp_id,
+        badge_id: event.badge_id,
+      });
+
+      if (!achievementExists) {
+        await Achievement.create({
+          emp_id: eventEmployee.emp_id,
+          badge_id: event.badge_id,
+          event_id: event._id,
+          created_at: new Date(),
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Error completing event:", error);
   }
 };

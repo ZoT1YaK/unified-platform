@@ -15,4 +15,7 @@ router.put("/response", verifyToken, eventController.updateEventResponse);
 // Get all resources for event creation
 router.get("/resources", verifyToken, eventController.getEventResources);
 
+// Delete an event
+router.delete("/delete/:eventId", verifyToken, eventController.deleteEvent);
+
 module.exports = router;

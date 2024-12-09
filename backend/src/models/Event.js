@@ -27,6 +27,9 @@ const eventSchema = new mongoose.Schema({
     type: String,
     default: "Online",
   },
+
+  badge_id: { type: mongoose.Schema.Types.ObjectId, ref: "Badge", required: false },
+
 });
 
 module.exports = mongoose.model("Event", eventSchema);

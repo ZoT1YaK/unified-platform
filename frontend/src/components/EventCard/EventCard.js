@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./EventCard.css";
 
-const EventCard = ({ onEventClick, clickable }) => {
+const EventCard = ({ isLeader }) => {
   const [events, setEvents] = useState([]);
   const [hoveredEvent, setHoveredEvent] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
 
   // Fetch events on component mount
   useEffect(() => {
@@ -77,6 +78,29 @@ const EventCard = ({ onEventClick, clickable }) => {
     }
   };
 
+  const handleDeleteEvent = async (eventId) => {
+    try {
+      await axios.delete(
+        `${process.env.REACT_APP_BACKEND_URL}/api/events/delete/${eventId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      // Update the event list after deletion
+      setEvents((prevEvents) =>
+        prevEvents.filter((event) => event._id !== eventId)
+      );
+      console.log("Event deleted successfully.");
+    } catch (err) {
+      console.error("Error deleting event:", err);
+      alert("Failed to delete the event. Please try again.");
+    }
+  };
+
+
   // Render the component
   if (loading) return <p>Loading events...</p>;
   if (error) return <p className="error-message">{error}</p>;
@@ -87,11 +111,8 @@ const EventCard = ({ onEventClick, clickable }) => {
       {events.map((event) => (
         <div
           key={event._id}
-          className={`event-card ${clickable ? 'clickable' : ''}`}
           onMouseEnter={() => setHoveredEvent(event._id)}
           onMouseLeave={() => setHoveredEvent(null)}
-          onClick={() => clickable && onEventClick(event)} // Trigger click only if clickable
-
         >
           <div className="event-main">
             <div className="event-info">
@@ -100,6 +121,16 @@ const EventCard = ({ onEventClick, clickable }) => {
               <p>Time: {event.time || "N/A"}</p>
               <p>Location: {event.location || "Online"}</p>
             </div>
+            {isLeader && (
+              <div className="event-actions">
+                <button
+                  className="delete-button"
+                  onClick={() => handleDeleteEvent(event._id)}
+                >
+                  Delete
+                </button>
+              </div>
+            )}
             <div className="event-rsvp">
               <button
                 className={`rsvp-btn accept ${event.response === "Joined" ? "active" : ""}`}

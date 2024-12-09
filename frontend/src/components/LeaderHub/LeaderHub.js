@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import './LeaderHub.css';
-import { useLocation } from 'react-router-dom'; 
+import { useLocation } from 'react-router-dom';
 import TopBar from '../TopBar/TopBar';
 import Header from '../Header/Header';
 import EmployeeDetails from '../EmployeeDetails/EmployeeDetails';
@@ -11,7 +11,6 @@ import EventCard from '../EventCard/EventCard';
 
 const LeaderHub = () => {
     const [isLeader, setIsLeader] = useState(false);
-    const [selectedEvent, setSelectedEvent] = useState(null);
     const location = useLocation();
 
     // Fetch the user data from localStorage
@@ -94,7 +93,7 @@ const LeaderHub = () => {
     /*const [selectedEvent, setSelectedEvent] = useState(null);*/
 
 
-    // Event Handlers
+    /*// Event Handlers
     const handleEventClick = (event) => {
         // Only allow clicks if the user is a leader and on /leaderhub
         if (isLeader && location.pathname === '/leaderhub') {
@@ -109,9 +108,12 @@ const LeaderHub = () => {
     const handleDeleteEvent = () => {
         console.log('Event deleted:', selectedEvent._id); // Optionally handle deletion here
         setSelectedEvent(null); // Close the modal
-    };
+    };*/
 
 
+    const handleSaveEvent = (newEvent) => {
+        console.log("Event saved:", newEvent);
+      }; 
     return (
         <div className="leaderhub-page">
             <TopBar />
@@ -126,9 +128,8 @@ const LeaderHub = () => {
                     <div className="scheduled-event-container">
                         <h3 className="scheduled-event-title">Scheduled Events</h3>
                         <div className="event-grid">
-                        <EventCard
-                                onEventClick={handleEventClick} // Pass the click handler
-                                clickable={isLeader && location.pathname === '/leaderhub'} // Conditionally make events clickable
+                            <EventCard isLeader={isLeader && location.pathname === "/leaderhub"} // Only leaders see delete buttons
+
                             />
                         </div>
                     </div>
@@ -160,9 +161,7 @@ const LeaderHub = () => {
                             />
                             Create an Event
                         </h2>
-                        <EventCreator
-
-                        />
+                        <EventCreator onSave={handleSaveEvent} />
                     </div>
                 </div>
 
@@ -202,33 +201,8 @@ const LeaderHub = () => {
                 </div>
 
             </div>
-        {/* Event Modal (only for leaders) */}
-        {selectedEvent && isLeader && (
-            <div className="events-modal-overlay">
-                <div className="events-modal-content">
-                    <h2>Edit Event</h2>
-                    <EventCreator
-                        existingEvent={selectedEvent} // Pass the selected event for editing
-                        onSave={handleSaveEvent} // Save event callback
-                    />
-                    <div className="events-modal-actions">
-                        <button
-                            className="events-modal-delete"
-                            onClick={handleDeleteEvent}
-                        >
-                            Delete Event
-                        </button>
-                        <button
-                            className="events-modal-close"
-                            onClick={() => setSelectedEvent(null)}
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
-            </div>
-        )}
-    </div>
+
+        </div>
     );
 };
 

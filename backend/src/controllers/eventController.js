@@ -274,3 +274,38 @@ exports.completeEvent = async (eventId) => {
     console.error("Error completing event:", error);
   }
 };
+
+exports.deleteEvent = async (req, res) => {
+  const { id: userId } = req.user; 
+  const { eventId } = req.params; 
+
+  try {
+    
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found." });
+    }
+
+   
+    if (event.created_by_id.toString() !== userId) {
+      return res.status(403).json({ message: "You are not authorized to delete this event." });
+    }
+
+   
+    await Promise.all([
+      EventEmployee.deleteMany({ event_id: eventId }),
+      EventDepartment.deleteMany({ event_id: eventId }),
+      EventTeam.deleteMany({ event_id: eventId }),
+      EventLocation.deleteMany({ event_id: eventId }),
+    ]);
+
+    
+    await Event.findByIdAndDelete(eventId);
+
+    res.status(200).json({ message: "Event deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting event:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+

@@ -82,4 +82,17 @@
   .event-card.no-hover .event-description {
     display: none; /* Hide hover details */
   }
+  .event-actions .delete-button {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+  
+  .event-actions .delete-button:hover {
+    background-color: #c0392b;
+  }
   

@@ -95,4 +95,9 @@
   .event-actions .delete-button:hover {
     background-color: #c0392b;
   }
-  
+  .filter-search-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }

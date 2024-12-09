@@ -1,13 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import "./EventCard.css";
+
 
 const EventCard = ({ isLeader }) => {
   const [events, setEvents] = useState([]);
   const [hoveredEvent, setHoveredEvent] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [filter, setFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
+
+  const useFilterAndSearch = (items, filter, searchQuery, filterKey = "response", searchKey = "title") => {
+    return useMemo(() => {
+      return items
+        .filter((item) => {
+          if (filter === "All") return true;
+          if (filter === "Accepted") return item[filterKey] === "Joined";
+          if (filter === "Declined") return item[filterKey] === "Declined";
+          return true;
+        })
+        .filter((item) => {
+          const query = searchQuery || ""; // Fallback to empty string
+          const searchValue = searchKey.includes(".")
+            ? searchKey.split(".").reduce((obj, key) => (obj ? obj[key] : ""), item)
+            : item[searchKey];
+          return (searchValue || "").toLowerCase().includes(query.toLowerCase());
+        });
+    }, [items, filter, searchQuery, filterKey, searchKey]);
+  };
 
   // Fetch events on component mount
   useEffect(() => {
@@ -23,7 +45,6 @@ const EventCard = ({ isLeader }) => {
           }
         );
 
-        // Standardize "Accepted" to "Joined"
         const standardizedEvents = response.data.events.map((event) => ({
           ...event,
           response: event.response === "Accepted" ? "Joined" : event.response,
@@ -78,6 +99,8 @@ const EventCard = ({ isLeader }) => {
     }
   };
 
+  const filteredAndSearchedEvents = useFilterAndSearch(events, filter, searchQuery);
+
   const handleDeleteEvent = async (eventId) => {
     try {
       await axios.delete(
@@ -100,15 +123,36 @@ const EventCard = ({ isLeader }) => {
     }
   };
 
-
   // Render the component
   if (loading) return <p>Loading events...</p>;
   if (error) return <p className="error-message">{error}</p>;
 
+
+
   return (
     <div className="event-list">
       <h2>Upcoming Events</h2>
-      {events.map((event) => (
+      {/* Search and Filter UI */}
+      <div className="filter-search-container">
+        <button onClick={() => setFilter('All')} className={filter === 'All' ? 'active' : ''}>
+          All
+        </button>
+        <button onClick={() => setFilter('Accepted')} className={filter === 'Accepted' ? 'active' : ''}>
+          Accepted
+        </button>
+        <button onClick={() => setFilter('Declined')} className={filter === 'Declined' ? 'active' : ''}>
+          Declined
+        </button>
+
+        <input
+          type="text"
+          placeholder="Search events..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="search-bar"
+        />
+      </div>
+      {filteredAndSearchedEvents.map((event) => (
         <div
           key={event._id}
           onMouseEnter={() => setHoveredEvent(event._id)}

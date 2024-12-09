@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 const path = require("path");
-
+const { Parser } = require("json2csv");
 const Task = require("../models/Task");
 const Milestone = require("../models/Milestone");
 const Employee = require("../models/Employee");
@@ -224,10 +224,9 @@ exports.downloadMetricsReport = async (req, res) => {
   }
 };
 
-const calculateMetricsData = async ({ emp_id, team_id, start_date, end_date }) => {
+const calculateMetricsData = async ({ emp_id, start_date, end_date }) => {
   const filter = {
     ...(emp_id && { assigned_to_id: new mongoose.Types.ObjectId(emp_id) }),
-    ...(team_id && { assigned_to_team_id: new mongoose.Types.ObjectId(team_id) }),
     created_date: { $gte: new Date(start_date), $lte: new Date(end_date) },
   };
 
@@ -235,7 +234,7 @@ const calculateMetricsData = async ({ emp_id, team_id, start_date, end_date }) =
     { $match: filter },
     {
       $group: {
-        _id: new mongoose.Types.ObjectId(emp_id || team_id),
+        _id: new mongoose.Types.ObjectId(emp_id),
         totalTasks: { $sum: 1 },
         completedTasks: { $sum: { $cond: [{ $eq: ["$status", "Completed"] }, 1, 0] } },
         averageTaskSpeed: {
@@ -302,4 +301,120 @@ const calculateMetricsData = async ({ emp_id, team_id, start_date, end_date }) =
   }
 
   return metrics[0];
+};
+
+//-------------------------------- PowerBI --------------------------------//
+
+exports.generateMonthlyPowerBIReport = async () => {
+  console.log("Generating monthly Power BI reports...");
+
+  try {
+    const leaders = await Employee.find({ is_people_leader: true }).select("_id email");
+
+    for (const leader of leaders) {
+      try {
+        const reportPath = await generatePowerBIReportForLeader(leader._id);
+        console.log(`Power BI Report generated for Leader: ${leader.email} at ${reportPath}`);
+      } catch (error) {
+        console.error(`Error generating Power BI report for leader ${leader.email}:`, error);
+      }
+    }
+
+    console.log("Monthly Power BI reports generated successfully.");
+  } catch (error) {
+    console.error("Error generating monthly Power BI reports:", error);
+  }
+};
+
+exports.generateManualPowerBIReport = async (req, res) => {
+  const { id } = req.user;
+
+  try {
+    const reportPath = await generatePowerBIReportForLeader(id);
+    res.status(201).json({
+      message: "Power BI report generated successfully.",
+      reportPath,
+    });
+  } catch (error) {
+    console.error("Error generating manual Power BI report:", error);
+    res.status(500).json({ message: "Server error." });
+  }
+};
+
+const generatePowerBIReportForLeader = async (leaderId) => {
+  const leader = await Employee.findById(leaderId).select("email");
+  if (!leader) {
+    throw new Error("Leader not found.");
+  }
+
+  const leaderEmployees = await Employee.find({ people_leader_id: leaderId }).select("_id email");
+
+  if (!leaderEmployees.length) {
+    throw new Error("No employees found for this leader.");
+  }
+
+  const employeeIds = leaderEmployees.map((emp) => emp._id);
+  const employeeEmailsMap = leaderEmployees.reduce((acc, emp) => {
+    acc[emp._id.toString()] = emp.email;
+    return acc;
+  }, {});
+
+  const snapshots = await MetricsSnapshot.find({ emp_id: { $in: employeeIds } });
+
+  if (!snapshots.length) {
+    throw new Error("No metrics data found for the leader's employees.");
+  }
+
+  const csvFields = [
+    "Employee Email",
+    "Task Completion Rate",
+    "Average Task Speed (days)",
+    "Milestones Achieved",
+    "Engagement Score",
+    "Start Date",
+    "End Date",
+  ];
+
+  const csvData = snapshots.map((snapshot) => ({
+    "Employee Email": employeeEmailsMap[snapshot.emp_id?.toString()] || "N/A",
+    "Task Completion Rate": `${snapshot.task_completion_rate.toFixed(2)}%`,
+    "Average Task Speed (days)": snapshot.average_task_speed.toFixed(2),
+    "Milestones Achieved": snapshot.milestones_achieved,
+    "Engagement Score": snapshot.engagement_score.toFixed(2),
+    "Start Date": snapshot.start_date.toISOString(),
+    "End Date": snapshot.end_date.toISOString(),
+  }));
+
+  const json2csvParser = new Parser({ fields: csvFields });
+  const csv = json2csvParser.parse(csvData);
+
+  const reportsDir = path.resolve(__dirname, "../reports");
+  if (!fs.existsSync(reportsDir)) {
+    fs.mkdirSync(reportsDir, { recursive: true });
+  }
+
+  const reportFilePath = path.join(reportsDir, `power_bi_report_${leaderId}_${Date.now()}.csv`);
+  fs.writeFileSync(reportFilePath, csv);
+
+  return reportFilePath;
+};
+
+exports.downloadPowerBIReport = async (req, res) => {
+  const { report_path } = req.params;
+
+  try {
+    if (!fs.existsSync(report_path)) {
+      return res.status(404).json({ message: "File not found." });
+    }
+
+    res.download(report_path, (err) => {
+      if (err) {
+        console.error("Error downloading file:", err);
+        res.status(500).json({ message: "Error downloading file." });
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching report for download:", error);
+    res.status(500).json({ message: "Server error." });
+  }
 };

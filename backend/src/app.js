@@ -5,6 +5,7 @@ require("./utils/scheduledTasks");
 require("./utils/scheduledReports");
 require("./utils/fileCleanup");
 require("./utils/scheduledMetrics");
+require("./utils/scheduledReportsPBI");
 
 const employeeRoutes = require("./routes/employeeRoutes");
 const teamRoutes = require("./routes/teamRoutes");

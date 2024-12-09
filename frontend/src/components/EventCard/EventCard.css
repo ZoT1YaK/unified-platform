@@ -74,4 +74,12 @@
     padding: 10px;
     border-radius: 5px;
   }
+  .event-card.no-hover:hover {
+    background-color: transparent; /* Prevent hover background changes */
+    cursor: pointer; /* Keep pointer cursor for clicks */
+  }
+  
+  .event-card.no-hover .event-description {
+    display: none; /* Hide hover details */
+  }
   

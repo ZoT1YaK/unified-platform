@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './LeaderHub.css';
 import TopBar from '../TopBar/TopBar';
 import Header from '../Header/Header';
@@ -55,7 +55,7 @@ const LeaderHub = () => {
     ];
     
 
-    const [events, setEvents] = useState([
+   /* const [events, setEvents] = useState([
         {
             id: 1,
             thumbnail: 'https://via.placeholder.com/300x150',
@@ -77,9 +77,9 @@ const LeaderHub = () => {
             title: 'Ugly Sweater Weather',
             description: 'A fun contest for the ugliest sweater...',
         },
-    ]);
+    ]);*/
 
-    const [selectedEvent, setSelectedEvent] = useState(null);
+    /*const [selectedEvent, setSelectedEvent] = useState(null);
 
  
 
@@ -100,7 +100,7 @@ const LeaderHub = () => {
     const handleDeleteEvent = (eventId) => {
         setEvents((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
         setSelectedEvent(null);
-    };
+    };*/
 
     return (
         <div className="leaderhub-page">
@@ -116,37 +116,11 @@ const LeaderHub = () => {
                     <div className="scheduled-event-container">
                         <h3 className="scheduled-event-title">Scheduled Events</h3>
                         <div className="event-grid">
-                            {events.map((event) => (
                                 <EventCard
-                                    key={event.id}
-                                    thumbnail={event.thumbnail}
-                                    date={event.date}
-                                    title={event.title}
-                                    description={event.description}
-                                    onClick={() => handleEditEvent(event)}
                                 />
-                            ))}
                         </div>
                     </div>
-                    {/* Event Modal */}
-                    {selectedEvent && (
-                        <div className="events-modal-overlay">
-                            <div className="events-modal-content">
-                                <h2>Edit Event</h2>
-                                <EventCreator
-                                    onSave={(updatedEvent) => handleSaveEvent({ ...selectedEvent, ...updatedEvent })}
-                                    departments={["Engineering", "HR", "Marketing"]}
-                                    locations={["New York", "London", "Tokyo"]}
-                                    teams={["UX Team", "Sales Team"]}
-                                    existingEvent={selectedEvent}
-                                />
-                                <div className="events-modal-actions">
-                                    <button onClick={() => handleDeleteEvent(selectedEvent.id)}>Delete Event</button>
-                                    <button onClick={() => setSelectedEvent(null)}>Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                    
                 </div>
 
                 {/* Center Panel */}
@@ -175,10 +149,7 @@ const LeaderHub = () => {
                             Create an Event
                         </h2>
                         <EventCreator
-                            onSave={handleSaveEvent}
-                            departments={["Engineering", "HR", "Marketing"]}
-                            locations={["New York", "London", "Tokyo"]}
-                            teams={["UX Team", "Sales Team"]}
+                            
                         />
                     </div>
                 </div>

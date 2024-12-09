@@ -1,0 +1,47 @@
+.notification-button {
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.notification-history {
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.notification-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.notification-item.unread {
+    background-color: #fff;
+}
+
+.notification-item.read {
+    background-color: #a2acb0;
+}
+
+.notification-item strong {
+    display: block;
+    font-size: 1em;
+}
+
+.notification-item p {
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.notification-item small {
+    display: block;
+    font-size: 0.8em;
+    color: #555;
+}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './TopBar.css';
+import Notification from '../Notifications/Notifications';
 
 const TopBar = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -9,6 +10,7 @@ const TopBar = () => {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
+    const [showHistory, setShowHistory] = useState(false);
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -28,9 +30,9 @@ const TopBar = () => {
 
     const toggleView = () => {
         if (location.pathname === '/leaderhub') {
-            navigate('/profile'); 
+            navigate('/profile');
         } else {
-            navigate('/leaderhub'); 
+            navigate('/leaderhub');
         }
     };
 
@@ -86,7 +88,17 @@ const TopBar = () => {
             {/* Right Icons */}
             <div className="right-icons">
                 <img src="/business (1).png" alt="icon6" className="icon" />
-                <img src="/notification.png" alt="icon7" className="icon" />
+
+                {/* Notification Button */}
+                <button
+                    className="notification-button"
+                    onClick={() => setShowHistory((prev) => !prev)}
+                >
+                    <img src="/notification.png" alt="Notifications" className="icon" />
+                </button>
+                {/* Notification Dropdown */}
+                <Notification showHistory={showHistory} toggleHistory={() => setShowHistory(false)} />
+
                 <div className="dropdown-user-container">
                     <img
                         src="/cat.png"

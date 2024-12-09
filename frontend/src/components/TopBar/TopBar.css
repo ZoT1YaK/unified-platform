@@ -65,6 +65,7 @@
     object-fit: contain;
 }
 
+
 /* Right Icons */
 .right-icons {
     display: flex;
@@ -72,10 +73,43 @@
     align-items: center;
 }
 
+.notification-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.notification-button img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.notification-button:focus {
+    outline: none;
+}
+
+.notification-history-dropdown {
+    position: absolute;
+    top: 60px;
+    /* Adjust to fit under the top bar */
+    right: 10px;
+    width: 300px;
+    /* Adjust width as needed */
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    padding: 10px;
+}
+
 /* Leader Button */
 .leader-button {
     display: flex;
-    align-items: center; 
+    align-items: center;
     gap: 8px;
     background-color: #6adb99;
     color: #32444d;
@@ -85,8 +119,8 @@
     border-radius: 20px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    width: 150px; 
-    min-width: 150px; 
+    width: 150px;
+    min-width: 150px;
     height: 40px;
     box-sizing: border-box;
     text-align: center;
@@ -135,6 +169,7 @@
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -169,7 +204,7 @@
 
 /* Dropdown Links */
 .dropdown-links {
-    padding: 5px 15px; 
+    padding: 5px 15px;
 }
 
 .dropdown-links a {
@@ -184,12 +219,13 @@
 .dropdown-links a:hover {
     color: #5bc488;
 }
+
 /* Dropdown Link */
 .dropdown-link {
     display: block;
     color: #32444d;
     font-size: 13px;
-    margin: 4px 0; 
+    margin: 4px 0;
     cursor: pointer;
     text-decoration: none;
 }
@@ -201,16 +237,16 @@
 /* View Profile Button */
 .dropdown-view-profile-button {
     width: 100%;
-    padding: 8px; 
+    padding: 8px;
     background-color: #f5f5f5;
     border: none;
     border-radius: 6px;
     text-align: center;
-    font-size: 13px; 
+    font-size: 13px;
     font-weight: bold;
     color: #32444d;
     cursor: pointer;
-    margin: 8px 0; 
+    margin: 8px 0;
     transition: background-color 0.3s ease;
 }
 
@@ -225,10 +261,12 @@
 
 /* Log Out Link */
 .logout-link {
-    color: red; /* Optional: Highlight logout in red */
+    color: red;
+    /* Optional: Highlight logout in red */
     font-weight: bold;
 }
 
 .logout-link:hover {
-    color: darkred; /* Darker red on hover */
+    color: darkred;
+    /* Darker red on hover */
 }

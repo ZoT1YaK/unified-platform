@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./EventCard.css";
 
-const EventCard = () => {
+const EventCard = ({ onEventClick, clickable }) => {
   const [events, setEvents] = useState([]);
   const [hoveredEvent, setHoveredEvent] = useState(null);
   const [error, setError] = useState(null);
@@ -87,9 +87,11 @@ const EventCard = () => {
       {events.map((event) => (
         <div
           key={event._id}
-          className="event-card"
+          className={`event-card ${clickable ? 'clickable' : ''}`}
           onMouseEnter={() => setHoveredEvent(event._id)}
           onMouseLeave={() => setHoveredEvent(null)}
+          onClick={() => clickable && onEventClick(event)} // Trigger click only if clickable
+
         >
           <div className="event-main">
             <div className="event-info">

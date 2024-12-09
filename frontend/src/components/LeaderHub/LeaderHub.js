@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import './LeaderHub.css';
+import { useLocation } from 'react-router-dom'; 
 import TopBar from '../TopBar/TopBar';
 import Header from '../Header/Header';
 import EmployeeDetails from '../EmployeeDetails/EmployeeDetails';
@@ -9,7 +10,18 @@ import EventCreator from '../EventCreator/EventCreator';
 import EventCard from '../EventCard/EventCard';
 
 const LeaderHub = () => {
+    const [isLeader, setIsLeader] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const location = useLocation();
 
+    // Fetch the user data from localStorage
+    useEffect(() => {
+        const storedEmployee = localStorage.getItem('employee');
+        if (storedEmployee) {
+            const parsedEmployee = JSON.parse(storedEmployee);
+            setIsLeader(parsedEmployee.is_people_leader || false); // Check if the user is a leader
+        }
+    }, []);
 
     const employees = [
         {
@@ -53,54 +65,52 @@ const LeaderHub = () => {
             team: 'HR Team',
         },
     ];
-    
 
-   /* const [events, setEvents] = useState([
-        {
-            id: 1,
-            thumbnail: 'https://via.placeholder.com/300x150',
-            date: '12/12/24',
-            title: 'The Yearly Big Marathon',
-            description: 'Join us for the big yearly marathon...',
-        },
-        {
-            id: 2,
-            thumbnail: 'https://via.placeholder.com/300x150',
-            date: '10/10/24',
-            title: 'Let’s Recycle in the Office!',
-            description: 'Learn about sustainability in the office...',
-        },
-        {
-            id: 3,
-            thumbnail: 'https://via.placeholder.com/300x150',
-            date: '09/09/24',
-            title: 'Ugly Sweater Weather',
-            description: 'A fun contest for the ugliest sweater...',
-        },
-    ]);*/
 
-    /*const [selectedEvent, setSelectedEvent] = useState(null);
+    /* const [events, setEvents] = useState([
+         {
+             id: 1,
+             thumbnail: 'https://via.placeholder.com/300x150',
+             date: '12/12/24',
+             title: 'The Yearly Big Marathon',
+             description: 'Join us for the big yearly marathon...',
+         },
+         {
+             id: 2,
+             thumbnail: 'https://via.placeholder.com/300x150',
+             date: '10/10/24',
+             title: 'Let’s Recycle in the Office!',
+             description: 'Learn about sustainability in the office...',
+         },
+         {
+             id: 3,
+             thumbnail: 'https://via.placeholder.com/300x150',
+             date: '09/09/24',
+             title: 'Ugly Sweater Weather',
+             description: 'A fun contest for the ugliest sweater...',
+         },
+     ]);*/
 
- 
+    /*const [selectedEvent, setSelectedEvent] = useState(null);*/
+
 
     // Event Handlers
-    const handleEditEvent = (event) => {
-        setSelectedEvent(event);
+    const handleEventClick = (event) => {
+        // Only allow clicks if the user is a leader and on /leaderhub
+        if (isLeader && location.pathname === '/leaderhub') {
+            setSelectedEvent(event); // Open modal for editing
+        }
     };
-
     const handleSaveEvent = (updatedEvent) => {
-        setEvents((prevEvents) =>
-            prevEvents.map((event) =>
-                event.id === updatedEvent.id ? updatedEvent : event
-            )
-        );
-        setSelectedEvent(null);
+        console.log('Event saved:', updatedEvent); // Optionally handle updates here
+        setSelectedEvent(null); // Close the modal
     };
 
-    const handleDeleteEvent = (eventId) => {
-        setEvents((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
-        setSelectedEvent(null);
-    };*/
+    const handleDeleteEvent = () => {
+        console.log('Event deleted:', selectedEvent._id); // Optionally handle deletion here
+        setSelectedEvent(null); // Close the modal
+    };
+
 
     return (
         <div className="leaderhub-page">
@@ -116,11 +126,13 @@ const LeaderHub = () => {
                     <div className="scheduled-event-container">
                         <h3 className="scheduled-event-title">Scheduled Events</h3>
                         <div className="event-grid">
-                                <EventCard
-                                />
+                        <EventCard
+                                onEventClick={handleEventClick} // Pass the click handler
+                                clickable={isLeader && location.pathname === '/leaderhub'} // Conditionally make events clickable
+                            />
                         </div>
                     </div>
-                    
+
                 </div>
 
                 {/* Center Panel */}
@@ -136,7 +148,7 @@ const LeaderHub = () => {
                             Create a Task
                         </h2>
                         <TaskCreator
-                           
+
                         />
                     </div>
                     <div className="event-creator-container">
@@ -149,7 +161,7 @@ const LeaderHub = () => {
                             Create an Event
                         </h2>
                         <EventCreator
-                            
+
                         />
                     </div>
                 </div>
@@ -189,9 +201,35 @@ const LeaderHub = () => {
                     </div>
                 </div>
 
+            </div>
+        {/* Event Modal (only for leaders) */}
+        {selectedEvent && isLeader && (
+            <div className="events-modal-overlay">
+                <div className="events-modal-content">
+                    <h2>Edit Event</h2>
+                    <EventCreator
+                        existingEvent={selectedEvent} // Pass the selected event for editing
+                        onSave={handleSaveEvent} // Save event callback
+                    />
+                    <div className="events-modal-actions">
+                        <button
+                            className="events-modal-delete"
+                            onClick={handleDeleteEvent}
+                        >
+                            Delete Event
+                        </button>
+                        <button
+                            className="events-modal-close"
+                            onClick={() => setSelectedEvent(null)}
+                        >
+                            Close
+                        </button>
+                    </div>
                 </div>
             </div>
-            );
+        )}
+    </div>
+    );
 };
 
-            export default LeaderHub;
+export default LeaderHub;

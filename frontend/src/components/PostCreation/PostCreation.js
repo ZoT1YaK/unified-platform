@@ -28,6 +28,10 @@ const PostDialog = ({ user, closeDialog }) => {
     const [postText, setPostText] = useState('');
     const [isActive, setIsActive] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [audience, setAudience] = useState('all');  // For "Post to..." dropdown
+    const [mediaType, setMediaType] = useState('');  // For "Attach Media" dropdown
+    const [showAudienceDropdown, setShowAudienceDropdown] = useState(false);
+    const [showMediaDropdown, setShowMediaDropdown] = useState(false);
 
     const handleChange = (e) => {
         setPostText(e.target.value);
@@ -71,14 +75,33 @@ const PostDialog = ({ user, closeDialog }) => {
                     <img src={user.avatar} alt="User Avatar" className="post-avatar" />
                     <div className="user-info">
                         <h2>{user.name}</h2>
-                        <p>Post to Feed</p>
+                        <p>Post to
+                            <button
+                                className="audience-dropdown-btn"
+                                onClick={() => setShowAudienceDropdown(!showAudienceDropdown)}
+                            >
+                                {audience.charAt(0).toUpperCase() + audience.slice(1)}
+                            </button></p>
+                        {showAudienceDropdown && (
+                            <div className="audience-dropdown">
+                                <select
+                                    value={audience}
+                                    onChange={(e) => setAudience(e.target.value)}
+                                >
+                                    <option value="all">All</option>
+                                    <option value="location">Location</option>
+                                    <option value="department">Department</option>
+                                    <option value="team">Team</option>
+                                </select>
+                            </div>
+                        )}
                     </div>
                     <button className="close-btn" onClick={closeDialog}>
-                        <img src="/close.png" alt="Close button" className='post-dialogue-close-bttn' />
+                        <img src="/close.png" alt="Close button" className="post-dialogue-close-bttn" />
                     </button>
                 </div>
 
-                <div className='post-textarea-contents'>
+                <div className="post-textarea-contents">
                     <textarea
                         className="post-textarea"
                         placeholder={`What's on your mind, ${user.name}?`}
@@ -86,9 +109,28 @@ const PostDialog = ({ user, closeDialog }) => {
                         onChange={handleChange}
                         disabled={isLoading} // Disable input while posting
                     />
-                    <button className={`attachment-btn ${isActive ? 'active' : ''}`} disabled={isLoading}>
-                        <img src='/attach.png' alt="Attachment button" />
+                    <button
+                        className={`attachment-btn ${isActive ? 'active' : ''}`}
+                        disabled={isLoading}
+                        onClick={() => setShowMediaDropdown(!showMediaDropdown)}
+                    >
+                        <img src="/attach.png" alt="Attachment button" />
                     </button>
+
+                    {showMediaDropdown && (
+                        <div className="media-dropdown">
+                            <select
+                                value={mediaType}
+                                onChange={(e) => setMediaType(e.target.value)}
+                            >
+                                <option value="">Attach Media</option>
+                                <option value="image">Image</option>
+                                <option value="video">Video</option>
+                                <option value="link">Link</option>
+                                <option value="podcast">Podcast</option>
+                            </select>
+                        </div>
+                    )}
                 </div>
 
                 <div className="post-dialogue-footer">

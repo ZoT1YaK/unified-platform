@@ -2,6 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 require("./utils/scheduledTasks");
+require("./utils/scheduledReports");
+require("./utils/fileCleanup");
+require("./utils/scheduledMetrics");
 
 const employeeRoutes = require("./routes/employeeRoutes");
 const teamRoutes = require("./routes/teamRoutes");

@@ -175,6 +175,7 @@ const LeaderHub = () => {
                             alt="Power BI Placeholder"
                             className="power-bi-report"
                         />
+              
                     </div>
 
                     {/* Employee Statistics */}

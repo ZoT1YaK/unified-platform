@@ -10,6 +10,7 @@ const badgeSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
+    unique: true,
   },
   description: {
     type: String,
@@ -20,11 +21,16 @@ const badgeSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
+    validate: {
+      validator: (v) => /^(http|https):\/\/[^ "]+$/.test(v),
+      message: "Invalid URL format for img_link",
+    },
   },
   created_at: {
     type: Date,
     default: Date.now,
   },
+  
 });
 
 module.exports = mongoose.model("Badge", badgeSchema);

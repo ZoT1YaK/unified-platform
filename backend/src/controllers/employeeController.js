@@ -116,7 +116,7 @@ exports.getAllEmployees = async (req, res) => {
   }
 };
 
-exports.updateDataMindType = async (req, res) => {
+exports.updateDatamindType = async (req, res) => {
   const { data_mind_type } = req.body;
   const { id } = req.user;
 

@@ -88,8 +88,7 @@ const Home = () => {
                 {user.position || "Role"} | {user.dep_id?.name || "Team"}
               </p>
               <p>{user.location || "Location"}</p>
-              <p className="message">I am #XDataMind</p>
-            </div>
+              <p className="message">I am #{user.data_mind_type}Datamind</p>            </div>
             <div className="stats">
               <div className="stat">
                 {analytics.achievementsCount}{" "}

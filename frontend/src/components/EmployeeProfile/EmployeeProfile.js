@@ -14,27 +14,10 @@ import EmployeeTasks from "../EmployeeTasks/EmployeeTasks";
 const EmployeeProfile = () => {
   const [filter, setFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [dataMind, setDataMind] = useState("Curious");
   const [milestones, setMilestones] = useState([]);
   const [achievements, setAchievements] = useState([]);
 
-  const dataMindOptions = [
-    "Curious",
-    "Creative",
-    "Innovative",
-    "Resilient",
-    "Collaborative",
-  ];
-
-  const generateRandomDataMind = () => {
-    const randomIndex = Math.floor(Math.random() * dataMindOptions.length);
-    setDataMind(dataMindOptions[randomIndex]);
-  };
-
-  const handleDataMindChange = (event) => {
-    setDataMind(event.target.value);
-  };
-
+  
   return (
     <div className="employee-profile-page">
       <TopBar />
@@ -69,10 +52,7 @@ const EmployeeProfile = () => {
           {/* Employee Details Section */}
           <EmployeeDetails>
             <Datamind
-              dataMind={dataMind}
-              dataMindOptions={dataMindOptions}
-              handleDataMindChange={handleDataMindChange}
-              generateRandomDataMind={generateRandomDataMind}
+            
             />
           </EmployeeDetails>
 

@@ -16,6 +16,7 @@ const achievementRoutes = require("./routes/achievementRoutes");
 const eventRoutes = require("./routes/eventRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
+const datamindRoutes = require("./routes/datamindRoutes");
 
 const app = express();
 
@@ -48,5 +49,7 @@ app.use("/api/achievements", achievementRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/analytics",analyticsRoutes);
+app.use("/api/datamind", datamindRoutes);
+
 
 module.exports = app;

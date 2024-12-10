@@ -2,6 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 require("./utils/scheduledTasks");
+require("./utils/scheduledReports");
+require("./utils/fileCleanup");
+require("./utils/scheduledMetrics");
+// require("./utils/scheduledReportsPBI");
 
 const employeeRoutes = require("./routes/employeeRoutes");
 const teamRoutes = require("./routes/teamRoutes");
@@ -12,6 +16,7 @@ const postRoutes = require("./routes/postRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const achievementRoutes = require("./routes/achievementRoutes");
 const eventRoutes = require("./routes/eventRoutes");
+const metricsRoutes = require("./routes/metricsRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 
@@ -33,6 +38,7 @@ app.use("/api/posts", postRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/achievements", achievementRoutes);
 app.use("/api/events", eventRoutes);
+app.use("/api/metrics", metricsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/analytics",analyticsRoutes);
 

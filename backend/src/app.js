@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
+const fs = require('fs');
 const connectDB = require("./config/db");
 require("./utils/scheduledTasks");
 require("./utils/scheduledReports");
@@ -19,6 +21,7 @@ const eventRoutes = require("./routes/eventRoutes");
 const metricsRoutes = require("./routes/metricsRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
+const datamindRoutes = require("./routes/datamindRoutes");
 
 const app = express();
 
@@ -27,6 +30,17 @@ app.use(cors()); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse JSON payloads
 
 connectDB();
+
+// Serve Uploads storage
+
+
+const uploadDir = path.join(__dirname, "src/uploads");
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+    console.log("Uploads directory ensured at:", uploadDir);
+  }
+
+app.use("/uploads", express.static(uploadDir));
 
 // Routes
 app.use("/api/employees", employeeRoutes);
@@ -41,5 +55,7 @@ app.use("/api/events", eventRoutes);
 app.use("/api/metrics", metricsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/analytics",analyticsRoutes);
+app.use("/api/datamind", datamindRoutes);
+
 
 module.exports = app;

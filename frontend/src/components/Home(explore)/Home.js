@@ -9,6 +9,7 @@ import PostComponent from "../PostComponent/Post";
 import Milestones from "../Milestones/Milestones";
 import Achievements from "../Achievements/Achievements";
 import useAnalytics from "../../hooks/useAnalytics";
+import Gratification from "../Gratification/Gratification";
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -87,8 +88,7 @@ const Home = () => {
                 {user.position || "Role"} | {user.dep_id?.name || "Team"}
               </p>
               <p>{user.location || "Location"}</p>
-              <p className="message">I am #XDataMind</p>
-            </div>
+              <p className="message">I am #{user.data_mind_type}Datamind</p>            </div>
             <div className="stats">
               <div className="stat">
                 {analytics.achievementsCount}{" "}
@@ -115,8 +115,11 @@ const Home = () => {
           <div className="milestones-container">
             <h2>Milestones</h2>
             <Milestones simpleMode />
+            {user.is_admin && <Gratification />}
           </div>
+
         </div>
+
 
         <div className="post-column">
           {/* Post Creation and Feed boxes */}

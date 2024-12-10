@@ -6,11 +6,6 @@ const metricsSnapshotSchema = new mongoose.Schema({
     ref: "Employee",
     required: false,
   },
-  team_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Team",
-    required: false,
-  },
   task_completion_rate: {
     type: Number,
     required: true,
@@ -24,6 +19,18 @@ const metricsSnapshotSchema = new mongoose.Schema({
     required: true,
   },
   engagement_score: {
+    type: Number,
+    required: true,
+  },
+  total_tasks: {
+    type: Number,
+    required: true,
+  },
+  completed_tasks: {
+    type: Number,
+    required: true,
+  },
+  total_achievements: {
     type: Number,
     required: true,
   },

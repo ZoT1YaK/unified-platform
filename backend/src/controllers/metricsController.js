@@ -40,6 +40,9 @@ exports.updateDailyMetricsSnapshot = async () => {
               average_task_speed: metrics.averageTaskSpeed,
               milestones_achieved: metrics.milestonesAchieved,
               engagement_score: metrics.engagementScore,
+              total_tasks: metrics.totalTasks,
+              completed_tasks: metrics.completedTasks,
+              total_achievements: metrics.totalAchievements,
               snapshot_date: new Date(),
             },
           }
@@ -51,6 +54,9 @@ exports.updateDailyMetricsSnapshot = async () => {
           average_task_speed: metrics.averageTaskSpeed,
           milestones_achieved: metrics.milestonesAchieved,
           engagement_score: metrics.engagementScore,
+          total_tasks: metrics.totalTasks,
+          completed_tasks: metrics.completedTasks,
+          total_achievements: metrics.totalAchievements,
           snapshot_date: new Date(),
           start_date: startOfMonth,
           end_date: endOfMonth,
@@ -61,6 +67,40 @@ exports.updateDailyMetricsSnapshot = async () => {
     console.log("Daily metrics snapshots updated successfully.");
   } catch (error) {
     console.error("Error updating daily metrics snapshots:", error);
+  }
+};
+
+exports.getReportsByDate = async (req, res) => {
+  const { id } = req.user;
+  const { start_date, end_date } = req.query;
+
+  try {
+    if (!start_date || !end_date) {
+      return res.status(400).json({ message: "Start date and end date are required." });
+    }
+
+    const startDate = new Date(start_date);
+    const endDate = new Date(end_date);
+
+    const reports = await MetricsReport.find({
+      generated_for: id,
+      report_date: { $gte: startDate, $lte: endDate },
+    }).select("_id report_date generated_for");
+
+    if (!reports.length) {
+      return res.status(404).json({ message: "No reports found for the specified date range." });
+    }
+
+    const formattedReports = reports.map((report) => ({
+      reportId: report._id,
+      reportDate: report.report_date.toISOString(),
+      generatedFor: report.generated_for,
+    }));
+
+    res.status(200).json({ reports: formattedReports });
+  } catch (error) {
+    console.error("Error fetching reports by date:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -159,6 +199,9 @@ const generateMetricsReportForLeader = async (leaderId) => {
       .text(`Average Task Speed: ${snapshot.average_task_speed.toFixed(2)} days`)
       .text(`Milestones Achieved: ${snapshot.milestones_achieved}`)
       .text(`Engagement Score: ${snapshot.engagement_score.toFixed(2)}`)
+      .text(`Total tasks: ${snapshot.total_tasks}`)
+      .text(`Completed tasks: ${snapshot.completed_tasks}`)
+      .text(`Total Achievements: ${snapshot.total_achievements}`)
       .moveDown();
   });
 
@@ -224,6 +267,44 @@ exports.downloadMetricsReport = async (req, res) => {
   }
 };
 
+exports.getMetricsByPeopleLeader = async (req, res) => {
+  const { id } = req.user;
+
+  try {
+    const leaderEmployees = await Employee.find({ people_leader_id: id }).select("_id f_name l_name email");
+    if (!leaderEmployees.length) {
+      return res.status(404).json({ message: "No employees found for this leader." });
+    }
+
+    const employeeIds = leaderEmployees.map((emp) => emp._id);
+    const snapshots = await MetricsSnapshot.find({ emp_id: { $in: employeeIds } });
+
+    if (!snapshots.length) {
+      return res.status(404).json({ message: "No metrics data found for the leader's employees." });
+    }
+
+    const metrics = snapshots.map((snapshot) => {
+      const employee = leaderEmployees.find((emp) => emp._id.toString() === snapshot.emp_id.toString());
+      return {
+        employeeName: `${employee?.f_name || "N/A"} ${employee?.l_name || ""}`,
+        employeeEmail: employee?.email || "N/A",
+        taskCompletionRate: snapshot.task_completion_rate,
+        averageTaskSpeed: snapshot.average_task_speed,
+        milestonesAchieved: snapshot.milestones_achieved,
+        engagementScore: snapshot.engagement_score,
+        totalTasks: snapshot.total_tasks,
+        completedTasks: snapshot.completed_tasks,
+        totalAchievements: snapshot.total_achievements,
+      };
+    });
+
+    res.status(200).json({ metrics });
+  } catch (error) {
+    console.error("Error fetching metrics by People Leader:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 const calculateMetricsData = async ({ emp_id, start_date, end_date }) => {
   const filter = {
     ...(emp_id && { assigned_to_id: new mongoose.Types.ObjectId(emp_id) }),
@@ -260,6 +341,9 @@ const calculateMetricsData = async ({ emp_id, start_date, end_date }) => {
         averageTaskSpeed: { $ifNull: ["$averageTaskSpeed", 0] },
         milestonesAchieved: { $ifNull: ["$milestonesAchieved", 0] },
         engagementScore: { $ifNull: ["$engagementScore", 0] },
+        totalAchievements: { $ifNull: ["$totalAchievements", 0] },
+        totalTasks: { $ifNull: ["$totalTasks", 0] },
+        completedTasks: { $ifNull: ["$completedTasks", 0] },
       },
     },
     {
@@ -271,8 +355,17 @@ const calculateMetricsData = async ({ emp_id, start_date, end_date }) => {
       },
     },
     {
+      $lookup: {
+        from: "achievements",
+        localField: "_id",
+        foreignField: "emp_id",
+        as: "achievements",
+      },
+    },
+    {
       $addFields: {
         milestonesAchieved: { $size: "$milestones" },
+        totalAchievements: { $size: "$achievements" },
         taskCompletionRate: {
           $multiply: [{ $divide: ["$completedTasks", "$totalTasks"] }, 100],
         },
@@ -285,12 +378,22 @@ const calculateMetricsData = async ({ emp_id, start_date, end_date }) => {
       },
     },
     {
+      $addFields: {
+        taskCompletionRate: { $round: ["$taskCompletionRate", 2] },
+        averageTaskSpeed: { $round: ["$averageTaskSpeed", 2] },
+        engagementScore: { $round: ["$engagementScore", 2] },
+      },
+    },
+    {
       $project: {
         _id: 0,
         id: "$_id",
+        totalTasks: 1,
+        completedTasks: 1,
         taskCompletionRate: 1,
         averageTaskSpeed: 1,
         milestonesAchieved: 1,
+        totalAchievements: 1,
         engagementScore: 1,
       },
     },

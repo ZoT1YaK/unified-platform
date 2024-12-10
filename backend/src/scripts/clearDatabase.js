@@ -10,6 +10,9 @@ const Notification = require("../models/Notification");
 const Milestone = require("../models/Milestone");
 const Badge = require("../models/Badge");
 const Post = require("../models/Post");
+const PostDepartment = require("../models/PostDepartment");
+const PostLocation = require("../models/PostLocation");
+const PostTeam = require("../models/PostTeam");
 const Comment = require("../models/Comment");
 const Like = require("../models/Like");
 const Task = require("../models/Task");
@@ -19,6 +22,8 @@ const EventDepartment = require("../models/EventDepartment");
 const EventEmployee = require("../models/EventEmployee");
 const EventLocation = require("../models/EventLocation");
 const EventTeam = require("../models/EventTeam");
+const MetricsSnapshot = require("../models/MetricsSnapshot");
+const MetricsReport = require("../models/MetricsReport");
 require("dotenv").config();
 
 const clearDatabase = async () => {
@@ -42,6 +47,9 @@ const clearDatabase = async () => {
     await Comment.deleteMany({});
     await Like.deleteMany({});
     await Post.deleteMany({});
+    await PostDepartment.deleteMany({});
+    await PostLocation.deleteMany({});
+    await PostTeam.deleteMany({});
     await Task.deleteMany({});
     await Achievement.deleteMany({});
     await Event.deleteMany({});
@@ -49,6 +57,8 @@ const clearDatabase = async () => {
     await EventEmployee.deleteMany({});
     await EventLocation.deleteMany({});
     await EventTeam.deleteMany({});
+    await MetricsSnapshot.deleteMany({});
+    await MetricsReport.deleteMany({});
     console.log("Database cleared.");
     process.exit();
   } catch (error) {

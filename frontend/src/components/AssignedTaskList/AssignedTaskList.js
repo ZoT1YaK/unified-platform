@@ -20,6 +20,9 @@ const AssignedTaskList = () => {
         deadline: "",
     });
 
+    const [currentPage, setCurrentPage] = useState(1); 
+    const tasksPerPage = 5; 
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -70,6 +73,16 @@ const AssignedTaskList = () => {
         const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesEmployee && matchesSearch;
     });
+
+    // Calculate pagination variables
+    const indexOfLastTask = currentPage * tasksPerPage;
+    const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+    const currentTasks = filteredTasks.slice(indexOfFirstTask, indexOfLastTask);
+    const totalPages = Math.ceil(filteredTasks.length / tasksPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
 
     const handleInputChange = (e) => {
@@ -218,7 +231,7 @@ const AssignedTaskList = () => {
 
                 {/* Task List */}
                 <ul className="assigned-task-list">
-                    {filteredTasks.map((task) => (
+                    {currentTasks.map((task) => (
                         <li
                             key={task._id}
                             className="assigned-task-list-item"
@@ -259,12 +272,23 @@ const AssignedTaskList = () => {
                                     <h4>Details:</h4>
                                     <p><strong>Description:</strong> {task.description || "No description"}</p>
                                     <p><strong>Badge:</strong> {availableBadges.find((b) => b._id === task.badge_id)?.name || "No badge attached"}</p>
-                                    <p><strong>Assigned To:</strong> {task.assigned_to_id?.email || "Unassigned"}</p>
                                 </div>
                             )}
                         </li>
                     ))}
                 </ul>
+                {/* Pagination Controls */}
+                <div className="pagination">
+                    {Array.from({ length: totalPages }, (_, index) => (
+                        <button
+                            key={index + 1}
+                            className={`pagination-button ${currentPage === index + 1 ? "active" : ""}`}
+                            onClick={() => handlePageChange(index + 1)}
+                        >
+                            {index + 1}
+                        </button>
+                    ))}
+                </div>
                 {/* Edit Modal */}
                 {editingTask && (
                     <div className="assigned-task-modal-overlay">

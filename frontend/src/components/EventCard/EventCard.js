@@ -10,6 +10,8 @@ const EventCard = ({ isLeader }) => {
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const eventsPerPage = 5;
 
 
   const useFilterAndSearch = (items, filter, searchQuery, filterKey = "response", searchKey = "title") => {
@@ -62,6 +64,8 @@ const EventCard = ({ isLeader }) => {
     fetchEvents();
   }, []);
 
+  const filteredAndSearchedEvents = useFilterAndSearch(events, filter, searchQuery);
+
   // Handle RSVP updates
   const handleRSVP = async (eventId, response) => {
     try {
@@ -99,8 +103,6 @@ const EventCard = ({ isLeader }) => {
     }
   };
 
-  const filteredAndSearchedEvents = useFilterAndSearch(events, filter, searchQuery);
-
   const handleDeleteEvent = async (eventId) => {
     try {
       await axios.delete(
@@ -128,10 +130,18 @@ const EventCard = ({ isLeader }) => {
   if (error) return <p className="error-message">{error}</p>;
 
 
+  // Pagination variables
+  const totalPages = Math.ceil(filteredAndSearchedEvents.length / eventsPerPage);
+  const indexOfLastEvent = currentPage * eventsPerPage;
+  const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
+  const currentEvents = filteredAndSearchedEvents.slice(indexOfFirstEvent, indexOfLastEvent);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="event-list">
-      <h2>Upcoming Events</h2>
       {/* Search and Filter UI */}
       <div className="filter-search-container">
         <button onClick={() => setFilter('All')} className={filter === 'All' ? 'active' : ''}>
@@ -152,7 +162,7 @@ const EventCard = ({ isLeader }) => {
           className="search-bar"
         />
       </div>
-      {filteredAndSearchedEvents.map((event) => (
+      {currentEvents.map((event) => (
         <div
           key={event._id}
           onMouseEnter={() => setHoveredEvent(event._id)}
@@ -197,6 +207,18 @@ const EventCard = ({ isLeader }) => {
           )}
         </div>
       ))}
+      {/* Pagination Controls */}
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index + 1}
+            className={`pagination-button ${currentPage === index + 1 ? "active" : ""}`}
+            onClick={() => handlePageChange(index + 1)}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

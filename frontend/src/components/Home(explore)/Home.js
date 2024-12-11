@@ -17,6 +17,8 @@ const Home = () => {
   const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 7;
   const analytics = useAnalytics();
 
   // Fetch user data from localStorage
@@ -105,6 +107,31 @@ const Home = () => {
     return <div>No posts to display</div>;
   }
 
+    // Pagination logic
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  
+    const nextPage = () => {
+      if (currentPage < Math.ceil(posts.length / postsPerPage)) {
+        setCurrentPage((prev) => prev + 1);
+      }
+    };
+  
+    const prevPage = () => {
+      if (currentPage > 1) {
+        setCurrentPage((prev) => prev - 1);
+      }
+    };
+  
+    if (loading) {
+      return <div>Loading posts...</div>;
+    }
+  
+    if (!posts.length) {
+      return <div>No posts to display</div>;
+    }
+
   // Task search handler
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value); // Update search query state
@@ -177,11 +204,27 @@ const Home = () => {
           </div>
 
           <div className="post-feed-gray-box">
-            {posts.map((post) => (
+            {currentPosts.map((post) => (
               <PostComponent key={post._id} post={post} user={user} />
             ))}
           </div>
+          {/* Pagination Controls */}
+          <div className="pagination-controls">
+            <button onClick={prevPage} disabled={currentPage === 1}>
+              Previous
+            </button>
+            <span>
+              Page {currentPage} of {Math.ceil(posts.length / postsPerPage)}
+            </span>
+            <button
+              onClick={nextPage}
+              disabled={currentPage === Math.ceil(posts.length / postsPerPage)}
+            >
+              Next
+            </button>
+          </div>
         </div>
+          
 
         <div className="tasks-column">
           {/* Tasks and Events boxes */}

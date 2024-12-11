@@ -7,9 +7,9 @@ import Milestones from "../Milestones/Milestones";
 import EmployeeDetails from "../EmployeeDetails/EmployeeDetails";
 import Datamind from "../Datamind/Datamind";
 import Analytics from "../Analytics/Analytics";
-import Activity from "../Activity/Activity";
 import EventCard from "../EventCard/EventCard";
 import EmployeeTasks from "../EmployeeTasks/EmployeeTasks";
+import UserPostTracker from "../UserPostTracker/UserPostTracker";
 
 const EmployeeProfile = () => {
   const [filter, setFilter] = useState("All");
@@ -63,9 +63,9 @@ const EmployeeProfile = () => {
             milestonesCount={milestones.length}
           />
 
-          {/* Activity and Events */}
+          {/* Posts and Events */}
           <div className="activity-events-container">
-            <Activity />
+            <UserPostTracker />
 
             <div className="events-gray-box">
               <h2>Events</h2>

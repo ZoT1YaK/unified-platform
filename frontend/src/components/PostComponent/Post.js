@@ -82,9 +82,9 @@ const PostComponent = ({ post }) => {
         <div className="post-component">
             <div className="post-header">
                 <div className="post-user-info">
-                    <h3>
+                    <h2>
                         {post.author?.f_name} {post.author?.l_name || "Unknown"}
-                    </h3>
+                    </h2>
                     <p>
                         {post.author?.position || "Unknown Position"} - {post.author?.department || "Unknown Department"}
                     </p>
@@ -112,7 +112,7 @@ const PostComponent = ({ post }) => {
                 </div>
             </div>
                  {/* Comment Input */}
-            <div className="comment-input-section">
+            <div className="comment-area">
                 <input
                     type="text"
                     placeholder="Write a comment..."

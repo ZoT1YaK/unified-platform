@@ -2,6 +2,12 @@ const Datamind = require("../models/Datamind");
 const Employee = require("../models/Employee");
 const xlsx = require("xlsx");
 
+// Sanitize and clean the parsed data
+const sanitizeString = (str) => {
+  if (typeof str !== "string") return str;
+  return str.replace(/^"+|"+$/g, "").trim(); 
+};
+
 // Upload Datamind values from an Excel file
 exports.uploadDatamind = async (req, res) => {
     const { id: adminId } = req.user;
@@ -24,7 +30,7 @@ exports.uploadDatamind = async (req, res) => {
 
     // Save Datamind values to the database
     const dataMindValues = sheetData.map((row) => ({
-      data_mind_type: row.data_mind_type,
+      data_mind_type: sanitizeString(row.data_mind_type)
     }));
 
     // Insert only unique values

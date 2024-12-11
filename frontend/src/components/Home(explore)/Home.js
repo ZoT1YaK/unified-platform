@@ -33,6 +33,48 @@ const Home = () => {
     }
   }, []);
 
+ //Fetch user profile for details
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/employees/profile`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        if (!response.ok) {
+          throw new Error("Failed to fetch user profile");
+        }
+  
+        const data = await response.json();
+        console.log("Fetched Profile:", data); 
+  
+        localStorage.setItem("employee", JSON.stringify(data.profile));
+        setUser(data.profile);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+  
+    const storedEmployee = localStorage.getItem("employee");
+    if (storedEmployee) {
+      const parsedEmployee = JSON.parse(storedEmployee);
+      if (!parsedEmployee.data_mind_type) {
+        console.warn("data_mind_type missing, fetching from backend...");
+        fetchUserProfile(); 
+        setUser(parsedEmployee);
+      }
+    } else {
+      fetchUserProfile(); 
+    }
+  }, []);
+  
+
   // Fetch posts from the backend
   useEffect(() => {
     const fetchPosts = async () => {

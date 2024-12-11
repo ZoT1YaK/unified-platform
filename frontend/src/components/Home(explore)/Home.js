@@ -33,7 +33,7 @@ const Home = () => {
     }
   }, []);
 
- //Fetch user profile for details
+ /*//Fetch user profile for details
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -72,7 +72,7 @@ const Home = () => {
     } else {
       fetchUserProfile(); 
     }
-  }, []);
+  }, []); */
   
 
   // Fetch posts from the backend

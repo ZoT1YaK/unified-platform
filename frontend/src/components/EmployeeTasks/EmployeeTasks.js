@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import "./EmployeeTasks.css";
 import TaskStatus from "../TaskStatus/TaskStatus";
@@ -8,6 +8,7 @@ const EmployeeTasks = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
+    const [filter, setFilter] = useState("All");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -132,13 +133,13 @@ const EmployeeTasks = () => {
                     },
                 }
             );
-    
+
             setTasks((prevTasks) =>
                 prevTasks.map((task) =>
                     task._id === taskId ? { ...task, status: newStatus } : task
                 )
             );
-    
+
             // Notify user if a badge is awarded
             if (newStatus === "Completed" && response.data.task.badge_id) {
                 alert("Congratulations! You’ve earned a new achievement!");
@@ -148,12 +149,24 @@ const EmployeeTasks = () => {
             setError("Failed to update task status. Please try again.");
         }
     };
-    
 
-    const filteredTasks = tasks.filter((task) =>
-        task.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    // Filter tasks based on the selected filter
+    const filteredTasks = useMemo(() => {
+        let filtered = tasks;
+        if (filter === "Completed") {
+            filtered = tasks.filter((task) => task.status === "Completed");
+        } else if (filter === "Incomplete") {
+            filtered = tasks.filter((task) => task.status !== "Completed");
+        }
+        return filtered.filter((task) =>
+            task.title.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [tasks, filter, searchQuery]);
 
+    const visibleTasks = filteredTasks.slice(0, 20);
+
+
+   
     if (loading) return <p>Loading tasks...</p>;
     if (error) return <p className="error-message">{error}</p>;
 
@@ -165,6 +178,18 @@ const EmployeeTasks = () => {
                 uncompletedTasks={uncompletedTasks}
             />
             <h2>Assigned Tasks</h2>
+            <div className="employee-tasks-filter-buttons">
+                {["All", "Completed", "Incomplete"].map((status) => (
+                    <button
+                        key={status}
+                        className={`filter-button ${filter === status ? "active" : ""}`}
+                        onClick={() => setFilter(status)}
+                    >
+                        {status}
+                    </button>
+                ))}
+            </div>
+
             <div className="search-add-container">
                 <input
                     type="text"
@@ -177,8 +202,8 @@ const EmployeeTasks = () => {
                     <img src="more.png" alt="Add" className="icon" />
                 </button>
             </div>
-            <ul className="task-list">
-                {filteredTasks.map((task) => (
+            <ul className="task-list" >
+                {visibleTasks.map((task) => (
                     <li key={task._id} className="task-item">
                         {task.type === "Self-Created" && (
                             <button
@@ -199,7 +224,7 @@ const EmployeeTasks = () => {
                                 ? new Date(task.deadline).toLocaleDateString("de-DE")
                                 : "No deadline"}
                         </span>
-                        
+
                         {task.type === "Self-Created" && (
                             <button
                                 className="employee-task-delete-button"

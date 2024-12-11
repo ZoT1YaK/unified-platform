@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "./Home.css";
 import EventCard from "../EventCard/EventCard"; // This fetches and displays events
 import TopBar from "../TopBar/TopBar";
@@ -15,6 +16,7 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const analytics = useAnalytics();
 
   // Fetch user data from localStorage
@@ -33,33 +35,75 @@ const Home = () => {
     }
   }, []);
 
+  /*//Fetch user profile for details Overrides leaderhub switch. needs fixing 
+   useEffect(() => {
+     const fetchUserProfile = async () => {
+       try {
+         const token = localStorage.getItem("token");
+         const response = await fetch(
+           `${process.env.REACT_APP_BACKEND_URL}/api/employees/profile`,
+           {
+             headers: {
+               Authorization: `Bearer ${token}`,
+             },
+           }
+         );
+   
+         if (!response.ok) {
+           throw new Error("Failed to fetch user profile");
+         }
+   
+         const data = await response.json();
+         console.log("Fetched Profile:", data); 
+   
+         localStorage.setItem("employee", JSON.stringify(data.profile));
+         setUser(data.profile);
+       } catch (error) {
+         console.error("Error fetching user profile:", error);
+       }
+     };
+   
+     const storedEmployee = localStorage.getItem("employee");
+     if (storedEmployee) {
+       const parsedEmployee = JSON.parse(storedEmployee);
+       if (!parsedEmployee.data_mind_type) {
+         console.warn("data_mind_type missing, fetching from backend...");
+         fetchUserProfile(); 
+         setUser(parsedEmployee);
+       }
+     } else {
+       fetchUserProfile(); 
+     }
+   }, []); */
+
+
   // Fetch posts from the backend
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/posts/get`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch posts");
-        }
-
-        const data = await response.json();
-        setPosts(data.posts);
+        const response = await axios.get("http://localhost:5000/api/posts/get", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setPosts(response.data.posts);
       } catch (error) {
-        console.error("Error fetching posts:", error.message);
+        console.error("Error fetching posts:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchPosts();
   }, []);
+
+  if (loading) {
+    return <div>Loading posts...</div>;
+  }
+
+  if (!posts.length) {
+    return <div>No posts to display</div>;
+  }
 
   // Task search handler
   const handleSearchChange = (e) => {
@@ -121,8 +165,8 @@ const Home = () => {
         </div>
 
 
+        {/* Posts */}
         <div className="post-column">
-          {/* Post Creation and Feed boxes */}
           <div className="post-creation-gray-box">
             <PostCreation
               user={{
@@ -133,27 +177,9 @@ const Home = () => {
           </div>
 
           <div className="post-feed-gray-box">
-            {posts.length > 0 ? (
-              posts.map((post, index) => (
-                <PostComponent
-                  key={index}
-                  user={{
-                    name: `${post.author.f_name} ${post.author.l_name}`,
-                    avatar: "/cat.png", // Placeholder avatar
-                    position: post.author.position,
-                  }}
-                  post={{
-                    description: post.content,
-                    likes: post.likes,
-                    comments: post.comments || [], // Ensure comments is an array
-                    timeAgo: new Date(post.timestamp).toLocaleDateString(),
-                    attachments: [], // Adjust if your API provides attachments
-                  }}
-                />
-              ))
-            ) : (
-              <p>No posts available.</p>
-            )}
+            {posts.map((post) => (
+              <PostComponent key={post._id} post={post} user={user} />
+            ))}
           </div>
         </div>
 

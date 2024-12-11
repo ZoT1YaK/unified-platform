@@ -3,7 +3,7 @@ import axios from "axios";
 import "./Datamind.css";
 
 const Datamind = () => {
-  const [dataMind, setDatamind] = useState(""); 
+  const [dataMind, setDatamind] = useState(localStorage.getItem("dataMind") || "");
   const [dataMindOptions, setDatamindOptions] = useState([]); 
   const [message, setMessage] = useState("");
 
@@ -31,7 +31,9 @@ const Datamind = () => {
             },
           }
         );
-        setDatamind(profileResponse.data.profile.data_mind_type || "");
+
+        const employeeDatamind = profileResponse.data.profile.data_mind_type || "";
+        setDatamind(employeeDatamind);
       } catch (error) {
         console.error("Error fetching Datamind data:", error);
         setMessage("Error fetching Datamind data. Please try again later.");
@@ -84,6 +86,7 @@ const Datamind = () => {
         }
       );
       setDatamind(randomDatamind); 
+      localStorage.setItem("dataMind", randomDatamind);
     } catch (error) {
       console.error("Error generating random Datamind:", error.response || error);
       setMessage("Error generating random Datamind. Please try again.");

@@ -26,10 +26,17 @@ const badgeSchema = new mongoose.Schema({
       message: "Invalid URL format for img_link",
     },
   },
+
+    is_archived: {
+    type: Boolean,
+    default: false, 
+  },
   created_at: {
     type: Date,
     default: Date.now,
   },
+
+
   
 });
 

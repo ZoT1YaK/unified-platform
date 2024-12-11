@@ -22,7 +22,7 @@ const PostCreation = ({ user }) => {
             {isOpen && <PostDialog user={user} closeDialog={closeDialog} />}
         </div>
     );
-};
+}; 
 
 const PostDialog = ({ user, closeDialog }) => {
     const [postText, setPostText] = useState('');
@@ -32,10 +32,58 @@ const PostDialog = ({ user, closeDialog }) => {
     const [mediaType, setMediaType] = useState('');  // For "Attach Media" dropdown
     const [showAudienceDropdown, setShowAudienceDropdown] = useState(false);
     const [showMediaDropdown, setShowMediaDropdown] = useState(false);
+    const [availableOptions, setAvailableOptions] = useState([]);
+    const [selectedOptions, setSelectedOptions] = useState([]);
+    const token = localStorage.getItem('token');
 
     const handleChange = (e) => {
         setPostText(e.target.value);
         setIsActive(e.target.value.trim() !== '');
+    };
+
+    // Fetch options dynamically based on audience selection
+    const fetchOptions = async (audienceType) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/posts/resources`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const data = await response.json();
+
+            console.log('Fetched Resources:', data); // Log backend response
+
+            if (audienceType === 'location') {
+                setAvailableOptions(data.locations || []);
+            } else if (audienceType === 'department') {
+                setAvailableOptions(data.departments || []);
+            } else if (audienceType === 'team') {
+                setAvailableOptions(data.teams || []);
+            }
+        } catch (error) {
+            console.error('Error fetching options:', error);
+        }
+    };
+
+    const handleAudienceChange = (e) => {
+        const selectedAudience = e.target.value;
+        setAudience(selectedAudience);
+
+        if (selectedAudience !== 'all') {
+            fetchOptions(selectedAudience); 
+        } else {
+            setAvailableOptions([]); 
+            setSelectedOptions([]); 
+        }
+    };
+
+    const handleCheckboxToggle = (id) => {
+        if (selectedOptions.includes(id)) {
+            setSelectedOptions(selectedOptions.filter((item) => item !== id));
+        } else {
+            setSelectedOptions([...selectedOptions, id]);
+        }
     };
 
     const handlePost = async () => {
@@ -43,7 +91,13 @@ const PostDialog = ({ user, closeDialog }) => {
 
         try {
             setIsLoading(true);
-            const token = localStorage.getItem("token");
+            // Prepare the payload
+            const payload = { content: postText };
+            if (audience === 'all') {
+                payload.global = true; // Global visibility
+            } else {
+                payload[`target_${audience}s`] = selectedOptions; // Add selected options
+            }
 
             const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/posts/create`, {
                 method: "POST",
@@ -51,7 +105,7 @@ const PostDialog = ({ user, closeDialog }) => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ content: postText }),
+                body: JSON.stringify(payload),
             });
 
             if (!response.ok) {
@@ -82,12 +136,9 @@ const PostDialog = ({ user, closeDialog }) => {
                             >
                                 {audience.charAt(0).toUpperCase() + audience.slice(1)}
                             </button></p>
-                        {showAudienceDropdown && (
+                            {showAudienceDropdown && (
                             <div className="audience-dropdown">
-                                <select
-                                    value={audience}
-                                    onChange={(e) => setAudience(e.target.value)}
-                                >
+                                <select value={audience} onChange={handleAudienceChange}>
                                     <option value="all">All</option>
                                     <option value="location">Location</option>
                                     <option value="department">Department</option>
@@ -96,6 +147,24 @@ const PostDialog = ({ user, closeDialog }) => {
                             </div>
                         )}
                     </div>
+                    {availableOptions.length > 0 && (
+                        <div className="audience-options">
+                            <p>Select {audience}(s):</p>
+                            {availableOptions.map((option, index) => (
+                                <label key={index} style={{ display: 'block' }}>
+                                    <input
+                                        type="checkbox"
+                                        value={option._id} // Use the unique identifier (e.g., _id)
+                                        checked={selectedOptions.includes(option._id)}
+                                        onChange={() => handleCheckboxToggle(option._id)}
+                                    />
+                                    {audience === 'location'
+                                        ? `${option.city}, ${option.country}` // Render city and country
+                                        : option.name || option.number || 'Unnamed Option'} {/* Render name or fallback for other options */}
+                                </label>
+                            ))}
+                        </div>
+                    )}
                     <button className="close-btn" onClick={closeDialog}>
                         <img src="/close.png" alt="Close button" className="post-dialogue-close-bttn" />
                     </button>

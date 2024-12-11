@@ -74,6 +74,8 @@ exports.getProfile = async (req, res) => {
         l_name: employee.l_name,
         position: employee.position,
         language: employee.language,
+        location: employee.location,
+        data_mind_type: employee.data_mind_type,
         department: employee.dep_id
           ? { number: employee.dep_id.number, name: employee.dep_id.name }
           : null,

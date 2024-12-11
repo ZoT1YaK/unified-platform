@@ -39,11 +39,11 @@ const EventCreator = ({ onSave, departments, locations, teams, existingEvent }) 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [employeesRes, badgesRes, resourcesRes] = await Promise.all([
+                const [employeesRes, activeBadgesRes, resourcesRes] = await Promise.all([
                     axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/employees/all`, {
                         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                     }),
-                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/badges/get`, {
+                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/badges/get-active`, {
                         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                     }),
                     axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events/resources`, {
@@ -52,7 +52,7 @@ const EventCreator = ({ onSave, departments, locations, teams, existingEvent }) 
                 ]);
 
                 setAvailableEmployees(employeesRes.data.employees || []);
-                setAvailableBadges(badgesRes.data.badges || []);
+                setAvailableBadges(activeBadgesRes.data.badges || []);
                 setAvailableDepartments(resourcesRes.data.departments || []);
                 setAvailableTeams(resourcesRes.data.teams || []);
                 setAvailableLocations(resourcesRes.data.locations || []);

@@ -1,23 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const Gratification = () => {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
+  const [selectedBadgeIds, setSelectedBadgeIds] = useState([]);
+  const [activeBadges, setActiveBadges] = useState([]);
+  const [archivedBadges, setArchivedBadges] = useState([]);
+  const [badgeFile, setBadgeFile] = useState(null);
+
 
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
-  const handleUpload = async () => {
-    if (!file) {
+  // Fetch badges on mount
+  useEffect(() => {
+    const fetchBadges = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/badges/get`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setActiveBadges(response.data.activeBadges || []);
+        setArchivedBadges(response.data.archivedBadges || []);
+      } catch (error) {
+        console.error("Error fetching badges:", error);
+        setMessage("Error fetching badges. Please try again later.");
+      }
+    };
+
+    fetchBadges();
+  }, []);
+  const handleBadgeFileChange = (e) => {
+    setBadgeFile(e.target.files[0]);
+  };
+
+  const handleUploadBadges = async () => {
+    if (!badgeFile) {
       setMessage("Please select a file.");
       return;
     }
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", badgeFile);
 
     try {
       const response = await axios.post(
@@ -26,33 +57,84 @@ const Gratification = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Ensure the admin token is included
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
       setMessage(response.data.message);
-    } catch (error) {
-      setMessage(error.response?.data?.message || "Error uploading badges.");
-    }
-  };
-
-  const handleResetBadges = async () => {
-    if (!window.confirm("Are you sure you want to reset all badges? This cannot be undone.")) {
-      return;
-    }
-
-    try {
-      const response = await axios.delete(
-        `${process.env.REACT_APP_BACKEND_URL}/api/badges/clear-badges`,
+      // Refresh the badge list after uploading
+      const badgesResponse = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/badges/get`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Ensure admin token
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
-      setMessage(response.data.message || "All badges have been reset.");
+      setActiveBadges(badgesResponse.data.activeBadges || []);
+      setArchivedBadges(badgesResponse.data.archivedBadges || []);
     } catch (error) {
-      setMessage(error.response?.data?.message || "Error resetting badges.");
+      console.error("Error uploading badges:", error);
+      setMessage("Error uploading badges. Please try again.");
+    }
+  };
+
+  const handleArchiveBadges = async () => {
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_BACKEND_URL}/api/badges/archive`,
+        { ids: selectedBadgeIds },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setMessage(response.data.message);
+      setSelectedBadgeIds([]); 
+    
+      const badgesResponse = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/badges/get`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setActiveBadges(badgesResponse.data.activeBadges || []);
+      setArchivedBadges(badgesResponse.data.archivedBadges || []);
+    } catch (error) {
+      console.error("Error archiving badges:", error);
+      setMessage("Error archiving badges. Please try again.");
+    }
+  };
+  
+  const handleActivateBadges = async () => {
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_BACKEND_URL}/api/badges/restore`,
+        { ids: selectedBadgeIds },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setMessage(response.data.message);
+      setSelectedBadgeIds([]); 
+      const badgesResponse = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/badges/get`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setActiveBadges(badgesResponse.data.activeBadges || []);
+      setArchivedBadges(badgesResponse.data.archivedBadges || []);
+    } catch (error) {
+      console.error("Error activating badges:", error);
+      setMessage("Error activating badges. Please try again.");
     }
   };
 
@@ -105,19 +187,61 @@ const Gratification = () => {
     <div className="gratification-container">
       <div>
         <h2>Badge Management</h2>
-        <button onClick={handleResetBadges} style={{ backgroundColor: "red", color: "white" }}>
-          Reset Badges
-        </button>
-        <br />
-        <input type="file" accept=".xlsx" onChange={handleFileChange} />
-        <button onClick={handleUpload}>Upload New Badges</button>
+        <input
+          type="file"
+          accept=".xlsx"
+          onChange={handleBadgeFileChange}
+        />
+        <button onClick={handleUploadBadges}>Upload New Badges</button>
+        <h3>Active Badges</h3>
+        <ul>
+          {activeBadges.map((badge) => (
+            <li key={badge._id}>
+              <input
+                type="checkbox"
+                value={badge._id}
+                onChange={(e) => {
+                  const { checked, value } = e.target;
+                  setSelectedBadgeIds((prev) =>
+                    checked
+                      ? [...prev, value]
+                      : prev.filter((id) => id !== value)
+                  );
+                }}
+              />
+              {badge.name}
+            </li>
+          ))}
+        </ul>
+        <h3>Archived Badges</h3>
+        <ul>
+          {archivedBadges.map((badge) => (
+            <li key={badge._id}>
+              <input
+                type="checkbox"
+                value={badge._id}
+                onChange={(e) => {
+                  const { checked, value } = e.target;
+                  setSelectedBadgeIds((prev) =>
+                    checked
+                      ? [...prev, value]
+                      : prev.filter((id) => id !== value)
+                  );
+                }}
+              />
+              {badge.name}
+            </li>
+          ))}
+        </ul>
+        <button onClick={handleArchiveBadges}>Archive Selected Badges</button>
+        <button onClick={handleActivateBadges}>Activate Selected Badges</button>
         {message && <p>{message}</p>}
       </div>
       <div>
         <h2>Datamind Management</h2>
         <button onClick={handleResetDatamind} style={{ backgroundColor: "red", color: "white" }}>
           Reset Datamind</button>
-          <br/>
+        <br />
         <input type="file" accept=".xlsx" onChange={handleFileChange} />
         <button onClick={handleUploadDatamind}>Upload Datamind</button>
         {message && <p>{message}</p>}

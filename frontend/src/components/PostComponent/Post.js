@@ -32,14 +32,15 @@ const PostComponent = ({ user, post }) => {
 
     return (
         <div className="post-component">
-            <div className="post-header">
-                <img src={user.avatar} alt="User Avatar" className="post-avatar" />
-                <div className="post-user-info">
-                    <h2>{user.name}</h2>
-                    <p>{user.position}</p>
-                    <p>{post.timeAgo}</p>
-                </div>
+        <div className="post-header">
+            <img src={user.avatar} alt="User Avatar" className="post-avatar" />
+            <div className="post-user-info">
+                <h2>{post.author?.f_name} {post.author?.l_name || 'Unknown'}</h2> {/* Display author's name */}
+                <p>{post.author?.position || 'Unknown Position'}</p> {/* Display author's position */}
+                <p>{post.author?.department || 'Unknown Department'}</p> {/* Display author's department */}
+                <p>{post.timeAgo}</p> {/* Display time ago */}
             </div>
+        </div>
 
             <div className="post-description">
                 <p>{post.description}</p>

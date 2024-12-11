@@ -33,47 +33,47 @@ const Home = () => {
     }
   }, []);
 
- /*//Fetch user profile for details
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/employees/profile`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-  
-        if (!response.ok) {
-          throw new Error("Failed to fetch user profile");
-        }
-  
-        const data = await response.json();
-        console.log("Fetched Profile:", data); 
-  
-        localStorage.setItem("employee", JSON.stringify(data.profile));
-        setUser(data.profile);
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-      }
-    };
-  
-    const storedEmployee = localStorage.getItem("employee");
-    if (storedEmployee) {
-      const parsedEmployee = JSON.parse(storedEmployee);
-      if (!parsedEmployee.data_mind_type) {
-        console.warn("data_mind_type missing, fetching from backend...");
-        fetchUserProfile(); 
-        setUser(parsedEmployee);
-      }
-    } else {
-      fetchUserProfile(); 
-    }
-  }, []); */
-  
+  /*//Fetch user profile for details Overrides leaderhub switch. needs fixing 
+   useEffect(() => {
+     const fetchUserProfile = async () => {
+       try {
+         const token = localStorage.getItem("token");
+         const response = await fetch(
+           `${process.env.REACT_APP_BACKEND_URL}/api/employees/profile`,
+           {
+             headers: {
+               Authorization: `Bearer ${token}`,
+             },
+           }
+         );
+   
+         if (!response.ok) {
+           throw new Error("Failed to fetch user profile");
+         }
+   
+         const data = await response.json();
+         console.log("Fetched Profile:", data); 
+   
+         localStorage.setItem("employee", JSON.stringify(data.profile));
+         setUser(data.profile);
+       } catch (error) {
+         console.error("Error fetching user profile:", error);
+       }
+     };
+   
+     const storedEmployee = localStorage.getItem("employee");
+     if (storedEmployee) {
+       const parsedEmployee = JSON.parse(storedEmployee);
+       if (!parsedEmployee.data_mind_type) {
+         console.warn("data_mind_type missing, fetching from backend...");
+         fetchUserProfile(); 
+         setUser(parsedEmployee);
+       }
+     } else {
+       fetchUserProfile(); 
+     }
+   }, []); */
+
 
   // Fetch posts from the backend
   useEffect(() => {
@@ -89,12 +89,10 @@ const Home = () => {
           }
         );
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch posts");
-        }
-
         const data = await response.json();
+        console.log("Fetched Posts from API:", data.posts);
         setPosts(data.posts);
+        console.log("Updated posts state:", data.posts);
       } catch (error) {
         console.error("Error fetching posts:", error.message);
       }
@@ -180,18 +178,20 @@ const Home = () => {
                 <PostComponent
                   key={index}
                   user={{
-                    name: `${post.author.f_name} ${post.author.l_name}`,
-                    avatar: "/cat.png", // Placeholder avatar
-                    position: post.author.position,
+                    name: `${post.author?.f_name || "Unknown"} ${post.author?.l_name || ""}`,
+                    avatar: "/cat.png",
+                    position: post.author?.position || "Unknown Position",
                   }}
                   post={{
-                    description: post.content,
-                    likes: post.likes,
-                    comments: post.comments || [], // Ensure comments is an array
-                    timeAgo: new Date(post.timestamp).toLocaleDateString(),
-                    attachments: [], // Adjust if your API provides attachments
+                    description: post.content || "No content available.",
+                    likes: post.likes || 0,
+                    comments: post.comments || [],
+                    timeAgo: post.timestamp
+                      ? new Date(post.timestamp).toLocaleString()
+                      : "Unknown time",
                   }}
                 />
+
               ))
             ) : (
               <p>No posts available.</p>

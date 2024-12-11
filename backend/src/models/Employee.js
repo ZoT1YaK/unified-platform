@@ -49,10 +49,12 @@ const employeeSchema = new mongoose.Schema({
     type: String,
     default: null
   },
-  location: { 
-    type: String, 
-    required: true 
+  location: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Location", 
+    required: true,
   },
+
   people_leader_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Employee",

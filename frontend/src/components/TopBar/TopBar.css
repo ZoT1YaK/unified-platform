@@ -230,6 +230,18 @@
     text-decoration: none;
 }
 
+.settings-button {
+    color: #32444d;
+    font-size: 13px;
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+}
+
+.settings-button:hover {
+    color: #5bc488;
+}
+
 .dropdown-link:hover {
     color: #5bc488;
 }

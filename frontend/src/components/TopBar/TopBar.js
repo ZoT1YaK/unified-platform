@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './TopBar.css';
 import Notification from '../Notifications/Notifications';
+import SettingsModal from '../SettingsModal/SettingsModal';
 
 const TopBar = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -11,6 +12,10 @@ const TopBar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [showHistory, setShowHistory] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenModal = () => setIsModalOpen(true);
+    const handleCloseModal = () => setIsModalOpen(false);
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -135,7 +140,10 @@ const TopBar = () => {
                             <hr />
                             <hr />
                             <div className="dropdown-links">
-                                <span className="dropdown-link">Settings</span>
+                                <button className="settings-button" onClick={handleOpenModal}>
+                                    Settings
+                                </button>
+                                {isModalOpen && <SettingsModal onClose={handleCloseModal} isLeader={isLeader} />}
                                 <span className="dropdown-link">Help</span>
                                 <span
                                     className="dropdown-link logout-link"

@@ -295,7 +295,7 @@ exports.getCommentsByPost = async (req, res) => {
       });
 
     if (!comments.length) {
-      return res.status(404).json({ message: "No comments found for this post." });
+      return res.status(200).json({ comments: [] });
     }
 
     const enrichedComments = await Promise.all(

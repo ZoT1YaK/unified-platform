@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "./Home.css";
 import EventCard from "../EventCard/EventCard"; // This fetches and displays events
 import TopBar from "../TopBar/TopBar";
@@ -15,6 +16,7 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const analytics = useAnalytics();
 
   // Fetch user data from localStorage
@@ -79,27 +81,29 @@ const Home = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/posts/get`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const data = await response.json();
-        console.log("Fetched Posts from API:", data.posts);
-        setPosts(data.posts);
-        console.log("Updated posts state:", data.posts);
+        const response = await axios.get("http://localhost:5000/api/posts/get", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setPosts(response.data.posts);
       } catch (error) {
-        console.error("Error fetching posts:", error.message);
+        console.error("Error fetching posts:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchPosts();
   }, []);
+
+  if (loading) {
+    return <div>Loading posts...</div>;
+  }
+
+  if (!posts.length) {
+    return <div>No posts to display</div>;
+  }
 
   // Task search handler
   const handleSearchChange = (e) => {
@@ -161,8 +165,8 @@ const Home = () => {
         </div>
 
 
+        {/* Posts */}
         <div className="post-column">
-          {/* Post Creation and Feed boxes */}
           <div className="post-creation-gray-box">
             <PostCreation
               user={{
@@ -173,29 +177,9 @@ const Home = () => {
           </div>
 
           <div className="post-feed-gray-box">
-            {posts.length > 0 ? (
-              posts.map((post, index) => (
-                <PostComponent
-                  key={index}
-                  user={{
-                    name: `${post.author?.f_name || "Unknown"} ${post.author?.l_name || ""}`,
-                    avatar: "/cat.png",
-                    position: post.author?.position || "Unknown Position",
-                  }}
-                  post={{
-                    description: post.content || "No content available.",
-                    likes: post.likes || 0,
-                    comments: post.comments || [],
-                    timeAgo: post.timestamp
-                      ? new Date(post.timestamp).toLocaleString()
-                      : "Unknown time",
-                  }}
-                />
-
-              ))
-            ) : (
-              <p>No posts available.</p>
-            )}
+            {posts.map((post) => (
+              <PostComponent key={post._id} post={post} user={user} />
+            ))}
           </div>
         </div>
 

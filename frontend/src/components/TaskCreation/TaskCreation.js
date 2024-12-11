@@ -21,7 +21,7 @@ const TaskCreator = () => {
         const fetchData = async () => {
             try {
                 const [badgeRes, employeeRes] = await Promise.all([
-                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/badges/get`, {
+                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/badges/get-active`, {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,
                         },

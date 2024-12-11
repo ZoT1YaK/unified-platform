@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Achievements.css";
 import { useFilterAndSearch } from "../../hooks/useFilterAndSearch";
 
-let fetchTimeout; // Declare fetchTimeout globally to persist across renders
+let fetchTimeout;
 
 const Achievements = ({ simpleMode = false, onAchievementsFetched }) => {
     const [achievements, setAchievements] = useState([]);
@@ -97,12 +97,16 @@ const Achievements = ({ simpleMode = false, onAchievementsFetched }) => {
                 <h2>Achievements</h2>
                 {achievements.length > 0 ? (
                     <ul className="achievements-simple-list">
-                        {achievements.map((achievement) => (
-                            <li key={achievement._id} className="achievement-item">
-                                {achievement.badge_id?.name || "Unknown Badge"}
-                            </li>
-                        ))}
-                    </ul>
+                    {achievements.map((achievement) => (
+                        <li key={achievement._id} className="achievement-item">
+                            <img
+                                className="achievement-icon"
+                                src={achievement.badge_id?.img_link || "Ach-badge1.png"}
+                                alt={achievement.badge_id?.name || "Achievement Badge"}
+                            />
+                        </li>
+                    ))}
+                </ul>
                 ) : (
                     <p>No achievements available.</p>
                 )}

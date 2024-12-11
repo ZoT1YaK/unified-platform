@@ -40,13 +40,26 @@ exports.createBadge = async (req, res) => {
 
 exports.getAllBadges = async (req, res) => {
   try {
-    const badges = await Badge.find().populate("created_by_id", "f_name l_name email");
-    res.status(200).json({ badges });
+    const activeBadges = await Badge.find({ is_archived: false }).populate("created_by_id", "f_name l_name email");
+    const archivedBadges = await Badge.find({ is_archived: true }).populate("created_by_id", "f_name l_name email");
+
+    res.status(200).json({ activeBadges, archivedBadges });
   } catch (error) {
     console.error("Error fetching badges:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.getActiveBadges = async (req, res) => {
+  try {
+    const activeBadges = await Badge.find({ is_archived: false });
+    res.status(200).json({ badges: activeBadges });
+  } catch (error) {
+    console.error("Error fetching active badges:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 
 exports.uploadBadges = async (req, res) => {
   const { id: adminId } = req.user;
@@ -77,6 +90,7 @@ exports.uploadBadges = async (req, res) => {
           name: sanitizeString(row.name),
           description: sanitizeString(row.description),
           img_link: sanitizeString(row.img_link),
+          is_archived: false,
         }))
         .filter((row) => row.name && row.description && row.img_link);
 
@@ -118,21 +132,39 @@ exports.uploadBadges = async (req, res) => {
   }
 };
 
-exports.clearBadges = async (req, res) => {
-  try {
-    // Ensure only admins can perform this action
-    const { id: adminId } = req.user;
 
+exports.archiveBadges = async (req, res) => {
+  const { ids } = req.body; 
+  const { id: adminId } = req.user;
+
+  try {
     const admin = await Employee.findById(adminId);
     if (!admin || !admin.is_admin) {
-      return res.status(403).json({ message: "You are not authorized to reset badges." });
+      return res.status(403).json({ message: "You are not authorized to archive badges." });
     }
 
-    // Delete all badges
-    await Badge.deleteMany({});
-    res.status(200).json({ message: "All badges have been cleared successfully!" });
+    await Badge.updateMany({ _id: { $in: ids } }, { is_archived: true });
+    res.status(200).json({ message: "Badges archived successfully." });
   } catch (error) {
-    console.error("Error clearing badges:", error);
-    res.status(500).json({ message: "Failed to clear badges." });
+    console.error("Error archiving badges:", error);
+    res.status(500).json({ message: "Failed to archive badges." });
+  }
+};
+
+exports.restoreBadges = async (req, res) => {
+  const { ids } = req.body;
+  const { id: adminId } = req.user;
+
+  try {
+    const admin = await Employee.findById(adminId);
+    if (!admin || !admin.is_admin) {
+      return res.status(403).json({ message: "You are not authorized to restore badges." });
+    }
+
+    await Badge.updateMany({ _id: { $in: ids } }, { is_archived: false });
+    res.status(200).json({ message: "Badges restored successfully." });
+  } catch (error) {
+    console.error("Error restoring badges:", error);
+    res.status(500).json({ message: "Failed to restore badges." });
   }
 };

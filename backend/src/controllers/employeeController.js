@@ -1,6 +1,9 @@
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 const Employee = require("../models/Employee");
 const Department = require("../models/Department");
+const EmployeeDatamind = require("../models/EmployeeDatamind");
+const Datamind = require("../models/Datamind");
 
 exports.loginEmployee = async (req, res) => {
   const { email, password } = req.body;
@@ -75,7 +78,6 @@ exports.getProfile = async (req, res) => {
         position: employee.position,
         language: employee.language,
         location: employee.location,
-        data_mind_type: employee.data_mind_type,
         department: employee.dep_id
           ? { number: employee.dep_id.number, name: employee.dep_id.name }
           : null,
@@ -118,31 +120,57 @@ exports.getAllEmployees = async (req, res) => {
   }
 };
 
-exports.updateDatamindType = async (req, res) => {
-  const { data_mind_type } = req.body;
+exports.updateEmployeeDatamind = async (req, res) => {
+  const { datamind_id } = req.body;
   const { id } = req.user;
 
   try {
-    if (!data_mind_type) {
-      return res.status(400).json({ message: "Data mind type is required." });
+    if (!mongoose.Types.ObjectId.isValid(datamind_id)) {
+      return res.status(400).json({ message: "Invalid datamind ID" });
     }
 
-    const updatedEmployee = await Employee.findByIdAndUpdate(
-      { _id: id },
-      { data_mind_type },
-      { new: true }
-    );
+    const existingEmployeeDatamind = await EmployeeDatamind.findOne({
+      emp_id: id,
+    });
 
-    if (!updatedEmployee) {
-      return res.status(404).json({ message: "Employee not found." });
+    if (existingEmployeeDatamind) {
+      await EmployeeDatamind.updateOne(
+        { _id: existingEmployeeDatamind._id },
+        {
+          $set: {
+            datamind_id: datamind_id,
+          },
+        }
+      );
+    } else {
+      await EmployeeDatamind.create({
+        emp_id: id,
+        datamind_id: datamind_id,
+      });
     }
 
     res.status(200).json({
-      message: "Data mind type updated successfully.",
-      data_mind_type
+      message: "Employee data mind updated successfully.",
     });
   } catch (error) {
-    console.error("Error updating data mind type:", error);
+    console.error("Error updating data mind:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getEmployeeDatamind = async (req, res) => {
+  const { id } = req.user;
+
+  try {
+    const employeeDatamind = await EmployeeDatamind.findOne({
+      emp_id: id,
+    }).populate("datamind_id", "data_mind_type");;
+
+    res.status(200).json({
+      employeeDatamind,
+    });
+  } catch (error) {
+    console.error("Error fetching data mind:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

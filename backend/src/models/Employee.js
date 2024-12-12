@@ -45,9 +45,9 @@ const employeeSchema = new mongoose.Schema({
     type: String, 
     default: "en" 
   },
-  data_mind_type: {
+  img_link: {
     type: String,
-    default: null
+    default: null,
   },
   location: {
     type: mongoose.Schema.Types.ObjectId,

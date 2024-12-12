@@ -80,7 +80,7 @@ exports.getNotificationsForEmployee = async (req, res) => {
     console.error("Error fetching notifications:", error);
     res.status(500).json({ message: "Server error" });
   }
-};  
+};
 
 exports.markNotificationAsRead = async (req, res) => {
   const { notification_id } = req.body;
@@ -138,4 +138,26 @@ exports.updateNotificationPreference = async (req, res) => {
     console.error("Error updating notification preference:", error);
     res.status(500).json({ message: "Server error" });
   }
-};  
+};
+
+exports.getNotificationPreferences = async (req, res) => {
+  const { id } = req.user;
+
+  try {
+    const preferences = await NotificationSettings.find({ emp_id: id }).populate(
+      "noti_type_id",
+      "type_name"
+    );
+
+    const formattedPreferences = preferences.map((preference) => ({
+      noti_type_id: preference.noti_type_id._id,
+      type_name: preference.noti_type_id.type_name,
+      preference: preference.preference,
+    }));
+
+    res.status(200).json(formattedPreferences);
+  } catch (error) {
+    console.error("Error fetching notification preferences:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

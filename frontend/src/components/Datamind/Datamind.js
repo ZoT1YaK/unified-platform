@@ -3,7 +3,7 @@ import axios from "axios";
 import "./Datamind.css";
 
 const Datamind = () => {
-  const [dataMind, setDatamind] = useState(localStorage.getItem("dataMind") || "");
+  const [dataMind, setDatamind] = useState("");
   const [dataMindOptions, setDatamindOptions] = useState([]); 
   const [message, setMessage] = useState("");
 
@@ -20,11 +20,11 @@ const Datamind = () => {
             },
           }
         );
-        setDatamindOptions(optionsResponse.data.dataMinds.map((item) => item.data_mind_type));
+        setDatamindOptions(optionsResponse.data.dataMinds);
 
         // Fetch the current employee's Datamind
-        const profileResponse = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/employees/profile`,
+        const employeeDatamindResponse = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/employees/get-data-mind-type`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -32,7 +32,7 @@ const Datamind = () => {
           }
         );
 
-        const employeeDatamind = profileResponse.data.profile.data_mind_type || "";
+        const employeeDatamind = employeeDatamindResponse.data.employeeDatamind?.datamind_id._id || "";
         setDatamind(employeeDatamind);
       } catch (error) {
         console.error("Error fetching Datamind data:", error);
@@ -46,20 +46,21 @@ const Datamind = () => {
   
 
   const handleDatamindChange = async (event) => {
-    const selectedDatamind = event.target.value;
+    const selectedId = event.target.value;
+    const selectedDatamind = dataMindOptions.find((item) => item._id === selectedId);
     try {
       // Update the dataMind type for the employee
       await axios.put(
         `${process.env.REACT_APP_BACKEND_URL}/api/employees/data-mind-type`,
-        { data_mind_type: selectedDatamind },
+        { datamind_id: selectedId },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
-      setDatamind(selectedDatamind);
-      setMessage(`Datamind updated to ${selectedDatamind}`);
+      setDatamind(selectedId);
+      setMessage(`Datamind updated to ${selectedDatamind.data_mind_type}`);
     } catch (error) {
       console.error("Error updating Datamind:", error);
       setMessage("Error updating Datamind. Please try again.");
@@ -78,15 +79,14 @@ const Datamind = () => {
     try {
       await axios.put(
         `${process.env.REACT_APP_BACKEND_URL}/api/employees/data-mind-type`,
-        { data_mind_type: randomDatamind },
+        { datamind_id: randomDatamind._id },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
-      setDatamind(randomDatamind); 
-      localStorage.setItem("dataMind", randomDatamind);
+      setDatamind(randomDatamind._id); 
     } catch (error) {
       console.error("Error generating random Datamind:", error.response || error);
       setMessage("Error generating random Datamind. Please try again.");
@@ -97,12 +97,12 @@ const Datamind = () => {
   return (
     <div className="datamind-container">
       {/* Overlay Heading */}
-      <h2 className="datamind-heading">#IAm{dataMind || "X"}Datamind</h2>
+      <h2 className="datamind-heading">#IAm{dataMindOptions.find(item => item._id === dataMind)?.data_mind_type || "X"}Datamind</h2>
 
       {/* Controls */}
       <div className="datamind-controls">
         <select
-          value={dataMind || ""}
+          value={dataMind}
           onChange={handleDatamindChange}
           className="datamind-dropdown"
         >
@@ -110,8 +110,8 @@ const Datamind = () => {
             What is your Data Mind?
           </option>
           {dataMindOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
+            <option key={option._id} value={option._id}>
+              {option.data_mind_type}
             </option>
           ))}
         </select>

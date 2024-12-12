@@ -3,7 +3,7 @@ import axios from "axios";
 import "./Datamind.css";
 
 const Datamind = () => {
-  const [dataMind, setDatamind] = useState(localStorage.getItem("dataMind") || "");
+  const [dataMind, setDatamind] = useState("");
   const [dataMindOptions, setDatamindOptions] = useState([]); 
   const [message, setMessage] = useState("");
 
@@ -32,7 +32,7 @@ const Datamind = () => {
           }
         );
 
-        const employeeDatamind = employeeDatamindResponse.data.employeeDatamind?.datamind_id.data_mind_type || "";
+        const employeeDatamind = employeeDatamindResponse.data.employeeDatamind?.datamind_id._id || "";
         setDatamind(employeeDatamind);
       } catch (error) {
         console.error("Error fetching Datamind data:", error);
@@ -59,7 +59,7 @@ const Datamind = () => {
           },
         }
       );
-      setDatamind(selectedDatamind.data_mind_type);
+      setDatamind(selectedId);
       setMessage(`Datamind updated to ${selectedDatamind.data_mind_type}`);
     } catch (error) {
       console.error("Error updating Datamind:", error);
@@ -86,7 +86,7 @@ const Datamind = () => {
           },
         }
       );
-      setDatamind(randomDatamind.data_mind_type); 
+      setDatamind(randomDatamind._id); 
     } catch (error) {
       console.error("Error generating random Datamind:", error.response || error);
       setMessage("Error generating random Datamind. Please try again.");
@@ -97,12 +97,12 @@ const Datamind = () => {
   return (
     <div className="datamind-container">
       {/* Overlay Heading */}
-      <h2 className="datamind-heading">#IAm{dataMind || "X"}Datamind</h2>
+      <h2 className="datamind-heading">#IAm{dataMindOptions.find(item => item._id === dataMind)?.data_mind_type || "X"}Datamind</h2>
 
       {/* Controls */}
       <div className="datamind-controls">
         <select
-          value={dataMind || ""}
+          value={dataMind}
           onChange={handleDatamindChange}
           className="datamind-dropdown"
         >

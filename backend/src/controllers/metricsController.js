@@ -10,6 +10,8 @@ const MetricsSnapshot = require("../models/MetricsSnapshot");
 const MetricsReport = require("../models/MetricsReport");
 const NotificationController = require("./notificationController");
 const NotificationType = require("../models/NotificationType");
+const EventEmployee = require("../models/EventEmployee");
+const Event = require ("../models/Event");
 
 exports.updateDailyMetricsSnapshot = async () => {
   const startOfMonth = new Date(new Date().setDate(1)); // First day of the current month
@@ -519,6 +521,106 @@ exports.downloadPowerBIReport = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching report for download:", error);
+    res.status(500).json({ message: "Server error." });
+  }
+};
+
+//-------------------------------- ChartJS --------------------------------//
+exports.getTeamTasksMetrics = async (req, res) => {
+  const { id: leaderId } = req.user; // Leader's ID from authentication
+
+  try {
+    // Find employees who are not leaders and are under this leader
+    const employees = await Employee.find({ 
+      people_leader_id: leaderId, 
+      is_people_leader: false // Ensure we exclude leaders
+    }).select("_id f_name l_name");
+
+    const employeeIds = employees.map((emp) => emp._id);
+
+    // Aggregate tasks assigned to these employees
+    const tasks = await Task.aggregate([
+      { $match: { assigned_to_id: { $in: employeeIds } } },
+      {
+        $group: {
+          _id: "$assigned_to_id", // Group by employee ID
+          totalTasks: { $sum: 1 },
+          completedTasks: { $sum: { $cond: [{ $eq: ["$status", "Completed"] }, 1, 0] } },
+          averageTaskSpeed: {
+            $avg: {
+              $cond: [
+                { $eq: ["$status", "Completed"] },
+                { $divide: [{ $subtract: ["$completion_date", "$created_date"] }, 1000 * 60 * 60 * 24] },
+                null,
+              ],
+            },
+          },
+        },
+      },
+    ]);
+
+    // Map aggregated metrics to the corresponding employees
+    const taskBreakdown = tasks.map((task) => {
+      const employee = employees.find((emp) => emp._id.toString() === task._id.toString());
+      return {
+        employeeName: `${employee?.f_name || "N/A"} ${employee?.l_name || "N/A"}`,
+        totalTasks: task.totalTasks,
+        completedTasks: task.completedTasks,
+        averageTaskSpeed: parseFloat(task.averageTaskSpeed || 0).toFixed(2), // Round to 2 decimal places
+      };
+    });
+
+    res.status(200).json({ taskBreakdown });
+  } catch (error) {
+    console.error("Error fetching task metrics:", error);
+    res.status(500).json({ message: "Server error." });
+  }
+};
+
+
+exports.getTeamEventMetrics = async (req, res) => {
+  const { id: leaderId } = req.user; // Extract People Leader ID
+
+  try {
+    // Fetch events created by the leader
+    const events = await Event.find({ created_by_id: leaderId }).select("_id title");
+
+    if (!events.length) {
+      return res.status(404).json({ message: "No events found for this leader." });
+    }
+
+    const eventIds = events.map((event) => event._id);
+
+    const eventResponses = await EventEmployee.find({ event_id: { $in: eventIds } }).select(
+      "event_id response"
+    );
+
+    const responseBreakdown = {
+      Accepted: [],
+      Declined: [],
+      Pending: [],
+    };
+
+    // Group event titles based on responses
+    eventResponses.forEach((response) => {
+      const event = events.find((event) => event._id.toString() === response.event_id.toString());
+      if (event) {
+        if (response.response === "Accepted") {
+          responseBreakdown.Accepted.push(event.title);
+        } else if (response.response === "Declined") {
+          responseBreakdown.Declined.push(event.title);
+        } else if (response.response === "Pending") {
+          responseBreakdown.Pending.push(event.title);
+        }
+      }
+    });
+
+    res.status(200).json({
+      totalEvents: events.length,
+      responseBreakdown,
+    });
+  } catch (error) {
+    console.error("Error fetching event metrics:", error);
     res.status(500).json({ message: "Server error." });
   }
 };

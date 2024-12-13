@@ -9,6 +9,8 @@ import AssignedTaskList from '../AssignedTaskList/AssignedTaskList';
 import EventCreator from '../EventCreator/EventCreator';
 import EventCard from '../EventCard/EventCard';
 import TeamMetrics from '../TeamMetrics/TeamMetrics';
+import EventMetricsChart from './EventMetricsChart';
+import TaskMetricsChart from './TaskMetricsChart';
 
 const LeaderHub = () => {
     const [isLeader, setIsLeader] = useState(false);
@@ -23,98 +25,10 @@ const LeaderHub = () => {
         }
     }, []);
 
-   /* const employees = [
-        {
-            id: 1,
-            name: 'Ivan Ivanov',
-            avatar: 'https://via.placeholder.com/50',
-            tasks: 6,
-            completedTasks: 2,
-            achievements: 12,
-            milestones: 2,
-            team: 'HR Team',
-        },
-        {
-            id: 2,
-            name: 'Aiga Kalneja',
-            avatar: 'https://via.placeholder.com/50',
-            tasks: 8,
-            completedTasks: 6,
-            achievements: 10,
-            milestones: 3,
-            team: 'HR Team',
-        },
-        {
-            id: 3,
-            name: 'Roberts Zustars',
-            avatar: 'https://via.placeholder.com/50',
-            tasks: 5,
-            completedTasks: 3,
-            achievements: 8,
-            milestones: 2,
-            team: 'HR Team',
-        },
-        {
-            id: 4,
-            name: 'Diana Antoniuc',
-            avatar: 'https://via.placeholder.com/50',
-            tasks: 4,
-            completedTasks: 1,
-            achievements: 5,
-            milestones: 1,
-            team: 'HR Team',
-        },
-    ]; */
-
-
-    /* const [events, setEvents] = useState([
-         {
-             id: 1,
-             thumbnail: 'https://via.placeholder.com/300x150',
-             date: '12/12/24',
-             title: 'The Yearly Big Marathon',
-             description: 'Join us for the big yearly marathon...',
-         },
-         {
-             id: 2,
-             thumbnail: 'https://via.placeholder.com/300x150',
-             date: '10/10/24',
-             title: 'Let’s Recycle in the Office!',
-             description: 'Learn about sustainability in the office...',
-         },
-         {
-             id: 3,
-             thumbnail: 'https://via.placeholder.com/300x150',
-             date: '09/09/24',
-             title: 'Ugly Sweater Weather',
-             description: 'A fun contest for the ugliest sweater...',
-         },
-     ]);*/
-
-    /*const [selectedEvent, setSelectedEvent] = useState(null);*/
-
-
-    /*// Event Handlers
-    const handleEventClick = (event) => {
-        // Only allow clicks if the user is a leader and on /leaderhub
-        if (isLeader && location.pathname === '/leaderhub') {
-            setSelectedEvent(event); // Open modal for editing
-        }
-    };
-    const handleSaveEvent = (updatedEvent) => {
-        console.log('Event saved:', updatedEvent); // Optionally handle updates here
-        setSelectedEvent(null); // Close the modal
-    };
-
-    const handleDeleteEvent = () => {
-        console.log('Event deleted:', selectedEvent._id); // Optionally handle deletion here
-        setSelectedEvent(null); // Close the modal
-    };*/
-
-
+  
     const handleSaveEvent = (newEvent) => {
         console.log("Event saved:", newEvent);
-      }; 
+    };
     return (
         <div className="leaderhub-page">
             <TopBar />
@@ -168,20 +82,19 @@ const LeaderHub = () => {
 
                 {/* Right Panel */}
                 <div className="right-panel">
-                    {/* Power BI Placeholder */}
-                    <div className="power-bi-placeholder">
-                        <h3>Employee Metrics</h3>
-                        <img
-                            src="https://via.placeholder.com/300x150"
-                            alt="Power BI Placeholder"
-                            className="power-bi-report"
-                        />
-              
+                    {/* Metrics Placeholder */}
+                    <div className="employee-metrics-container">
+                        <div>
+                            <EventMetricsChart />
+                        </div>
+                        <div>
+                            <TaskMetricsChart />
+                        </div>
                     </div>
 
                     {/* Employee Statistics */}
                     <div className="employee-statistics">
-                        <TeamMetrics/>
+                        <TeamMetrics />
                     </div>
                 </div>
 

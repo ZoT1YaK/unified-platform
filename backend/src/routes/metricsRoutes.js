@@ -15,6 +15,12 @@ router.get("/report/download/:report_id", verifyToken, metricsController.downloa
 // Get employees metrics by People Leader
 router.get("/metrics", verifyToken, metricsController.getMetricsByPeopleLeader);
 
+// Get task metrics for tasks assigned by the leader
+router.get("/team-tasks", verifyToken, metricsController.getTeamTasksMetrics);
+
+// Get event participation metrics
+router.get("/team-events", verifyToken, metricsController.getTeamEventMetrics);
+
 // // Generate metrics report (PowerBI)
 // router.post("/report/power_bi", verifyToken, metricsController.generateManualPowerBIReport);
 

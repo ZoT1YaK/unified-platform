@@ -88,24 +88,6 @@
     text-align: left;
 }
 
-.power-bi-placeholder {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.power-bi-placeholder h3 {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #32444D;
-}
-
-.power-bi-report {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-}
-
 .employee-statistics {
     margin-top: 20px;
 }

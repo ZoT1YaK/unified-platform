@@ -1,26 +1,23 @@
 .employee-user-container {
-
     background-color: white;
     border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
-
 }
 
 
 .employee-user-container-top {
     background-color: #82ED9B;
-    height: 100px;
+    height: 70px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     position: relative;
-    top: -40px;
+    /* top: -40px; */
     padding-top: 20px;
 }
 
 
 .employee-info {
-    margin-top: -50px;
+    /* margin-top: -50px; */
     display: flex;
     align-items: start;
     gap: 40px;
@@ -35,8 +32,6 @@
     border-radius: 50%;
     position: absolute;
     top: 0;
-   
-
 }
 
 

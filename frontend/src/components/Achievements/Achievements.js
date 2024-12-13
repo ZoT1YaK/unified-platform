@@ -4,12 +4,11 @@ import { useFilterAndSearch } from "../../hooks/useFilterAndSearch";
 
 let fetchTimeout;
 
-const Achievements = ({ simpleMode = false, onAchievementsFetched }) => {
+const Achievements = ({ simpleMode = false, empId, mode = "own", onAchievementsFetched }) => {
     const [achievements, setAchievements] = useState([]);
     const [filter, setFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
 
-    const filteredAchievements = useFilterAndSearch(achievements, filter, searchQuery, "visible", "badge_id.name");
 
     useEffect(() => {
         const fetchAchievements = async () => {
@@ -19,12 +18,12 @@ const Achievements = ({ simpleMode = false, onAchievementsFetched }) => {
                 return;
             }
 
-            // Throttle the fetch request
+            const query = mode === "visited" ? `?emp_id=${empId}` : "";
             if (fetchTimeout) clearTimeout(fetchTimeout);
 
             fetchTimeout = setTimeout(async () => {
                 try {
-                    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/achievements/get`, {
+                    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/achievements/get${query}`, {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
@@ -35,25 +34,23 @@ const Achievements = ({ simpleMode = false, onAchievementsFetched }) => {
                     }
 
                     const data = await response.json();
-
-                    // Filter achievements if `simpleMode` is true
-                    const fetchedAchievements = simpleMode
+                    const filteredData = simpleMode
                         ? data.achievements.filter((achievement) => achievement.visibility)
                         : data.achievements;
 
-                    setAchievements(fetchedAchievements);
+                    setAchievements(filteredData);
 
                     if (onAchievementsFetched) {
-                        onAchievementsFetched(fetchedAchievements);
+                        onAchievementsFetched(filteredData);
                     }
                 } catch (error) {
                     console.error("Error fetching achievements:", error.message);
                 }
-            }, 300); // Throttle fetch calls with 300ms delay
+            }, 300);
         };
 
         fetchAchievements();
-    }, [simpleMode, onAchievementsFetched]); // Dependencies remain the same
+    }, [empId, mode, simpleMode, onAchievementsFetched]);
 
     const toggleVisibility = async (id) => {
         if (simpleMode) return;
@@ -90,29 +87,31 @@ const Achievements = ({ simpleMode = false, onAchievementsFetched }) => {
         }
     };
 
-    if (simpleMode) {
-        // Render simplified layout in simpleMode
+    // Simplified layout for simpleMode or visited profiles
+    if (simpleMode || mode === "visited") {
         return (
             <div className="achievements-section">
                 <h2>Achievements</h2>
                 {achievements.length > 0 ? (
                     <ul className="achievements-simple-list">
-                    {achievements.map((achievement) => (
-                        <li key={achievement._id} className="achievement-item">
-                            <img
-                                className="achievement-icon"
-                                src={achievement.badge_id?.img_link || "Ach-badge1.png"}
-                                alt={achievement.badge_id?.name || "Achievement Badge"}
-                            />
-                        </li>
-                    ))}
-                </ul>
+                        {achievements.map((achievement) => (
+                            <li key={achievement._id} className="achievement-item">
+                                <img
+                                    className="achievement-icon"
+                                    src={achievement.badge_id?.img_link || "Ach-badge1.png"}
+                                    alt={achievement.badge_id?.name || "Achievement Badge"}
+                                />
+                            </li>
+                        ))}
+                    </ul>
                 ) : (
                     <p>No achievements available.</p>
                 )}
             </div>
         );
     }
+
+    const filteredAchievements = useFilterAndSearch(achievements, filter, searchQuery, "visible", "badge_id.name");
 
     return (
         <div className="achievements-section">
@@ -143,15 +142,13 @@ const Achievements = ({ simpleMode = false, onAchievementsFetched }) => {
             <div className="achievements-list">
                 {filteredAchievements.map((achievement) => (
                     <div key={achievement._id} className="achievement-row">
-                        {/* Display badge details */}
                         <img
-                            className="achievement-icon"
                             src={achievement.badge_id?.img_link || "Ach-badge1.png"}
                             alt={achievement.badge_id?.name || "Achievement Badge"}
                         />
                         <div className="achievement-details">
-                            <h3>{achievement.badge_id?.name || "Unknown Badge"}</h3>
-                            <p>{achievement.badge_id?.description || "No description available"}</p>
+                            <h3>{achievement.badge_id?.name}</h3>
+                            <p>{achievement.badge_id?.description}</p>
                         </div>
                         <img
                             className="visibility-icon"

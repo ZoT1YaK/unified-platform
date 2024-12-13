@@ -1,11 +1,27 @@
 const mongoose = require("mongoose");
 const Milestone = require("../models/Milestone");
 
+// exports.getMilestonesByEmployee = async (req, res) => {
+//   const { id } = req.user;
+
+//   try {
+//     const milestones = await Milestone.find({ emp_id: id }).sort({ date_unlocked: -1 });
+
+//     res.status(200).json({ milestones });
+//   } catch (error) {
+//     console.error("Error fetching milestones:", error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
 exports.getMilestonesByEmployee = async (req, res) => {
-  const { id } = req.user;
+  const { id: loggedInId } = req.user;
+  const { emp_id } = req.query; // Fetch specific employee's milestones if provided
+  const targetId = emp_id || loggedInId;
 
   try {
-    const milestones = await Milestone.find({ emp_id: id }).sort({ date_unlocked: -1 });
+    const milestones = await Milestone.find({ emp_id: targetId, visibility: true }) // Only visible ones
+      .sort({ date_unlocked: -1 });
 
     res.status(200).json({ milestones });
   } catch (error) {
@@ -13,6 +29,7 @@ exports.getMilestonesByEmployee = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 exports.updateMilestoneVisibility = async (req, res) => {
   const { milestone_id, visibility } = req.body;

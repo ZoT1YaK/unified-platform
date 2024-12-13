@@ -6,6 +6,7 @@ import Home from "./components/Home(explore)/Home";
 import EmployeeProfile from "./components/EmployeeProfile/EmployeeProfile";
 /*import TopBar from "./components/TopBar/TopBar";*/
 import LeaderHub from "./components/LeaderHub/LeaderHub";
+import VisitedProfPage from "./components/VisitedProfile/VisitedProfPage";
 
 const App = () => {
   return (
@@ -20,7 +21,7 @@ const App = () => {
           element={
             <ProtectedRoute
               component={() => (
-                <> 
+                <>
                   <Home />
                 </>
               )}
@@ -39,7 +40,18 @@ const App = () => {
             />
           }
         />
-
+        <Route
+          path="/profile/:empId"
+          element={
+            <ProtectedRoute
+              component={() => (
+                <>
+                  <VisitedProfPage />
+                </>
+              )}
+            />
+          }
+        />
         <Route
           path="/leaderhub"
           element={

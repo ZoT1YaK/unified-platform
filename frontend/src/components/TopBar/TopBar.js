@@ -8,6 +8,7 @@ import Gratification from '../Gratification/Gratification';
 
 const TopBar = () => {
     const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
     const [isLeader, setIsLeader] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [user, setUser] = useState(null);
@@ -36,9 +37,45 @@ const TopBar = () => {
         fetchUserDetails();
     }, []);
 
+    useEffect(() => {
+        const fetchEmployees = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('No token found.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/employees/all`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch employees.');
+                }
+
+                const data = await response.json();
+                setSearchResults(data.employees); // Populate initial list of employees
+            } catch (error) {
+                console.error('Error fetching employees:', error.message);
+            }
+        };
+
+        fetchEmployees();
+    }, []);
+
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
     };
+
+    const handleEmployeeClick = (employeeId) => {
+        navigate(`/profile/${employeeId}`);
+        setSearchQuery(''); // Clear search input after navigation
+    };
+
+    const filteredResults = searchResults.filter((employee) =>
+        `${employee.f_name} ${employee.l_name}`.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const toggleView = () => {
         if (location.pathname === '/leaderhub') {
@@ -92,9 +129,26 @@ const TopBar = () => {
                     className="search-input"
                     value={searchQuery}
                     onChange={handleSearchChange}
-                    placeholder="Search..."
+                    placeholder="Search employees..."
                 />
                 <img src="/magnifying-glass 2.png" alt="search" className="search-icon" />
+                {searchQuery && (
+                    <ul className="search-results">
+                        {filteredResults.length > 0 ? (
+                            filteredResults.map((employee) => (
+                                <li
+                                    key={employee._id}
+                                    onClick={() => handleEmployeeClick(employee._id)}
+                                    className="search-result-item"
+                                >
+                                    {employee.f_name} {employee.l_name}
+                                </li>
+                            ))
+                        ) : (
+                            <li className="no-results">No results found.</li>
+                        )}
+                    </ul>
+                )}
             </div>
 
             {/* Right Icons */}

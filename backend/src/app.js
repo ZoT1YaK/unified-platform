@@ -36,9 +36,9 @@ connectDB();
 
 const uploadDir = path.join(__dirname, "src/uploads");
 if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-    console.log("Uploads directory ensured at:", uploadDir);
-  }
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log("Uploads directory ensured at:", uploadDir);
+}
 
 app.use("/uploads", express.static(uploadDir));
 
@@ -54,7 +54,8 @@ app.use("/api/achievements", achievementRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/metrics", metricsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-app.use("/api/analytics",analyticsRoutes);
+app.use("/api/analytics", analyticsRoutes); // analytics for home page
+app.use("/api", analyticsRoutes); // analytics for profile pages (own and visited)
 app.use("/api/datamind", datamindRoutes);
 
 

@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import './Milestones.css';
-import { useFilterAndSearch } from '../../hooks/useFilterAndSearch';
+import React, { useEffect, useState } from "react";
+import "./Milestones.css";
+import { useFilterAndSearch } from "../../hooks/useFilterAndSearch";
 
-let fetchTimeout; 
+let fetchTimeout;
 
-const Milestones = ({ simpleMode = false, onMilestonesFetched }) => {
+const Milestones = ({ simpleMode = false, empId, mode = "own", onMilestonesFetched }) => {
     const [milestones, setMilestones] = useState([]);
-    const [filter, setFilter] = useState('All');
-    const [searchQuery, setSearchQuery] = useState('');
-
-    const filteredMilestones = useFilterAndSearch(milestones, filter, searchQuery, "visibility", "name");
+    const [filter, setFilter] = useState("All");
+    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         const fetchMilestones = async () => {
@@ -19,14 +17,13 @@ const Milestones = ({ simpleMode = false, onMilestonesFetched }) => {
                 return;
             }
 
+            const query = mode === "visited" ? `?emp_id=${empId}` : "";
             if (fetchTimeout) clearTimeout(fetchTimeout);
 
             fetchTimeout = setTimeout(async () => {
                 try {
-                    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/milestones/get`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
+                    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/milestones/get${query}`, {
+                        headers: { Authorization: `Bearer ${token}` },
                     });
 
                     if (!response.ok) {
@@ -34,23 +31,23 @@ const Milestones = ({ simpleMode = false, onMilestonesFetched }) => {
                     }
 
                     const data = await response.json();
-                    const fetchedMilestones = simpleMode
+                    const filteredData = simpleMode
                         ? data.milestones.filter((milestone) => milestone.visibility)
                         : data.milestones;
 
-                    setMilestones(fetchedMilestones);
+                    setMilestones(filteredData);
 
                     if (onMilestonesFetched) {
-                        onMilestonesFetched(fetchedMilestones);
+                        onMilestonesFetched(filteredData);
                     }
                 } catch (error) {
                     console.error("Error fetching milestones:", error.message);
                 }
-            }, 300); // Throttle API calls (300ms delay)
+            }, 300);
         };
 
         fetchMilestones();
-    }, [simpleMode, onMilestonesFetched]); // Dependencies remain unchanged
+    }, [empId, mode, simpleMode, onMilestonesFetched]);
 
     const toggleVisibility = async (id) => {
         if (simpleMode) return; // No visibility toggle in simpleMode
@@ -87,13 +84,14 @@ const Milestones = ({ simpleMode = false, onMilestonesFetched }) => {
         }
     };
 
-    if (simpleMode) {
+    // Render simplified layout for simpleMode or visited profiles
+    if (simpleMode || mode === "visited") {
         return (
             <div className="milestones-section">
                 <h2>Milestones</h2>
-                {filteredMilestones.length > 0 ? (
+                {milestones.length > 0 ? (
                     <ul className="milestones-list">
-                        {filteredMilestones.map((milestone) => (
+                        {milestones.map((milestone) => (
                             <li key={milestone._id} className="milestone-item">
                                 {milestone.name}
                             </li>
@@ -106,19 +104,22 @@ const Milestones = ({ simpleMode = false, onMilestonesFetched }) => {
         );
     }
 
+    // Full layout for own profile
+    const filteredMilestones = useFilterAndSearch(milestones, filter, searchQuery, "visibility", "name");
+
     return (
         <div className="milestones-section">
             <h2>Milestones</h2>
-            <div className='milestones-header'>
+            <div className="milestones-header">
                 <p>You've gained {milestones.length} milestones</p>
                 <div className="milestones-filters">
-                    <button onClick={() => setFilter('All')} className={filter === 'All' ? 'active' : ''}>
+                    <button onClick={() => setFilter("All")} className={filter === "All" ? "active" : ""}>
                         All
                     </button>
-                    <button onClick={() => setFilter('Visible')} className={filter === 'Visible' ? 'active' : ''}>
+                    <button onClick={() => setFilter("Visible")} className={filter === "Visible" ? "active" : ""}>
                         Visible
                     </button>
-                    <button onClick={() => setFilter('Hidden')} className={filter === 'Hidden' ? 'active' : ''}>
+                    <button onClick={() => setFilter("Hidden")} className={filter === "Hidden" ? "active" : ""}>
                         Hidden
                     </button>
                     <div className="search-bar">

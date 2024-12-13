@@ -76,7 +76,7 @@ const Home = () => {
        fetchUserProfile(); 
      }
    }, []); */
-   useEffect(() => {
+  useEffect(() => {
     const fetchDataMindType = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -88,7 +88,7 @@ const Home = () => {
             },
           }
         );
-  
+
         if (response.data && response.data.employeeDatamind) {
           const dataMindType = response.data.employeeDatamind.datamind_id.data_mind_type;
           setUser((prevUser) => ({
@@ -102,13 +102,13 @@ const Home = () => {
         console.error("Error fetching data mind type:", error);
       }
     };
-  
+
     // Only fetch data mind type if user is already loaded
     if (user && user._id && !user.data_mind_type) {
       fetchDataMindType();
     }
   }, [user]);
-  
+
 
   // Fetch posts from the backend
   useEffect(() => {
@@ -137,32 +137,32 @@ const Home = () => {
   if (!posts.length) {
     return <div>No posts to display</div>;
   }
-  
 
-    // Pagination logic
-    const indexOfLastPost = currentPage * postsPerPage;
-    const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-  
-    const nextPage = () => {
-      if (currentPage < Math.ceil(posts.length / postsPerPage)) {
-        setCurrentPage((prev) => prev + 1);
-      }
-    };
-  
-    const prevPage = () => {
-      if (currentPage > 1) {
-        setCurrentPage((prev) => prev - 1);
-      }
-    };
-  
-    if (loading) {
-      return <div>Loading posts...</div>;
+
+  // Pagination logic
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+
+  const nextPage = () => {
+    if (currentPage < Math.ceil(posts.length / postsPerPage)) {
+      setCurrentPage((prev) => prev + 1);
     }
-  
-    if (!posts.length) {
-      return <div>No posts to display</div>;
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
     }
+  };
+
+  if (loading) {
+    return <div>Loading posts...</div>;
+  }
+
+  if (!posts.length) {
+    return <div>No posts to display</div>;
+  }
 
   // Task search handler
   const handleSearchChange = (e) => {
@@ -180,7 +180,7 @@ const Home = () => {
           {/* User Profile Overview */}
           <div className="profile-container">
             <div className="profile-container-top"></div>
-            <img src="/cat.png" alt="icon8" className="avatar" />
+            <img src={user.img_link || "/placeholder.png"} alt="User Avatar" className="avatar" />
             <div className="user-details">
               <h2>
                 {user.f_name && user.l_name
@@ -229,7 +229,7 @@ const Home = () => {
             <PostCreation
               user={{
                 name: `${user.f_name || "User"} ${user.l_name || ""}`,
-                avatar: user.avatar || "/cat.png",
+                img_link:  user.img_link || "/placeholder.png",
               }}
             />
           </div>
@@ -255,7 +255,7 @@ const Home = () => {
             </button>
           </div>
         </div>
-          
+
 
         <div className="tasks-column">
           {/* Tasks and Events boxes */}

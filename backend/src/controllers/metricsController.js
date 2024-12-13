@@ -271,7 +271,7 @@ exports.getMetricsByPeopleLeader = async (req, res) => {
   const { id } = req.user;
 
   try {
-    const leaderEmployees = await Employee.find({ people_leader_id: id }).select("_id f_name l_name email");
+    const leaderEmployees = await Employee.find({ people_leader_id: id }).select("_id f_name l_name email img_link");
     if (!leaderEmployees.length) {
       return res.status(404).json({ message: "No employees found for this leader." });
     }
@@ -288,6 +288,7 @@ exports.getMetricsByPeopleLeader = async (req, res) => {
       return {
         employeeName: `${employee?.f_name || "N/A"} ${employee?.l_name || ""}`,
         employeeEmail: employee?.email || "N/A",
+        img_link: employee?.img_link || "/placeholder.png",
         taskCompletionRate: snapshot.task_completion_rate,
         averageTaskSpeed: snapshot.average_task_speed,
         milestonesAchieved: snapshot.milestones_achieved,

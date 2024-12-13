@@ -113,7 +113,7 @@ const TopBar = () => {
 
                 <div className="dropdown-user-container">
                     <img
-                        src="/cat.png"
+                        src={user?.img_link || "/placeholder.png"}
                         alt="User Avatar"
                         className="dropdown-user-avatar"
                         onClick={toggleDropdown}
@@ -122,7 +122,7 @@ const TopBar = () => {
                         <div className="dropdown-user-details">
                             <div className="dropdown-header">
                                 <img
-                                    src="/cat.png"
+                                    src={user?.img_link || "/placeholder.png"}
                                     alt="User Avatar"
                                     className="dropdown-user-avatar-large"
                                 />

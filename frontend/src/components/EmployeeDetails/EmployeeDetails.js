@@ -13,11 +13,11 @@ const EmployeeDetails = ({ children }) => {
                     setUser(parsedEmployee);
                 } else {
                     console.warn('No employee data found in localStorage.');
-                    window.location.href = '/login'; 
+                    window.location.href = '/login';
                 }
             } catch (error) {
                 console.error('Failed to parse employee data:', error);
-                window.location.href = '/login'; 
+                window.location.href = '/login';
             }
         };
 
@@ -34,7 +34,7 @@ const EmployeeDetails = ({ children }) => {
             {/* User Avatar and Details */}
             <div className="employee-info">
                 <img
-                    src={user?.avatar || 'cat.png'}
+                    src={user?.img_link || '/placeholder.png'}
                     alt="User Avatar"
                     className="employee-user-avatar"
                 />

@@ -8,6 +8,7 @@ import TaskCreator from '../TaskCreation/TaskCreation';
 import AssignedTaskList from '../AssignedTaskList/AssignedTaskList';
 import EventCreator from '../EventCreator/EventCreator';
 import EventCard from '../EventCard/EventCard';
+import TeamMetrics from '../TeamMetrics/TeamMetrics';
 
 const LeaderHub = () => {
     const [isLeader, setIsLeader] = useState(false);
@@ -22,7 +23,7 @@ const LeaderHub = () => {
         }
     }, []);
 
-    const employees = [
+   /* const employees = [
         {
             id: 1,
             name: 'Ivan Ivanov',
@@ -63,7 +64,7 @@ const LeaderHub = () => {
             milestones: 1,
             team: 'HR Team',
         },
-    ];
+    ]; */
 
 
     /* const [events, setEvents] = useState([
@@ -180,24 +181,7 @@ const LeaderHub = () => {
 
                     {/* Employee Statistics */}
                     <div className="employee-statistics">
-                        <h4>Team 10 | HR Team</h4>
-                        <ul className="employee-list">
-                            {employees.map((employee) => (
-                                <li key={employee.id} className="employee-item">
-                                    <img
-                                        src={employee.avatar}
-                                        alt={`${employee.name}'s Avatar`}
-                                        className="employee-avatar"
-                                    />
-                                    <div className="employee-details">
-                                        <h5>{employee.name}</h5>
-                                        <p>Tasks: {employee.tasks} ({employee.completedTasks} done)</p>
-                                        <p>Achievements: {employee.achievements}</p>
-                                        <p>Milestones: {employee.milestones}</p>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
+                        <TeamMetrics/>
                     </div>
                 </div>
 

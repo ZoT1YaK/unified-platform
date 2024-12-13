@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import './TopBar.css';
 import Notification from '../Notifications/Notifications';
 import SettingsModal from '../SettingsModal/SettingsModal';
+import Gratification from '../Gratification/Gratification';
+
 
 const TopBar = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -10,13 +12,18 @@ const TopBar = () => {
     const [isLeader, setIsLeader] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [user, setUser] = useState(null);
+    const [showHistory, setShowHistory] = useState(false);
+    const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+    const [isGratificationModalOpen, setIsGratificationModalOpen] = useState(false);
+
     const navigate = useNavigate();
     const location = useLocation();
-    const [showHistory, setShowHistory] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleOpenModal = () => setIsModalOpen(true);
-    const handleCloseModal = () => setIsModalOpen(false);
+    const handleOpenSettingsModal = () => setIsSettingsModalOpen(true);
+    const handleCloseSettingsModal = () => setIsSettingsModalOpen(false);
+
+    const handleOpenGratificationModal = () => setIsGratificationModalOpen(true);
+    const handleCloseGratificationModal = () => setIsGratificationModalOpen(false);
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -160,7 +167,7 @@ const TopBar = () => {
 
                 <div className="dropdown-user-container">
                     <img
-                        src="/cat.png"
+                        src={user?.img_link || "/placeholder.png"}
                         alt="User Avatar"
                         className="dropdown-user-avatar"
                         onClick={toggleDropdown}
@@ -169,7 +176,7 @@ const TopBar = () => {
                         <div className="dropdown-user-details">
                             <div className="dropdown-header">
                                 <img
-                                    src="/cat.png"
+                                    src={user?.img_link || "/placeholder.png"}
                                     alt="User Avatar"
                                     className="dropdown-user-avatar-large"
                                 />
@@ -192,13 +199,34 @@ const TopBar = () => {
                                 View Profile
                             </button>
                             <hr />
-                            <hr />
                             <div className="dropdown-links">
-                                <button className="settings-button" onClick={handleOpenModal}>
+                                <button className="settings-button" onClick={handleOpenSettingsModal}>
                                     Settings
                                 </button>
-                                {isModalOpen && <SettingsModal onClose={handleCloseModal} isLeader={isLeader} />}
-                                <span className="dropdown-link">Help</span>
+                                {isSettingsModalOpen && <SettingsModal onClose={handleCloseSettingsModal} isLeader={isLeader} />}
+                                <hr />
+                                {user?.is_admin && ( // Only allow access for admin
+                                    <>
+                                        <button
+                                            className="gratification-button"
+                                            onClick={() => {
+                                                console.log("Opening Gratification Modal");
+                                                handleOpenGratificationModal();
+                                            }}
+                                        >
+                                            Gratification System
+                                        </button>
+                                        {isGratificationModalOpen && (
+                                            <Gratification
+                                                onClose={() => {
+                                                    console.log("Closing Gratification Modal");
+                                                    handleCloseGratificationModal();
+                                                }}
+                                            />
+                                        )}
+                                        <hr />
+                                    </>
+                                )}
                                 <span
                                     className="dropdown-link logout-link"
                                     onClick={handleLogout}

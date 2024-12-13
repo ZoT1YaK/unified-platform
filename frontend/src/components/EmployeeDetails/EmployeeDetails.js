@@ -35,9 +35,17 @@ const EmployeeDetails = ({ empId, mode = "own", children }) => {
                 if (mode === "visited") {
                     setDatamind(data.profile.datamind); // Fetch Datamind value for visited profiles
                 }
+                const storedEmployee = localStorage.getItem('employee');
+                if (storedEmployee) {
+                    const parsedEmployee = JSON.parse(storedEmployee);
+                    setUser(parsedEmployee);
+                } else {
+                    console.warn('No employee data found in localStorage.');
+                    window.location.href = '/login';
+                }
             } catch (error) {
-                console.error("Error fetching employee details:", error.message);
-                window.location.href = "/login";
+                console.error('Failed to parse employee data:', error);
+                window.location.href = '/login';
             }
         };
 
@@ -62,7 +70,7 @@ const EmployeeDetails = ({ empId, mode = "own", children }) => {
             {/* User Avatar and Details */}
             <div className="employee-info">
                 <img
-                    src={user?.avatar || "cat.png"}
+                    src={user?.img_link || '/placeholder.png'}
                     alt="User Avatar"
                     className="employee-user-avatar"
                 />

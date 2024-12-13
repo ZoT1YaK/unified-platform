@@ -16,6 +16,8 @@ const EmployeeProfile = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [milestones, setMilestones] = useState([]);
   const [achievements, setAchievements] = useState([]);
+  const [posts, setPosts] = useState([]);
+
 
   
   return (
@@ -58,14 +60,15 @@ const EmployeeProfile = () => {
 
           {/* Analytics Section */}
           <Analytics
-            achievementsCount={achievements.length}
-            postsCount={15}
-            milestonesCount={milestones.length}
+            achievementsCount={achievements?.length || 0}
+            postsCount={posts?.length || 0} 
+            milestonesCount={milestones?.length || 0}
           />
 
           {/* Posts and Events */}
           <div className="activity-events-container">
-            <UserPostTracker />
+            <UserPostTracker
+              onPostsFetched={(postData) => setPosts(postData)} />
 
             <div className="events-gray-box">
               <h2>Events</h2>

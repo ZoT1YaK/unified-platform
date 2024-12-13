@@ -15,14 +15,14 @@ const PostCreation = ({ user }) => {
     return (
         <div className="post-creation-component">
             <div className="post-creation-box" onClick={openDialog}>
-                <img src={user.avatar} alt="User Avatar" className="post-avatar" />
+                <img src={user.img_link} alt="User Avatar" className="post-avatar" />
                 <p className="post-prompt">What's on your mind, {user.name}?</p>
             </div>
 
             {isOpen && <PostDialog user={user} closeDialog={closeDialog} />}
         </div>
     );
-}; 
+};
 
 const PostDialog = ({ user, closeDialog }) => {
     const [postText, setPostText] = useState('');
@@ -71,10 +71,10 @@ const PostDialog = ({ user, closeDialog }) => {
         setAudience(selectedAudience);
 
         if (selectedAudience !== 'all') {
-            fetchOptions(selectedAudience); 
+            fetchOptions(selectedAudience);
         } else {
-            setAvailableOptions([]); 
-            setSelectedOptions([]); 
+            setAvailableOptions([]);
+            setSelectedOptions([]);
         }
     };
 
@@ -126,7 +126,7 @@ const PostDialog = ({ user, closeDialog }) => {
         <div className="post-dialog-overlay" onClick={closeDialog}>
             <div className="post-dialog" onClick={(e) => e.stopPropagation()}>
                 <div className="post-dialogue-header">
-                    <img src={user.avatar} alt="User Avatar" className="post-avatar" />
+                    <img src={user.img_link || "/placeholder.png"} alt="User Avatar" className="post-avatar" />
                     <div className="user-info">
                         <h2>{user.name}</h2>
                         <p>Post to
@@ -136,7 +136,7 @@ const PostDialog = ({ user, closeDialog }) => {
                             >
                                 {audience.charAt(0).toUpperCase() + audience.slice(1)}
                             </button></p>
-                            {showAudienceDropdown && (
+                        {showAudienceDropdown && (
                             <div className="audience-dropdown">
                                 <select value={audience} onChange={handleAudienceChange}>
                                     <option value="all">All</option>

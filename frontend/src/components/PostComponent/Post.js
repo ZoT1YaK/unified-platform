@@ -3,7 +3,7 @@ import axios from 'axios';
 import './Post.css';
 
 const PostComponent = ({ post }) => {
-    const [likes, setLikes] = useState(post.likes || 0); 
+    const [likes, setLikes] = useState(post.likes || 0);
     const [newComment, setNewComment] = useState('');
     const [comments, setComments] = useState([]);
 
@@ -25,10 +25,10 @@ const PostComponent = ({ post }) => {
                 }
             }
         };
-    
+
         fetchComments();
     }, [post._id]);
-    
+
     // Toggle like functionality
     const handleLikeClick = async () => {
         try {
@@ -70,10 +70,10 @@ const PostComponent = ({ post }) => {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
                 }
             );
-            setComments([...comments, response.data.comment]); 
+            setComments([...comments, response.data.comment]);
             setNewComment('');
         } catch (error) {
-            console.error('Error posting comment:', error); 
+            console.error('Error posting comment:', error);
         }
     };
 
@@ -81,6 +81,13 @@ const PostComponent = ({ post }) => {
     return (
         <div className="post-component">
             <div className="post-header">
+                <div className="post-avatar">
+                    <img
+                           src={post.author.img_link || "/placeholder.png"} 
+                           alt={`${post.author.f_name} ${post.author.l_name}'s Avatar`}
+                           className="post-avatar"
+                    />
+                </div>
                 <div className="post-user-info">
                     <h2>
                         {post.author?.f_name} {post.author?.l_name || "Unknown"}
@@ -111,7 +118,7 @@ const PostComponent = ({ post }) => {
                     <span>{comments.length} Comments</span>
                 </div>
             </div>
-                 {/* Comment Input */}
+            {/* Comment Input */}
             <div className="comment-area">
                 <input
                     type="text"
@@ -123,7 +130,7 @@ const PostComponent = ({ post }) => {
                     Post
                 </button>
             </div>
-                {/* Comments List */}
+            {/* Comments List */}
             <div className="comments-list">
                 {comments.length === 0 ? (
                     <p>No comments yet. Be the first to comment!</p>
@@ -139,11 +146,11 @@ const PostComponent = ({ post }) => {
                 )}
             </div>
 
-                    
-            
 
-            </div>
-            );
+
+
+        </div>
+    );
 };
 
-            export default PostComponent;
+export default PostComponent;

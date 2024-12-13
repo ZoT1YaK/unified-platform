@@ -42,6 +42,7 @@ exports.loginEmployee = async (req, res) => {
       is_admin: employee.is_admin,
       is_people_leader: employee.is_people_leader,
       preferred_language: employee.preferred_language,
+      img_link: employee.img_link,
       dep_id: employee.dep_id ? { number: employee.dep_id.number, name: employee.dep_id.name } : null,
       people_leader_id: employee.people_leader_id,
     };
@@ -77,6 +78,7 @@ exports.getProfile = async (req, res) => {
         l_name: employee.l_name,
         position: employee.position,
         language: employee.language,
+        img_link:employee.img_link,
         location: employee.location,
         department: employee.dep_id
           ? { number: employee.dep_id.number, name: employee.dep_id.name }
@@ -112,7 +114,7 @@ exports.updateLanguage = async (req, res) => {
 };
 exports.getAllEmployees = async (req, res) => {
   try {
-      const employees = await Employee.find({}, "f_name l_name email position");
+      const employees = await Employee.find({}, "f_name l_name email position img_link");
       res.status(200).json({ employees });
   } catch (error) {
       console.error("Error fetching employees:", error);

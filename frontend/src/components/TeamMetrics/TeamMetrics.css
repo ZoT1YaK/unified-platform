@@ -79,4 +79,12 @@
     font-size: 14px;
     color: #666;
   }
+  .metric-avatar-image {
+    width: 60px; 
+    height: 60px; 
+    border-radius: 50%; 
+    object-fit: cover; 
+    border: 1px solid #ddd; 
+    margin-right: 10px; 
+  }
   

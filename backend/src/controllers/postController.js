@@ -199,7 +199,7 @@ exports.getTargetedPosts = async (req, res) => {
           ],
           visibility: true, 
       })
-      .populate("emp_id", "f_name l_name position dep_id location")
+      .populate("emp_id", "f_name l_name position dep_id location img_link")
       .populate({
         path: "emp_id",
         populate: [
@@ -227,6 +227,7 @@ exports.getTargetedPosts = async (req, res) => {
               l_name: post.emp_id?.l_name,
               position: post.emp_id?.position,
               department: post.emp_id?.dep_id?.name,
+              img_link: post.emp_id?.img_link || "/placeholder.png",
             },
             target_team_names: teamNames,
           };

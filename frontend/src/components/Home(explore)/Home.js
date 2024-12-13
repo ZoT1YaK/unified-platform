@@ -10,7 +10,6 @@ import PostComponent from "../PostComponent/Post";
 import Milestones from "../Milestones/Milestones";
 import Achievements from "../Achievements/Achievements";
 import useAnalytics from "../../hooks/useAnalytics";
-import Gratification from "../Gratification/Gratification";
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -77,7 +76,39 @@ const Home = () => {
        fetchUserProfile(); 
      }
    }, []); */
-
+   useEffect(() => {
+    const fetchDataMindType = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/employees/get-data-mind-type`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        if (response.data && response.data.employeeDatamind) {
+          const dataMindType = response.data.employeeDatamind.datamind_id.data_mind_type;
+          setUser((prevUser) => ({
+            ...prevUser,
+            data_mind_type: dataMindType,
+          }));
+        } else {
+          console.warn("Data mind type not found for the employee.");
+        }
+      } catch (error) {
+        console.error("Error fetching data mind type:", error);
+      }
+    };
+  
+    // Only fetch data mind type if user is already loaded
+    if (user && user._id && !user.data_mind_type) {
+      fetchDataMindType();
+    }
+  }, [user]);
+  
 
   // Fetch posts from the backend
   useEffect(() => {
@@ -100,12 +131,13 @@ const Home = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading posts...</div>;
+    return <div>Loading...</div>;
   }
 
   if (!posts.length) {
     return <div>No posts to display</div>;
   }
+  
 
     // Pagination logic
     const indexOfLastPost = currentPage * postsPerPage;
@@ -186,7 +218,6 @@ const Home = () => {
           <div className="milestones-container">
             <h2>Milestones</h2>
             <Milestones simpleMode />
-            {user.is_admin && <Gratification />}
           </div>
 
         </div>

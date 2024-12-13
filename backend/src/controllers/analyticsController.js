@@ -10,7 +10,7 @@ exports.getEmployeeAnalytics = async (req, res) => {
      const achievementsCount = await Achievement.countDocuments({ emp_id: id });
 
     // Count posts
-    const postsCount = await Post.countDocuments({ created_by_id: id });
+    const postsCount = await Post.countDocuments({ emp_id: id });
 
     // Count milestones
     const milestonesCount = await Milestone.countDocuments({ emp_id: id });

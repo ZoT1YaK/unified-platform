@@ -83,9 +83,9 @@ const PostComponent = ({ post }) => {
             <div className="post-header">
                 <div className="post-avatar">
                     <img
-                           src={post.author.img_link || "/placeholder.png"} 
-                           alt={`${post.author.f_name} ${post.author.l_name}'s Avatar`}
-                           className="post-avatar"
+                        src={post.author.img_link || "/placeholder.png"}
+                        alt={`${post.author.f_name} ${post.author.l_name}'s Avatar`}
+                        className="post-avatar"
                     />
                 </div>
                 <div className="post-user-info">
@@ -99,6 +99,47 @@ const PostComponent = ({ post }) => {
             </div>
             <div className="post-description">
                 <p>{post.content || "No content available"}</p>
+                {/* Render Media Links */}
+                {post.mediaLinks && post.mediaLinks.length > 0 && (
+                    <div className="post-media">
+                        <div className="media-grid">
+                            {post.mediaLinks.slice(0, 5).map((link, index) => (
+                                <div key={index} className="media-item">
+                                    {link.match(/\.(jpeg|jpg|gif|png)$/i) ? (
+                                        <img src={link} alt={`Media ${index}`} className="media-image" />
+                                    ) : link.match(/youtu\.be|youtube\.com/i) ? (
+                                        <iframe
+                                            src={link
+                                                .replace("watch?v=", "embed/") 
+                                                .replace("youtu.be/", "www.youtube.com/embed/")}
+                                            title={`Video ${index}`}
+                                            allowFullScreen
+                                            className="media-video"
+                                        ></iframe>
+                                    ) : link.match(/vimeo\.com/i) ? (
+                                        <iframe
+                                            src={link.replace("vimeo.com/", "player.vimeo.com/video/")} 
+                                            title={`Video ${index}`}
+                                            allowFullScreen
+                                            className="media-video"
+                                        ></iframe>
+                                    ) : (
+                                        <a href={link} target="_blank" rel="noopener noreferrer" className="media-link">
+                                            {link}
+                                        </a>
+                                    )}
+                                </div>
+                            ))}
+                            {post.mediaLinks.length > 5 && (
+                                <div className="media-item more-overlay">
+                                    +{post.mediaLinks.length - 5}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* Existing Attachments */}
                 {post.attachments && (
                     <div className="post-attachments">
                         {post.attachments.map((attachment, index) => (

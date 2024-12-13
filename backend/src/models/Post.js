@@ -1,39 +1,40 @@
 const mongoose = require("mongoose");
 
 const postSchema = new mongoose.Schema({
-  emp_id: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: "Employee", 
-    required: true 
+  emp_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Employee",
+    required: true
   },
-  related_emp_id: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: "Employee", 
-    required: false 
+  related_emp_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Employee",
+    required: false
   },
-  content: { 
-    type: String, 
-    required: true 
+  content: {
+    type: String,
+    required: true
   },
-  file_location: { 
-    type: String, 
-    required: false 
+  mediaLinks: [{ type: String }],
+  file_location: {
+    type: String,
+    required: false
   },
-  likes: { 
-    type: Number, 
-    default: 0 
+  likes: {
+    type: Number,
+    default: 0
   },
-  comments: { 
-    type: Number, 
-    default: 0 
+  comments: {
+    type: Number,
+    default: 0
   },
-  visibility: { 
-    type: Boolean, 
-    default: false 
+  visibility: {
+    type: Boolean,
+    default: false
   },
-  timestamp: { 
-    type: Date, 
-    default: Date.now 
+  timestamp: {
+    type: Date,
+    default: Date.now
   },
 });
 

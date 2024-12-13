@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import "./EmployeeDetails.css";
 
@@ -14,7 +15,6 @@ const EmployeeDetails = ({ empId, mode = "own", children }) => {
                     window.location.href = "/login";
                     return;
                 }
-
                 const query = mode === "visited" ? `/${empId}` : "";
                 const response = await fetch(
                     `${process.env.REACT_APP_BACKEND_URL}/api/employees/profile${query}`,
@@ -30,19 +30,23 @@ const EmployeeDetails = ({ empId, mode = "own", children }) => {
                 const data = await response.json();
                 setUser(data.profile);
 
-                console.log("Fetched employee details:", data.profile); // Add this log
-
                 if (mode === "visited") {
-                    setDatamind(data.profile.datamind); // Fetch Datamind value for visited profiles
+                    const datamind = data.profile?.datamind || await getEmployeeDatamind();
+                    setDatamind(datamind);
                 }
-                const storedEmployee = localStorage.getItem('employee');
-                if (storedEmployee) {
-                    const parsedEmployee = JSON.parse(storedEmployee);
-                    setUser(parsedEmployee);
-                } else {
-                    console.warn('No employee data found in localStorage.');
-                    window.location.href = '/login';
+                
+                async function getEmployeeDatamind() {
+                    const response = await axios.get(
+                        `${process.env.REACT_APP_BACKEND_URL}/api/employees/get-data-mind-type`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                            },
+                        }
+                    );
+                    return response.data.employeeDatamind?.datamind_id.data_mind_type || "";
                 }
+                
             } catch (error) {
                 console.error('Failed to parse employee data:', error);
                 window.location.href = '/login';
@@ -63,7 +67,7 @@ const EmployeeDetails = ({ empId, mode = "own", children }) => {
                 {mode === "own" ? (
                     children // Render Datamind generator or child components for "own" mode
                 ) : (
-                    <h3 className="datamind-header">#{datamind || "No Datamind Generated"}</h3>
+                    <h3 className="datamind-header">#IAm{datamind ? datamind + "Datamind" : "No Datamind Generated"}</h3>
                 )}
             </div>
 

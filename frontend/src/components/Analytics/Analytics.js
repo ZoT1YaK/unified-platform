@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { debounce } from "lodash";
 import "./Analytics.css";
 
 const Analytics = ({ empId = null }) => {
@@ -9,44 +10,32 @@ const Analytics = ({ empId = null }) => {
     });
 
     useEffect(() => {
-        const fetchAnalytics = async () => {
+        const fetchAnalytics = debounce(async () => {
             const token = localStorage.getItem("token");
-            if (!token) {
-                console.error("No token found. Skipping analytics fetch.");
-                return;
-            }
-
+            if (!token) return;
+    
             const endpoint = empId
                 ? `${process.env.REACT_APP_BACKEND_URL}/api/analytics/${empId}`
                 : `${process.env.REACT_APP_BACKEND_URL}/api/analytics`;
-
-            console.log("Fetching analytics from:", endpoint); // Log the API endpoint
-
+    
             try {
                 const response = await fetch(endpoint, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 });
-
-                if (!response.ok) {
-                    console.error("Error fetching analytics:", await response.text());
-                    throw new Error(`Failed to fetch analytics: ${response.statusText}`);
-                }
-
+    
+                if (!response.ok) throw new Error("Failed to fetch analytics");
+    
                 const data = await response.json();
                 setAnalytics({
                     achievementsCount: data.achievementsCount || 0,
                     postsCount: data.postsCount || 0,
                     milestonesCount: data.milestonesCount || 0,
                 });
-
-                console.log("Fetched analytics data:", data); // Add this log
             } catch (error) {
                 console.error("Error fetching analytics:", error.message);
             }
-        };
-
+        }, 1000); // 1-second debounce
+    
         fetchAnalytics();
     }, [empId]);
 

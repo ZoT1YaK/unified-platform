@@ -52,6 +52,8 @@ const Achievements = ({ simpleMode = false, empId, mode = "own", onAchievementsF
         fetchAchievements();
     }, [empId, mode, simpleMode, onAchievementsFetched]);
 
+    const filteredAchievements = useFilterAndSearch(achievements, filter, searchQuery, "visible", "badge_id.name");
+
     const toggleVisibility = async (id) => {
         if (simpleMode) return;
 
@@ -111,7 +113,6 @@ const Achievements = ({ simpleMode = false, empId, mode = "own", onAchievementsF
         );
     }
 
-    const filteredAchievements = useFilterAndSearch(achievements, filter, searchQuery, "visible", "badge_id.name");
 
     return (
         <div className="achievements-section">

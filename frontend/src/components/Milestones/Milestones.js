@@ -49,6 +49,8 @@ const Milestones = ({ simpleMode = false, empId, mode = "own", onMilestonesFetch
         fetchMilestones();
     }, [empId, mode, simpleMode, onMilestonesFetched]);
 
+    const filteredMilestones = useFilterAndSearch(milestones, filter, searchQuery, "visibility", "name");
+
     const toggleVisibility = async (id) => {
         if (simpleMode) return; // No visibility toggle in simpleMode
 
@@ -104,8 +106,6 @@ const Milestones = ({ simpleMode = false, empId, mode = "own", onMilestonesFetch
         );
     }
 
-    // Full layout for own profile
-    const filteredMilestones = useFilterAndSearch(milestones, filter, searchQuery, "visibility", "name");
 
     return (
         <div className="milestones-section">

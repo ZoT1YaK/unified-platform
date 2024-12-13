@@ -22,5 +22,7 @@ router.put("/data-mind-type", verifyToken, employeeController.updateEmployeeData
 // Get employee data mind type
 router.get("/get-data-mind-type", verifyToken, employeeController.getEmployeeDatamind);
 
+router.get("/profile/:emp_id", verifyToken, employeeController.getEmployeeProfile);
+
 module.exports = router;
 

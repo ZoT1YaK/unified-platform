@@ -3,21 +3,40 @@ const Achievement = require("../models/Achievement");
 const Badge = require("../models/Badge");
 const Task = require("../models/Task");
 
+// exports.getAchievementsByEmployee = async (req, res) => {
+//   const { id } = req.user;
+
+//   try {
+//     const achievements = await Achievement.find({ emp_id: id })
+//       .populate("badge_id", "name description img_link")
+//       .populate("task_id", "title description")
+//       .sort({ achievement_date: -1 });
+
+//     res.status(200).json({ achievements });
+//   } catch (error) {
+//     console.error("Error fetching achievements:", error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
 exports.getAchievementsByEmployee = async (req, res) => {
-  const { id } = req.user;
-  
+  const { id: loggedInId } = req.user;
+  const { emp_id } = req.query; // Fetch specific employee's achievements if provided
+  const targetId = emp_id || loggedInId;
+
   try {
-    const achievements = await Achievement.find({ emp_id: id })
+    const achievements = await Achievement.find({ emp_id: targetId, visibility: true }) // Only visible ones
       .populate("badge_id", "name description img_link")
       .populate("task_id", "title description")
       .sort({ achievement_date: -1 });
-  
+
     res.status(200).json({ achievements });
   } catch (error) {
     console.error("Error fetching achievements:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 exports.updateAchievementVisibility = async (req, res) => {
   const { achievement_id, visibility } = req.body;

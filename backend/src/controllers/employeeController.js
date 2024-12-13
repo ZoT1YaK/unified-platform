@@ -96,7 +96,7 @@ exports.updateLanguage = async (req, res) => {
   try {
     const employee = await Employee.findByIdAndUpdate(
       { _id: id },
-      { preferred_language: language},
+      { preferred_language: language },
       { new: true }
     );
 
@@ -112,11 +112,11 @@ exports.updateLanguage = async (req, res) => {
 };
 exports.getAllEmployees = async (req, res) => {
   try {
-      const employees = await Employee.find({}, "f_name l_name email position");
-      res.status(200).json({ employees });
+    const employees = await Employee.find({}, "f_name l_name email position");
+    res.status(200).json({ employees });
   } catch (error) {
-      console.error("Error fetching employees:", error);
-      res.status(500).json({ message: "Server error" });
+    console.error("Error fetching employees:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -171,6 +171,38 @@ exports.getEmployeeDatamind = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching data mind:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getEmployeeProfile = async (req, res) => {
+  const { emp_id } = req.params;
+
+  try {
+    const employee = await Employee.findById(emp_id)
+      .populate("dep_id", "number name")
+      .populate("people_leader_id", "f_name l_name")
+      .populate("location", "name");
+
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    const datamind = await Datamind.findOne({ emp_id });
+
+    res.status(200).json({
+      profile: {
+        id: employee._id,
+        f_name: employee.f_name,
+        l_name: employee.l_name,
+        position: employee.position,
+        location: employee.location?.name || "Unknown",
+        department: employee.dep_id?.name || "Unknown",
+        datamind: datamind ? datamind.data_mind_type : null,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching profile:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

@@ -1,0 +1,51 @@
+.visited-profile-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100vh;
+    background-color: #f9f9f9;
+}
+
+.visited-prof-active-area {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 80%;
+    margin-top: -90px;
+    border-radius: 10px;
+}
+
+.visited-prof-employee-column {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-right: 20px;
+}
+
+.visited-prof-achmil-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+}
+
+.achievements-section,
+.milestones-section {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.employee-user-container {
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 10px;
+    height: 210px;
+}

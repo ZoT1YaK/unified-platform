@@ -4,6 +4,8 @@ const { getEmployeeAnalytics } = require("../controllers/analyticsController");
 
 const router = express.Router();
 
-router.get("/analytics", verifyToken, getEmployeeAnalytics);
+router.get("/analytics/:empId", verifyToken, getEmployeeAnalytics); // With empId
+
+router.get("/analytics", verifyToken, getEmployeeAnalytics);       // Without empId
 
 module.exports = router;

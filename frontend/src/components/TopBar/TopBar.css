@@ -230,7 +230,7 @@
     text-decoration: none;
 }
 
-.settings-button {
+.settings-button, .gratification-button {
     color: #32444d;
     font-size: 13px;
     border: none;
@@ -238,7 +238,7 @@
     padding: 0px;
 }
 
-.settings-button:hover {
+.settings-button:hover, .gratification-button:hover {
     color: #5bc488;
 }
 

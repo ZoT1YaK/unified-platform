@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "./Gratification.css"
 
-const Gratification = () => {
+const Gratification = ({ onClose }) => {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
   const [selectedBadgeIds, setSelectedBadgeIds] = useState([]);
@@ -91,8 +92,8 @@ const Gratification = () => {
         }
       );
       setMessage(response.data.message);
-      setSelectedBadgeIds([]); 
-    
+      setSelectedBadgeIds([]);
+
       const badgesResponse = await axios.get(
         `${process.env.REACT_APP_BACKEND_URL}/api/badges/get`,
         {
@@ -108,7 +109,7 @@ const Gratification = () => {
       setMessage("Error archiving badges. Please try again.");
     }
   };
-  
+
   const handleActivateBadges = async () => {
     try {
       const response = await axios.put(
@@ -121,7 +122,7 @@ const Gratification = () => {
         }
       );
       setMessage(response.data.message);
-      setSelectedBadgeIds([]); 
+      setSelectedBadgeIds([]);
       const badgesResponse = await axios.get(
         `${process.env.REACT_APP_BACKEND_URL}/api/badges/get`,
         {
@@ -184,70 +185,78 @@ const Gratification = () => {
   };
 
   return (
-    <div className="gratification-container">
-      <div>
-        <h2>Badge Management</h2>
-        <input
-          type="file"
-          accept=".xlsx"
-          onChange={handleBadgeFileChange}
-        />
-        <button onClick={handleUploadBadges}>Upload New Badges</button>
-        <h3>Active Badges</h3>
-        <ul>
-          {activeBadges.map((badge) => (
-            <li key={badge._id}>
-              <input
-                type="checkbox"
-                value={badge._id}
-                onChange={(e) => {
-                  const { checked, value } = e.target;
-                  setSelectedBadgeIds((prev) =>
-                    checked
-                      ? [...prev, value]
-                      : prev.filter((id) => id !== value)
-                  );
-                }}
-              />
-              {badge.name}
-            </li>
-          ))}
-        </ul>
-        <h3>Archived Badges</h3>
-        <ul>
-          {archivedBadges.map((badge) => (
-            <li key={badge._id}>
-              <input
-                type="checkbox"
-                value={badge._id}
-                onChange={(e) => {
-                  const { checked, value } = e.target;
-                  setSelectedBadgeIds((prev) =>
-                    checked
-                      ? [...prev, value]
-                      : prev.filter((id) => id !== value)
-                  );
-                }}
-              />
-              {badge.name}
-            </li>
-          ))}
-        </ul>
-        <button onClick={handleArchiveBadges}>Archive Selected Badges</button>
-        <button onClick={handleActivateBadges}>Activate Selected Badges</button>
-        {message && <p>{message}</p>}
-      </div>
-      <div>
-        <h2>Datamind Management</h2>
-        <button onClick={handleResetDatamind} style={{ backgroundColor: "red", color: "white" }}>
-          Reset Datamind</button>
-        <br />
-        <input type="file" accept=".xlsx" onChange={handleFileChange} />
-        <button onClick={handleUploadDatamind}>Upload Datamind</button>
-        {message && <p>{message}</p>}
+    <div className="gratification-modal-overlay" onClick={onClose}>
+      <div className="gratification-modal-container" onClick={(e) => e.stopPropagation()}>
+        <button className="gratification-modal-close-button" onClick={onClose}>
+          &times;
+        </button>
+        <div className="gratification-container">
+          <div>
+            <h2>Badge Management</h2>
+            <input
+              type="file"
+              accept=".xlsx"
+              onChange={handleBadgeFileChange}
+            />
+            <button className="gratification-upload-button" onClick={handleUploadBadges}>Upload New Badges</button>
+            <h3>Active Badges</h3>
+            <ul>
+              {activeBadges.map((badge) => (
+                <li key={badge._id}>
+                  <input
+                    type="checkbox"
+                    value={badge._id}
+                    onChange={(e) => {
+                      const { checked, value } = e.target;
+                      setSelectedBadgeIds((prev) =>
+                        checked
+                          ? [...prev, value]
+                          : prev.filter((id) => id !== value)
+                      );
+                    }}
+                  />
+                  {badge.name}
+                </li>
+              ))}
+            </ul>
+            <h3>Archived Badges</h3>
+            <ul>
+              {archivedBadges.map((badge) => (
+                <li key={badge._id}>
+                  <input
+                    type="checkbox"
+                    value={badge._id}
+                    onChange={(e) => {
+                      const { checked, value } = e.target;
+                      setSelectedBadgeIds((prev) =>
+                        checked
+                          ? [...prev, value]
+                          : prev.filter((id) => id !== value)
+                      );
+                    }}
+                  />
+                  {badge.name}
+                </li>
+              ))}
+            </ul>
+            <div className="badge-control-buttons">
+              <button className="badge-control-button" onClick={handleArchiveBadges}>Archive Selected Badges</button>
+              <button className="badge-control-button" onClick={handleActivateBadges}>Activate Selected Badges</button>
+              {message && <p>{message}</p>}
+            </div>
+          </div>
+          <div>
+            <h2>Datamind Management</h2>
+            <button className="gratification-upload-button" onClick={handleResetDatamind} style={{ backgroundColor: "red", color: "white" }}>
+              Reset Datamind</button>
+            <br />
+            <input type="file" accept=".xlsx" onChange={handleFileChange} />
+            <button className="gratification-upload-button" onClick={handleUploadDatamind}>Upload Datamind</button>
+            {message && <p>{message}</p>}
+          </div>
+        </div>
       </div>
     </div>
-
   );
 };
 

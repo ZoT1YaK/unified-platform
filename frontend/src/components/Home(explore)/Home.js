@@ -10,7 +10,6 @@ import PostComponent from "../PostComponent/Post";
 import Milestones from "../Milestones/Milestones";
 import Achievements from "../Achievements/Achievements";
 import useAnalytics from "../../hooks/useAnalytics";
-import Gratification from "../Gratification/Gratification";
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -186,7 +185,6 @@ const Home = () => {
           <div className="milestones-container">
             <h2>Milestones</h2>
             <Milestones simpleMode />
-            {user.is_admin && <Gratification />}
           </div>
 
         </div>

@@ -1,0 +1,82 @@
+.team-metric-container {
+    margin-top: 20px;
+}
+
+.team-metric-container ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.team-metric-container li {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f4f4f4;
+}
+
+.team-metric-container strong {
+    font-size: 1.2em;
+}
+
+.team-metrics {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  
+  .team-metrics h3 {
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  
+  .metrics-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .metric-card {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #F2F2F2;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .metric-avatar {
+    flex-shrink: 0;
+    margin-right: 15px;
+  }
+  
+  .avatar-placeholder {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #555;
+  }
+  
+  .metric-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .metric-details h4 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+  }
+  
+  .metric-details p {
+    margin: 2px 0;
+    font-size: 14px;
+    color: #666;
+  }
+  

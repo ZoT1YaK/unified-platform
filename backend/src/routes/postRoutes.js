@@ -30,4 +30,7 @@ router.post("/unlike", verifyToken, postController.unlikePost);
 // Get all resources for post creation
 router.get("/resources", verifyToken, postController.getPostResources);
 
+// Delete a post
+router.delete("/delete", verifyToken, postController.deletePost);
+
 module.exports = router;

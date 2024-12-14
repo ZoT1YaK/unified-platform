@@ -152,6 +152,7 @@ exports.createEvent = async (req, res) => {
 
 exports.getEventsForEmployee = async (req, res) => {
   const { id } = req.user;
+  const { search } = req.query;
 
   try {
     const employee = await Employee.findById(id).populate("dep_id", "name");
@@ -178,9 +179,18 @@ exports.getEventsForEmployee = async (req, res) => {
       ]),
     ];
 
-    const events = await Event.find({ _id: { $in: eventIds } })
-      .sort({ date: 1 })
-      .lean();
+    const now = new Date();
+    const eventQuery = {
+      _id: { $in: eventIds },
+      $or: [
+        { archived: search ? undefined : false }, 
+        { date: { $gte: now } }, 
+      ],
+      ...(search && { title: { $regex: search, $options: "i" } }), 
+    };
+
+
+    const events = await Event.find(eventQuery).sort({ date: 1 }).lean();
 
     // Map the response field for direct events
     const eventsWithResponse = events.map((event) => {
@@ -190,8 +200,8 @@ exports.getEventsForEmployee = async (req, res) => {
         response: directEvent
           ? directEvent.response
           : event.created_by_id.toString() === id.toString()
-          ? "Pending" // Default to "Pending" for creator if no response exists
-          : null,
+            ? "Pending" // Default to "Pending" for creator if no response exists
+            : null,
       };
     });
 
@@ -277,22 +287,22 @@ exports.completeEvent = async (eventId) => {
 };
 
 exports.deleteEvent = async (req, res) => {
-  const { id: userId } = req.user; 
-  const { eventId } = req.params; 
+  const { id: userId } = req.user;
+  const { eventId } = req.params;
 
   try {
-    
+
     const event = await Event.findById(eventId);
     if (!event) {
       return res.status(404).json({ message: "Event not found." });
     }
 
-   
+
     if (event.created_by_id.toString() !== userId) {
       return res.status(403).json({ message: "You are not authorized to delete this event." });
     }
 
-   
+
     await Promise.all([
       EventEmployee.deleteMany({ event_id: eventId }),
       EventDepartment.deleteMany({ event_id: eventId }),
@@ -300,7 +310,7 @@ exports.deleteEvent = async (req, res) => {
       EventLocation.deleteMany({ event_id: eventId }),
     ]);
 
-    
+
     await Event.findByIdAndDelete(eventId);
 
     res.status(200).json({ message: "Event deleted successfully." });

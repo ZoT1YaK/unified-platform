@@ -30,6 +30,11 @@ const eventSchema = new mongoose.Schema({
 
   badge_id: { type: mongoose.Schema.Types.ObjectId, ref: "Badge", required: false },
 
+  archived: {
+    type: Boolean,
+    default: false,
+  }
+
 });
 
 module.exports = mongoose.model("Event", eventSchema);

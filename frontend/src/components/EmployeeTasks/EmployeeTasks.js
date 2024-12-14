@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import "./EmployeeTasks.css";
 import TaskStatus from "../TaskStatus/TaskStatus";
+import useDebounce from "../../hooks/useDebounce";
 
 const EmployeeTasks = () => {
     const [tasks, setTasks] = useState([]);
@@ -11,6 +12,7 @@ const EmployeeTasks = () => {
     const [filter, setFilter] = useState("All");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const debouncedSearchQuery = useDebounce(searchQuery, 300); 
 
     // Fetch tasks from the backend
     useEffect(() => {
@@ -23,10 +25,11 @@ const EmployeeTasks = () => {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,
                         },
+                        params: { search: debouncedSearchQuery  },
                     }
                 );
-                const { assignedTasks, ownTasks } = response.data;
-                setTasks([...assignedTasks, ...ownTasks]);
+                const { tasks } = response.data;
+                setTasks(tasks);
             } catch (err) {
                 console.error("Error fetching tasks:", err);
                 setError("Failed to fetch tasks. Please try again.");
@@ -35,7 +38,7 @@ const EmployeeTasks = () => {
             }
         };
         fetchTasks();
-    }, []);
+    }, [debouncedSearchQuery ]);
 
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter((task) => task.status === "Completed").length;
@@ -154,15 +157,17 @@ const EmployeeTasks = () => {
     const filteredTasks = useMemo(() => {
         let filtered = tasks;
         if (filter === "Completed") {
-            filtered = tasks.filter((task) => task.status === "Completed");
+            filtered = tasks.filter((task) => task.status === "Completed" && !task.archived);
         } else if (filter === "Incomplete") {
             filtered = tasks.filter((task) => task.status !== "Completed");
+        } else if (filter === "Archived") {
+            filtered = tasks.filter((task) => task.archived); // Show only archived tasks
         }
         return filtered.filter((task) =>
             task.title.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [tasks, filter, searchQuery]);
-
+    
     const visibleTasks = filteredTasks.slice(0, 20);
 
 

@@ -31,11 +31,31 @@ const UserPostTracker = () => {
             );
 
             setPosts(userPosts);
-            setFilteredPosts(userPosts); 
+            setFilteredPosts(userPosts);
         } catch (error) {
             console.error('Error fetching posts:', error);
         }
     };
+
+    const handleDeletePost = async (postId) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+        if (!confirmDelete) return;
+
+        try {
+            await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/posts/delete`, {
+                data: { post_id: postId },
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+            });
+
+            setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+            setFilteredPosts((prevFiltered) => prevFiltered.filter((post) => post._id !== postId));
+            alert("Post deleted successfully!");
+        } catch (error) {
+            console.error("Error deleting post:", error);
+            alert("Failed to delete post. Please try again.");
+        }
+    };
+
 
     useEffect(() => {
         fetchUserPosts();
@@ -81,7 +101,7 @@ const UserPostTracker = () => {
     return (
         <div className="user-post-tracker">
             <h2>Posts</h2>
-            <input 
+            <input
                 type="text"
                 placeholder="Search posts..."
                 value={searchQuery}
@@ -94,6 +114,30 @@ const UserPostTracker = () => {
                         <div key={post._id} className="post-summary" onClick={() => openModal(post)}>
                             <p className="post-date">{new Date(post.timestamp).toLocaleDateString()}</p>
                             <p className="post-snippet">{post.content.slice(0, 150)}...</p>
+                            <button
+                                className="delete-post-btn"
+                                onClick={() => handleDeletePost(post._id)}
+                            >
+                                Delete Post
+                            </button>
+                            {post.mediaLinks && post.mediaLinks.length > 0 && (
+                                <div className="post-media-preview">
+                                    {post.mediaLinks.slice(0, 3).map((url, index) => (
+                                        <div key={index} className="media-preview-item">
+                                            {url.match(/\.(jpeg|jpg|gif|png)$/) ? (
+                                                <img src={url} alt={`Media ${index}`} className="media-thumbnail" />
+                                            ) : (
+                                                <span className="media-placeholder">[Video/Link]</span>
+                                            )}
+                                        </div>
+                                    ))}
+                                    {post.mediaLinks.length > 3 && (
+                                        <div className="media-preview-more">
+                                            +{post.mediaLinks.length - 3}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                             <div className="post-stats">
                                 <span>{post.likes} Likes</span>
                                 <span>{post.comments} Comments</span>
@@ -158,19 +202,20 @@ const PostModal = ({ post, closeModal }) => {
                     </h3>
                     <p>{new Date(post.timestamp).toLocaleString()}</p>
                     <p>{post.content}</p>
-                    {post.media && post.media.length > 0 && (
-                        <div className="post-media">
-                            {post.media.map((url, index) =>
-                                url.match(/\.(jpeg|jpg|gif|png)$/) ? (
-                                    <img key={index} src={url} alt={`Media ${index}`} />
+                    {post.mediaLinks && post.mediaLinks.length > 0 && (
+                        <div className="post-modal-media-grid">
+                            {post.mediaLinks.map((url, index) =>
+                                url.match(/\.(jpeg|jpg|gif|png)$/i) ? (
+                                    <img key={index} src={url} alt={`Media ${index}`} className="post-modal-thumbnail" />
                                 ) : (
-                                    <a key={index} href={url} target="_blank" rel="noopener noreferrer">
-                                        {url}
+                                    <a key={index} href={url} target="_blank" rel="noopener noreferrer" className="post-modal-link">
+                                        Open Media
                                     </a>
                                 )
                             )}
                         </div>
                     )}
+
                     <div className="user-post-stats">
                         <span>{post.likes} Likes</span>
                         <span>{comments.length} Comments</span>

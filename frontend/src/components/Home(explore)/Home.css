@@ -328,57 +328,6 @@
   order: 5;
 }
 
-/* Task Search Bar */
-.task-search-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.task-search-wrapper {
-  width: 70%;
-  /* Adjust width of the wrapper */
-  background-color: #F2F2F2;
-  /* Set gray background for the wrapper */
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  /* Vertically align the icon and text */
-  padding: 0 10px;
-  /* Add some padding to the left and right */
-}
-
-.task-search {
-  width: 100%;
-  padding: 10px;
-  /* Padding left added to make room for the icon */
-  border-radius: 10px;
-  background-color: transparent;
-  font-size: 16px;
-  color: #32444D;
-  opacity: 0.5;
-  border: none;
-  /* No border */
-  /* display: flex; */
-  align-items: center;
-  /* Center the content vertically */
-}
-
-.task-search .search-icon {
-  /* position: absolute; */
-  margin-right: 10px;
-  /* Space between the icon and text */
-  font-size: 18px;
-  /* Icon size */
-}
-
-.task-search::placeholder {
-  color: #32444D;
-  opacity: 0.5;
-  text-align: left;
-}
-
 /* Task List Box */
 .tasks-box {
   background-color: white;
@@ -478,7 +427,8 @@
   padding-top: 20px;
 }
 
-/* Responsive Styles */
+/*/* Responsive Styles */
+/*
 @media (max-width: 1024px) {
   .active-ui-container {
     justify-content: space-between;
@@ -563,4 +513,4 @@
   .right-icons {
     gap: 5px;
   }
-}
+}*/

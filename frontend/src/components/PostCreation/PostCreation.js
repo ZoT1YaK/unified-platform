@@ -28,17 +28,32 @@ const PostDialog = ({ user, closeDialog }) => {
     const [postText, setPostText] = useState('');
     const [isActive, setIsActive] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [mediaLinks, setMediaLinks] = useState([]);
+    const [currentMediaLink, setCurrentMediaLink] = useState("");
     const [audience, setAudience] = useState('all');  // For "Post to..." dropdown
-    const [mediaType, setMediaType] = useState('');  // For "Attach Media" dropdown
+    /*const [mediaType, setMediaType] = useState('');  // For "Attach Media" dropdown*/
     const [showAudienceDropdown, setShowAudienceDropdown] = useState(false);
-    const [showMediaDropdown, setShowMediaDropdown] = useState(false);
+    /*const [showMediaDropdown, setShowMediaDropdown] = useState(false);*/
     const [availableOptions, setAvailableOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const token = localStorage.getItem('token');
 
     const handleChange = (e) => {
         setPostText(e.target.value);
-        setIsActive(e.target.value.trim() !== '');
+        setIsActive(e.target.value.trim() !== '' || mediaLinks.length > 0);
+    };
+
+    const handleAddMediaLink = () => {
+        if (currentMediaLink.trim()) {
+            setMediaLinks([...mediaLinks, currentMediaLink.trim()]);
+            setCurrentMediaLink("");
+            setIsActive(true);
+        }
+    };
+
+    const handleRemoveMediaLink = (index) => {
+        setMediaLinks(mediaLinks.filter((_, i) => i !== index));
+        setIsActive(postText.trim() !== '' || mediaLinks.length > 1); // Recalculate button state
     };
 
     // Fetch options dynamically based on audience selection
@@ -87,12 +102,11 @@ const PostDialog = ({ user, closeDialog }) => {
     };
 
     const handlePost = async () => {
-        if (!postText.trim()) return;
-
+        if (!postText.trim() && mediaLinks.length === 0) return;
         try {
             setIsLoading(true);
             // Prepare the payload
-            const payload = { content: postText };
+            const payload = { content: postText, mediaLinks };
             if (audience === 'all') {
                 payload.global = true; // Global visibility
             } else {
@@ -178,29 +192,49 @@ const PostDialog = ({ user, closeDialog }) => {
                         onChange={handleChange}
                         disabled={isLoading} // Disable input while posting
                     />
-                    <button
-                        className={`attachment-btn ${isActive ? 'active' : ''}`}
-                        disabled={isLoading}
-                        onClick={() => setShowMediaDropdown(!showMediaDropdown)}
-                    >
-                        <img src="/attach.png" alt="Attachment button" />
-                    </button>
-
-                    {showMediaDropdown && (
-                        <div className="media-dropdown">
-                            <select
-                                value={mediaType}
-                                onChange={(e) => setMediaType(e.target.value)}
-                            >
-                                <option value="">Attach Media</option>
-                                <option value="image">Image</option>
-                                <option value="video">Video</option>
-                                <option value="link">Link</option>
-                                <option value="podcast">Podcast</option>
-                            </select>
+                    <div className="media-attachment">
+                        <input
+                            type="text"
+                            placeholder="Paste image or video link here..."
+                            value={currentMediaLink}
+                            onChange={(e) => setCurrentMediaLink(e.target.value)}
+                        />
+                        <button onClick={handleAddMediaLink} disabled={!currentMediaLink.trim()}>
+                            Add Link
+                        </button>
+                    </div>
+                    {mediaLinks.length > 0 && (
+                        <div className="media-preview-container">
+                            <h4>Attached Media:</h4>
+                            <div className="media-preview">
+                                {mediaLinks.map((link, index) => (
+                                    <div key={index} className="preview-media-item">
+                                        {link.match(/\.(jpeg|jpg|gif|png)$/i) ? (
+                                            <img src={link} alt={`Media ${index}`} className="media-preview-image" />
+                                        ) : link.match(/(youtube\.com|vimeo\.com)/i) ? (
+                                            <iframe
+                                                src={link}
+                                                title={`Video ${index}`}
+                                                allowFullScreen
+                                                className="media-preview-video"
+                                            ></iframe>
+                                        ) : (
+                                            <a href={link} target="_blank" rel="noopener noreferrer" className="media-preview-link">
+                                                {link}
+                                            </a>
+                                        )}
+                                        <button onClick={() => handleRemoveMediaLink(index)} className="remove-media-btn">
+                                            Remove
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </div>
+
+
+
 
                 <div className="post-dialogue-footer">
                     <hr />

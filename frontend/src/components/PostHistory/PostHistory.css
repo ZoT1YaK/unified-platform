@@ -1,0 +1,10 @@
+.post-history {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+}
+
+.post-history h3 {
+    border-bottom: none;
+}

@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './Post.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./Post.css";
 
-const PostComponent = ({ post }) => {
+const PostComponent = ({ post, mode = "default" }) => {
     const [likes, setLikes] = useState(post.likes || 0);
-    const [newComment, setNewComment] = useState('');
+    const [newComment, setNewComment] = useState("");
     const [comments, setComments] = useState([]);
 
-    // Fetch comments on component mount
     useEffect(() => {
         const fetchComments = async () => {
             try {
@@ -17,20 +16,17 @@ const PostComponent = ({ post }) => {
                 );
                 setComments(response.data.comments || []);
             } catch (error) {
-                if (error.response && error.response.status === 404) {
-                    console.warn(`No comments found for post ID: ${post._id}`);
-                    setComments([]); // Treat 404 as no comments
-                } else {
-                    console.error("Error fetching comments:", error);
-                }
+                console.error("Error fetching comments:", error);
+                setComments([]); // Default to no comments in case of error
             }
         };
 
         fetchComments();
     }, [post._id]);
 
-    // Toggle like functionality
     const handleLikeClick = async () => {
+        if (mode === "visited") return; // Disable liking in visited mode
+
         try {
             if (likes === post.likes) {
                 await axios.post(
@@ -52,13 +48,14 @@ const PostComponent = ({ post }) => {
         }
     };
 
-    // Handle comment input change
     const handleCommentChange = (e) => {
         setNewComment(e.target.value);
     };
 
     const handlePostComment = async () => {
-        if (!newComment.trim()) return; // Don't allow empty comments
+        if (mode === "visited") return; // Disable commenting in visited mode
+        if (!newComment.trim()) return;
+
         try {
             const response = await axios.post(
                 `http://localhost:5000/api/posts/comments`,
@@ -67,25 +64,24 @@ const PostComponent = ({ post }) => {
                     content: newComment,
                 },
                 {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 }
             );
             setComments([...comments, response.data.comment]);
-            setNewComment('');
+            setNewComment("");
         } catch (error) {
-            console.error('Error posting comment:', error);
+            console.error("Error posting comment:", error);
         }
     };
-
 
     return (
         <div className="post-component">
             <div className="post-header">
                 <div className="post-avatar">
                     <img
-                           src={post.author.img_link || "/placeholder.png"} 
-                           alt={`${post.author.f_name} ${post.author.l_name}'s Avatar`}
-                           className="post-avatar"
+                        src={post.author.img_link || "/placeholder.png"}
+                        alt={`${post.author.f_name} ${post.author.l_name}'s Avatar`}
+                        className="post-avatar"
                     />
                 </div>
                 <div className="post-user-info">
@@ -107,48 +103,47 @@ const PostComponent = ({ post }) => {
                     </div>
                 )}
             </div>
-            <div className="post-footer">
-                <div className="likes-section">
-                    <button onClick={handleLikeClick} className="like-button">
-                        <img src="/like.png" alt="Like icon" className="like-icon" />
+            {mode !== "visited" && (
+                <div className="post-footer">
+                    <div className="likes-section">
+                        <button onClick={handleLikeClick} className="like-button">
+                            <img src="/like.png" alt="Like icon" className="like-icon" />
+                        </button>
+                        <span>{likes} Likes</span>
+                    </div>
+                    <div className="comments-section">
+                        <span>{comments.length} Comments</span>
+                    </div>
+                </div>
+            )}
+            {mode !== "visited" && (
+                <div className="comment-area">
+                    <input
+                        type="text"
+                        placeholder="Write a comment..."
+                        value={newComment}
+                        onChange={handleCommentChange}
+                    />
+                    <button className="post-comment-btn" onClick={handlePostComment} disabled={!newComment.trim()}>
+                        Post
                     </button>
-                    <span>{likes} Likes</span> {/* Display like count */}
                 </div>
-                <div className="comments-section">
-                    <span>{comments.length} Comments</span>
-                </div>
-            </div>
-            {/* Comment Input */}
-            <div className="comment-area">
-                <input
-                    type="text"
-                    placeholder="Write a comment..."
-                    value={newComment}
-                    onChange={handleCommentChange}
-                />
-                <button className="post-comment-btn" onClick={handlePostComment} disabled={!newComment.trim()}>
-                    Post
-                </button>
-            </div>
-            {/* Comments List */}
+            )}
             <div className="comments-list">
+                <h4>Comments</h4>
                 {comments.length === 0 ? (
-                    <p>No comments yet. Be the first to comment!</p>
+                    <p>No comments yet.</p>
                 ) : (
                     comments.map((comment, index) => (
                         <div key={index} className="comment">
                             <strong>
-                                {comment.employee?.f_name || 'Unknown'} {comment.employee?.l_name || 'Employee'}:
-                            </strong>{' '}
+                                {comment.employee?.f_name || "Unknown"} {comment.employee?.l_name || "Employee"}:
+                            </strong>{" "}
                             {comment.content}
                         </div>
                     ))
                 )}
             </div>
-
-
-
-
         </div>
     );
 };

@@ -427,7 +427,8 @@
   padding-top: 20px;
 }
 
-/* Responsive Styles */
+/*/* Responsive Styles */
+/*
 @media (max-width: 1024px) {
   .active-ui-container {
     justify-content: space-between;
@@ -512,4 +513,4 @@
   .right-icons {
     gap: 5px;
   }
-}
+}*/

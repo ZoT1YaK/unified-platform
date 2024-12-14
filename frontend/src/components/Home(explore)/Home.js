@@ -278,7 +278,7 @@ const Home = () => {
               <div>No posts match the filters.</div>
             )}
           </div>
-        </div>
+        
         {/* Pagination Controls */}
         <div className="pagination-controls">
           <button onClick={prevPage} disabled={currentPage === 1}>
@@ -294,7 +294,8 @@ const Home = () => {
             Next
           </button>
         </div>
-      </div>
+        </div>
+      
 
 
         <div className="tasks-column">
@@ -312,6 +313,7 @@ const Home = () => {
             <EventCard />
           </div>
         </div>
+      </div>
       </div>
   );
 };

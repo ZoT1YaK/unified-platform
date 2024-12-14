@@ -47,7 +47,7 @@ const PostDialog = ({ user, closeDialog }) => {
         if (currentMediaLink.trim()) {
             setMediaLinks([...mediaLinks, currentMediaLink.trim()]);
             setCurrentMediaLink("");
-            setIsActive(true); 
+            setIsActive(true);
         }
     };
 
@@ -203,37 +203,37 @@ const PostDialog = ({ user, closeDialog }) => {
                             Add Link
                         </button>
                     </div>
-                        {mediaLinks.length > 0 && (
-                            <div className="media-preview-container">
-                                <h4>Attached Media:</h4>
-                                <div className="media-preview">
-                                    {mediaLinks.map((link, index) => (
-                                        <div key={index} className="preview-media-item">
-                                            {link.match(/\.(jpeg|jpg|gif|png)$/i) ? (
-                                                <img src={link} alt={`Media ${index}`} className="media-preview-image" />
-                                            ) : link.match(/(youtube\.com|vimeo\.com)/i) ? (
-                                                <iframe
-                                                    src={link}
-                                                    title={`Video ${index}`}
-                                                    allowFullScreen
-                                                    className="media-preview-video"
-                                                ></iframe>
-                                            ) : (
-                                                <a href={link} target="_blank" rel="noopener noreferrer" className="media-preview-link">
-                                                    {link}
-                                                </a>
-                                            )}
-                                            <button onClick={() => handleRemoveMediaLink(index)} className="remove-media-btn">
-                                                Remove
-                                            </button>
-                                        </div>
-                                    ))}
-                                </div>
+                    {mediaLinks.length > 0 && (
+                        <div className="media-preview-container">
+                            <h4>Attached Media:</h4>
+                            <div className="media-preview">
+                                {mediaLinks.map((link, index) => (
+                                    <div key={index} className="preview-media-item">
+                                        {link.match(/\.(jpeg|jpg|gif|png)$/i) ? (
+                                            <img src={link} alt={`Media ${index}`} className="media-preview-image" />
+                                        ) : link.match(/(youtube\.com|vimeo\.com)/i) ? (
+                                            <iframe
+                                                src={link}
+                                                title={`Video ${index}`}
+                                                allowFullScreen
+                                                className="media-preview-video"
+                                            ></iframe>
+                                        ) : (
+                                            <a href={link} target="_blank" rel="noopener noreferrer" className="media-preview-link">
+                                                {link}
+                                            </a>
+                                        )}
+                                        <button onClick={() => handleRemoveMediaLink(index)} className="remove-media-btn">
+                                            Remove
+                                        </button>
+                                    </div>
+                                ))}
                             </div>
-                        )}
-                    </div>
-
+                        </div>
+                    )}
                 </div>
+
+
 
 
                 <div className="post-dialogue-footer">
@@ -246,7 +246,8 @@ const PostDialog = ({ user, closeDialog }) => {
                         {isLoading ? "Posting..." : "Post"}
                     </button>
                 </div>
-                </div>
+            </div>
+        </div>
     );
 };
 

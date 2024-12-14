@@ -1,6 +1,6 @@
 const express = require("express");
 const taskController = require("../controllers/taskController");
-const { verifyToken } = require("../middleware/authMiddleware");
+const { verifyToken, verifyPeopleLeader } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -17,7 +17,7 @@ router.get("/leader", verifyToken, taskController.getLeaderAssignedTasks);
 router.put("/complete", verifyToken, taskController.completeTask);
 
 // Edit a task assigned by the people leader
-router.put("/edit-assigned", verifyToken, taskController.editAssignedTask);
+router.put("/edit-assigned", verifyToken, verifyPeopleLeader, taskController.editAssignedTask);
 
 // Edit a self-created task
 router.put("/edit-own", verifyToken, taskController.editOwnCreatedTask);

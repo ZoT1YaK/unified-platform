@@ -1,25 +1,25 @@
 const express = require("express");
 const router = express.Router();
 const metricsController = require("../controllers/metricsController");
-const { verifyToken } = require("../middleware/authMiddleware");
+const { verifyToken, verifyPeopleLeader } = require("../middleware/authMiddleware");
 
 // Generate metrics report
-router.post("/report", verifyToken, metricsController.generateManualMetricsReport);
+router.post("/report", verifyToken, verifyPeopleLeader, metricsController.generateManualMetricsReport);
 
 // Get reports by date filter
-router.get("/reports", verifyToken, metricsController.getReportsByDate);
+router.get("/reports", verifyToken, verifyPeopleLeader, metricsController.getReportsByDate);
 
 // Download a metrics report
 router.get("/report/download/:report_id", verifyToken, metricsController.downloadMetricsReport);
 
 // Get employees metrics by People Leader
-router.get("/metrics", verifyToken, metricsController.getMetricsByPeopleLeader);
+router.get("/metrics", verifyToken, verifyPeopleLeader, metricsController.getMetricsByPeopleLeader);
 
 // Get task metrics for tasks assigned by the leader
-router.get("/team-tasks", verifyToken, metricsController.getTeamTasksMetrics);
+router.get("/team-tasks", verifyToken, verifyPeopleLeader, metricsController.getTeamTasksMetrics);
 
 // Get event participation metrics
-router.get("/team-events", verifyToken, metricsController.getTeamEventMetrics);
+router.get("/team-events", verifyToken, verifyPeopleLeader, metricsController.getTeamEventMetrics);
 
 // // Generate metrics report (PowerBI)
 // router.post("/report/power_bi", verifyToken, metricsController.generateManualPowerBIReport);

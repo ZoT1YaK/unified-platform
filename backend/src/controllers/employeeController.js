@@ -25,7 +25,7 @@ exports.loginEmployee = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: employee._id, is_people_leader: employee.is_people_leader },
+      { id: employee._id, is_people_leader: employee.is_people_leader, is_admin: employee.is_admin },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -198,7 +198,7 @@ exports.getEmployeeProfile = async (req, res) => {
         f_name: employee.f_name,
         l_name: employee.l_name,
         position: employee.position,
-        location: employee.location?.name || "Unknown",
+        location: employee.location,
         department: employee.dep_id?.name || "Unknown",
         datamind: datamind ? datamind.data_mind_type : null,
       },

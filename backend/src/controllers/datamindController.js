@@ -10,15 +10,7 @@ const sanitizeString = (str) => {
 
 // Upload Datamind values from an Excel file
 exports.uploadDatamind = async (req, res) => {
-    const { id: adminId } = req.user;
-
   try {
-     // Verify admin privileges
-     const admin = await Employee.findById(adminId);
-     if (!admin || !admin.is_admin) {
-       return res.status(403).json({ message: "You are not authorized to upload Datamind files." });
-     }
-
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded." });
     }
@@ -58,14 +50,7 @@ exports.getAllDatamind = async (req, res) => {
 
 // Reset all Datamind values
 exports.resetDatamind = async (req, res) => {
-    const { id: adminId } = req.user;
-
   try {
-     // Verify admin privileges
-     const admin = await Employee.findById(adminId);
-     if (!admin || !admin.is_admin) {
-       return res.status(403).json({ message: "You are not authorized to reset Datamind files." });
-     }
     await Datamind.deleteMany({});
     res.status(200).json({ message: "All Datamind values have been reset." });
   } catch (error) {

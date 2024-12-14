@@ -16,11 +16,6 @@ exports.createBadge = async (req, res) => {
   const { id: adminId } = req.user;
 
   try {
-    const admin = await Employee.findById(adminId);
-    if (!admin || !admin.is_admin) {
-      return res.status(403).json({ message: "You are not authorized to create badges." });
-    }
-
     const badge = await Badge.create({
       created_by_id: adminId,
       name,
@@ -62,15 +57,7 @@ exports.getActiveBadges = async (req, res) => {
 
 
 exports.uploadBadges = async (req, res) => {
-  const { id: adminId } = req.user;
-
   try {
-    // Verify admin privileges
-    const admin = await Employee.findById(adminId);
-    if (!admin || !admin.is_admin) {
-      return res.status(403).json({ message: "You are not authorized to upload badges." });
-    }
-
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded." });
     }
@@ -134,15 +121,9 @@ exports.uploadBadges = async (req, res) => {
 
 
 exports.archiveBadges = async (req, res) => {
-  const { ids } = req.body; 
-  const { id: adminId } = req.user;
+  const { ids } = req.body;
 
   try {
-    const admin = await Employee.findById(adminId);
-    if (!admin || !admin.is_admin) {
-      return res.status(403).json({ message: "You are not authorized to archive badges." });
-    }
-
     await Badge.updateMany({ _id: { $in: ids } }, { is_archived: true });
     res.status(200).json({ message: "Badges archived successfully." });
   } catch (error) {
@@ -153,14 +134,8 @@ exports.archiveBadges = async (req, res) => {
 
 exports.restoreBadges = async (req, res) => {
   const { ids } = req.body;
-  const { id: adminId } = req.user;
 
   try {
-    const admin = await Employee.findById(adminId);
-    if (!admin || !admin.is_admin) {
-      return res.status(403).json({ message: "You are not authorized to restore badges." });
-    }
-
     await Badge.updateMany({ _id: { $in: ids } }, { is_archived: false });
     res.status(200).json({ message: "Badges restored successfully." });
   } catch (error) {

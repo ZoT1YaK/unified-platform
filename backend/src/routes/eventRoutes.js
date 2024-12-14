@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const eventController = require("../controllers/eventController");
-const { verifyToken } = require("../middleware/authMiddleware");
+const { verifyToken, verifyPeopleLeader } = require("../middleware/authMiddleware");
 
 // Create an event
-router.post("/create", verifyToken, eventController.createEvent);
+router.post("/create", verifyToken, verifyPeopleLeader, eventController.createEvent);
 
 // Get targeted events
 router.get("/get", verifyToken, eventController.getEventsForEmployee);
@@ -16,6 +16,6 @@ router.put("/response", verifyToken, eventController.updateEventResponse);
 router.get("/resources", verifyToken, eventController.getEventResources);
 
 // Delete an event
-router.delete("/delete/:eventId", verifyToken, eventController.deleteEvent);
+router.delete("/delete/:eventId", verifyToken, verifyPeopleLeader, eventController.deleteEvent);
 
 module.exports = router;

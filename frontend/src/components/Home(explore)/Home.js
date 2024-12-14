@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Home.css";
-import EventCard from "../EventCard/EventCard"; // This fetches and displays events
+import EventCard from "../EventCard/EventCard"; 
 import TopBar from "../TopBar/TopBar";
 import TaskCard from "../TaskCard/TaskCard";
 import Header from "../Header/Header";

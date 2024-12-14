@@ -22,14 +22,24 @@ const Task = require("../models/Task");
 exports.getAchievementsByEmployee = async (req, res) => {
   const { id: loggedInId } = req.user;
   const { emp_id } = req.query; // Fetch specific employee's achievements if provided
-  const targetId = emp_id || loggedInId;
+  const targetId = mongoose.Types.ObjectId.isValid(emp_id) ? emp_id : loggedInId; // Fallback to logged-in user's ID
 
   try {
-    const achievements = await Achievement.find({ emp_id: targetId, visibility: true }) // Only visible ones
-      .populate("badge_id", "name description img_link")
-      .populate("task_id", "title description")
-      .sort({ achievement_date: -1 });
 
+    let achievements;
+    if (loggedInId === targetId) {
+      // If viewing own profile, fetch all achievements
+      achievements = await Achievement.find({ emp_id: targetId })
+        .populate("badge_id", "name description img_link")
+        .populate("task_id", "title description")
+        .sort({ achievement_date: -1 });
+    } else {
+      // If visiting another profile, fetch only visible achievements
+      achievements = await Achievement.find({ emp_id: targetId, visibility: true })
+        .populate("badge_id", "name description img_link")
+        .populate("task_id", "title description")
+        .sort({ achievement_date: -1 });
+    }
     res.status(200).json({ achievements });
   } catch (error) {
     console.error("Error fetching achievements:", error);

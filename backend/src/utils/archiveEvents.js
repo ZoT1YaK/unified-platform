@@ -5,9 +5,19 @@ const Event = require("../models/Event");
 cron.schedule("0 0 * * *", async () => {
   try {
     const now = new Date();
-    await Event.updateMany({ date: { $lt: now }, archived: false }, { archived: true });
-    console.log("Archived past events successfully.");
+
+    const addArchivedFieldResult = await Event.updateMany(
+      { archived: { $exists: false } }, 
+      { $set: { archived: false } }   
+    );
+    console.log(`${addArchivedFieldResult.modifiedCount} events updated with 'archived' field.`);
+
+    const archivePastEventsResult = await Event.updateMany(
+      { date: { $lt: now }, archived: false }, 
+      { $set: { archived: true } }  
+    );
+    console.log(`${archivePastEventsResult.modifiedCount} past events archived successfully.`);
   } catch (error) {
-    console.error("Error archiving past events:", error);
+    console.error("Error processing events in cron job:", error);
   }
 });

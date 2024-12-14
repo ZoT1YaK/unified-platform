@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import './Milestones.css';
 import { useFilterAndSearch } from '../../hooks/useFilterAndSearch';
-
+import useDebounce from '../../hooks/useDebounce';
 
 const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
     const [milestones, setMilestones] = useState([]);
     const [filter, setFilter] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
 
-    const filteredMilestones = useFilterAndSearch(milestones, filter, searchQuery, "visibility", "name");
+    const debouncedEmpId = useDebounce(empId, 500); 
+    const debouncedSearchQuery = useDebounce(searchQuery, 500); 
+    const filteredMilestones = useFilterAndSearch(milestones, filter, debouncedSearchQuery, "visibility", "name");
 
 
     useEffect(() => {
@@ -20,7 +22,7 @@ const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
             }
 
             const loggedInUser = JSON.parse(localStorage.getItem("employee"));
-            const fallbackEmpId = empId || loggedInUser?._id;
+            const fallbackEmpId = debouncedEmpId || loggedInUser?._id;
 
             try {
                 const fetchURL = `${process.env.REACT_APP_BACKEND_URL}/api/milestones/get?emp_id=${fallbackEmpId}`;
@@ -51,7 +53,7 @@ const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
         };
 
         fetchMilestones();
-    }, [empId, simpleMode, onMilestonesFetched]); 
+    }, [debouncedEmpId, simpleMode, onMilestonesFetched]); 
 
     const toggleVisibility = async (id) => {
         if (simpleMode) return; // No visibility toggle in simpleMode

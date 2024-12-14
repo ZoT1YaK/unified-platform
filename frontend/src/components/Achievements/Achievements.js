@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from "react";
 import "./Achievements.css";
 import { useFilterAndSearch } from "../../hooks/useFilterAndSearch";
+import useDebounce from "../../hooks/useDebounce";
 
-let fetchTimeout;
-
-const Achievements = ({ simpleMode = false, empId, mode = "own", onAchievementsFetched }) => {
+const Achievements = ({ empId, simpleMode = false, onAchievementsFetched }) => {
     const [achievements, setAchievements] = useState([]);
     const [filter, setFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
 
+    const debouncedEmpId = useDebounce(empId, 500);
+    const debouncedSearchQuery = useDebounce(searchQuery, 500);
+    const filteredAchievements = useFilterAndSearch(
+        achievements,
+        filter,
+        debouncedSearchQuery,
+        "visibility",
+        "badge_id.name"
+    );
 
     useEffect(() => {
         const fetchAchievements = async () => {
@@ -18,41 +26,41 @@ const Achievements = ({ simpleMode = false, empId, mode = "own", onAchievementsF
                 return;
             }
 
-            const query = mode === "visited" ? `?emp_id=${empId}` : "";
-            if (fetchTimeout) clearTimeout(fetchTimeout);
+            const loggedInUser = JSON.parse(localStorage.getItem("employee"));
+            const fallbackEmpId = debouncedEmpId || loggedInUser?._id; // Default to logged-in user's ID if empId is missing
 
-            fetchTimeout = setTimeout(async () => {
-                try {
-                    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/achievements/get${query}`, {
+            try {
+                const response = await fetch(
+                    `${process.env.REACT_APP_BACKEND_URL}/api/achievements/get?emp_id=${fallbackEmpId}`,
+                    {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
-                    });
-
-                    if (!response.ok) {
-                        throw new Error("Failed to fetch achievements");
                     }
-
-                    const data = await response.json();
-                    const filteredData = simpleMode
-                        ? data.achievements.filter((achievement) => achievement.visibility)
-                        : data.achievements;
-
-                    setAchievements(filteredData);
-
-                    if (onAchievementsFetched) {
-                        onAchievementsFetched(filteredData);
-                    }
-                } catch (error) {
-                    console.error("Error fetching achievements:", error.message);
+                );
+                if (!response.ok) {
+                    throw new Error("Failed to fetch achievements");
                 }
-            }, 300);
+
+                const data = await response.json();
+                const filteredData = simpleMode
+                    ? data.achievements.filter((achievement) => achievement.visibility)
+                    : data.achievements;
+
+                setAchievements(filteredData);
+
+                if (onAchievementsFetched) {
+                    onAchievementsFetched(filteredData);
+                }
+            } catch (error) {
+                console.error("Error fetching achievements:", error.message);
+            }
+
         };
 
         fetchAchievements();
-    }, [empId, mode, simpleMode, onAchievementsFetched]);
+    }, [debouncedEmpId, simpleMode, onAchievementsFetched]);
 
-    const filteredAchievements = useFilterAndSearch(achievements, filter, searchQuery, "visible", "badge_id.name");
 
     const toggleVisibility = async (id) => {
         if (simpleMode) return;
@@ -90,7 +98,7 @@ const Achievements = ({ simpleMode = false, empId, mode = "own", onAchievementsF
     };
 
     // Simplified layout for simpleMode or visited profiles
-    if (simpleMode || mode === "visited") {
+    if (simpleMode) {
         return (
             <div className="achievements-section">
                 <h2>Achievements</h2>
@@ -144,6 +152,7 @@ const Achievements = ({ simpleMode = false, empId, mode = "own", onAchievementsF
                 {filteredAchievements.map((achievement) => (
                     <div key={achievement._id} className="achievement-row">
                         <img
+                            className="achievement-icon"
                             src={achievement.badge_id?.img_link || "Ach-badge1.png"}
                             alt={achievement.badge_id?.name || "Achievement Badge"}
                         />

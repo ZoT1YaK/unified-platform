@@ -6,6 +6,7 @@ import EmployeeDetails from "../EmployeeDetails/EmployeeDetails";
 import TopBar from "../TopBar/TopBar";
 import Header from "../Header/Header";
 import Analytics from "../Analytics/Analytics";
+import PostHistory from "../PostHistory/PostHistory";
 import "./VisitedProfPage.css"
 
 const VisitedProfile = () => {
@@ -21,6 +22,7 @@ const VisitedProfile = () => {
                 <div className="visited-prof-employee-column">
                     <EmployeeDetails empId={empId} mode="visited" />
                     <Analytics empId={empId} />
+                    <PostHistory empId={empId} />
                 </div>
                 <div className="visited-prof-achmil-column">
                     <Achievements empId={empId} mode="visited" simpleMode={true} />

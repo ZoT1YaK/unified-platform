@@ -16,6 +16,10 @@ const Home = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const postsPerPage = 7;
   const analytics = useAnalytics();
 
@@ -119,6 +123,7 @@ const Home = () => {
           },
         });
         setPosts(response.data.posts);
+        setFilteredPosts(response.data.posts);
       } catch (error) {
         console.error("Error fetching posts:", error);
       } finally {
@@ -129,19 +134,33 @@ const Home = () => {
     fetchPosts();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // Filter posts based on search term and date range
+  useEffect(() => {
+    let filtered = posts;
 
-  if (!posts.length) {
-    return <div>No posts to display</div>;
-  }
+    // Filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter((post) =>
+        post.content.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Filter by date range
+    if (startDate) {
+      filtered = filtered.filter((post) => new Date(post.timestamp) >= new Date(startDate));
+    }
+    if (endDate) {
+      filtered = filtered.filter((post) => new Date(post.timestamp) <= new Date(endDate));
+    }
+
+    setFilteredPosts(filtered);
+  }, [searchTerm, startDate, endDate, posts]);
 
 
   // Pagination logic
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
 
   const nextPage = () => {
     if (currentPage < Math.ceil(posts.length / postsPerPage)) {
@@ -228,28 +247,54 @@ const Home = () => {
               }}
             />
           </div>
-
-          <div className="post-feed-gray-box">
-            {currentPosts.map((post) => (
-              <PostComponent key={post._id} post={post} user={user} />
-            ))}
+          {/* Search and Date Filter */}
+          <div className="filter-controls">
+            <input
+              type="text"
+              placeholder="Search posts..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-bar"
+            />
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="date-filter"
+            />
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="date-filter"
+            />
           </div>
-          {/* Pagination Controls */}
-          <div className="pagination-controls">
-            <button onClick={prevPage} disabled={currentPage === 1}>
-              Previous
-            </button>
-            <span>
-              Page {currentPage} of {Math.ceil(posts.length / postsPerPage)}
-            </span>
-            <button
-              onClick={nextPage}
-              disabled={currentPage === Math.ceil(posts.length / postsPerPage)}
-            >
-              Next
-            </button>
+
+          {/* Filtered Posts */}
+          <div className="post-feed-gray-box">
+            {currentPosts.length > 0 ? (
+              currentPosts.map((post) => <PostComponent key={post._id} post={post} user={user} />)
+            ) : (
+              <div>No posts match the filters.</div>
+            )}
           </div>
         </div>
+        {/* Pagination Controls */}
+        <div className="pagination-controls">
+          <button onClick={prevPage} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>
+            Page {currentPage} of {Math.ceil(filteredPosts.length / postsPerPage)}
+          </span>
+          <button
+            onClick={nextPage}
+            disabled={currentPage === Math.ceil(filteredPosts.length / postsPerPage)}
+          >
+            Next
+          </button>
+        </div>
+      </div>
 
 
         <div className="tasks-column">
@@ -268,7 +313,6 @@ const Home = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

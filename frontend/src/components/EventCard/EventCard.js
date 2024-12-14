@@ -14,7 +14,7 @@ const EventCard = ({ isLeader }) => {
   const eventsPerPage = 5;
 
 
-  const useFilterAndSearch = (items, filter, searchQuery, filterKey = "response", searchKey = "title") => {
+  const useFilterAndSearch = (items, filter, searchQuery, filterKey = "response") => {
     return useMemo(() => {
       return items
         .filter((item) => {
@@ -24,14 +24,12 @@ const EventCard = ({ isLeader }) => {
           return true;
         })
         .filter((item) => {
-          const query = searchQuery || ""; // Fallback to empty string
-          const searchValue = searchKey.includes(".")
-            ? searchKey.split(".").reduce((obj, key) => (obj ? obj[key] : ""), item)
-            : item[searchKey];
-          return (searchValue || "").toLowerCase().includes(query.toLowerCase());
+          if (searchQuery) return item.title.toLowerCase().includes(searchQuery.toLowerCase());
+          return !item.archived; 
         });
-    }, [items, filter, searchQuery, filterKey, searchKey]);
+    }, [items, filter, searchQuery, filterKey]); 
   };
+  
 
   // Fetch events on component mount
   useEffect(() => {
@@ -44,6 +42,7 @@ const EventCard = ({ isLeader }) => {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
+            params: { search: searchQuery },
           }
         );
 
@@ -62,7 +61,7 @@ const EventCard = ({ isLeader }) => {
     };
 
     fetchEvents();
-  }, []);
+  }, [searchQuery]);
 
   const filteredAndSearchedEvents = useFilterAndSearch(events, filter, searchQuery);
 

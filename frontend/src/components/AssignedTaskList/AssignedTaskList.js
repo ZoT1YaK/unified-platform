@@ -34,6 +34,7 @@ const AssignedTaskList = () => {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,
                         },
+                        params: { search: searchQuery },
                     }),
                     axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/badges/get`, {
                         headers: {
@@ -59,7 +60,7 @@ const AssignedTaskList = () => {
         };
 
         fetchData();
-    }, []);
+    },  [searchQuery]);
 
     // Handle employee selection
     const handleEmployeeChange = (e) => {
@@ -68,10 +69,12 @@ const AssignedTaskList = () => {
 
     // Filter tasks based on selected employee and search query
     const filteredTasks = tasks.filter((task) => {
+        const isArchived = task.archived;
+        const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesEmployee =
             selectedEmployee === "All" || task.assigned_to_id?._id === selectedEmployee;
-        const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesEmployee && matchesSearch;
+
+        return matchesEmployee && (matchesSearch || !isArchived);
     });
 
     // Calculate pagination variables

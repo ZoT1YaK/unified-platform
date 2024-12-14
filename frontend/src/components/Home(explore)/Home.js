@@ -12,7 +12,6 @@ import Achievements from "../Achievements/Achievements";
 import useAnalytics from "../../hooks/useAnalytics";
 
 const Home = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -164,10 +163,6 @@ const Home = () => {
     return <div>No posts to display</div>;
   }
 
-  // Task search handler
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value); // Update search query state
-  };
 
   return (
     <div className="home-page">
@@ -260,27 +255,9 @@ const Home = () => {
         <div className="tasks-column">
           {/* Tasks and Events boxes */}
           <div className="tasks-gray-box">
-            {/* Search input for filtering tasks */}
-            <div className="task-search-container">
-              <div className="task-search-wrapper">
-                <img
-                  src="/magnifying-glass 1.png"
-                  alt="Search Icon"
-                  className="search-icon"
-                />
-                <input
-                  type="text"
-                  className="task-search"
-                  placeholder="Search for a task..."
-                  value={searchQuery} // The value is controlled by the searchQuery state
-                  onChange={handleSearchChange} // This is where the function is used
-                />
-              </div>
-            </div>
-
-            {/* Tasks assigned by the people's leader */}
+            {/* Tasks */}
             <div className="tasks-box">
-              <TaskCard searchQuery={searchQuery} />
+              <TaskCard />
             </div>
           </div>
 

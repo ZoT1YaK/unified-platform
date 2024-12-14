@@ -8,6 +8,8 @@ const TaskCard = () => {
     const [error, setError] = useState(null);
     const [hoveredTask, setHoveredTask] = useState(null);
     const [filter, setFilter] = useState("All");
+    const [searchQuery, setSearchQuery] = useState("");
+    
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -20,23 +22,22 @@ const TaskCard = () => {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,
                         },
+                        params: { search: searchQuery },
                     }
                 );
 
-                const { assignedTasks, ownTasks } = response.data;
-
-
-                setTasks([...assignedTasks, ...ownTasks]);
-            } catch (err) {
+                console.log("Fetched tasks:", response.data.tasks);
+                setTasks(response.data.tasks);
+              } catch (err) {
                 console.error("Error fetching tasks:", err);
                 setError("Failed to fetch tasks. Please try again.");
-            } finally {
+              } finally {
                 setLoading(false);
-            }
-        };
+              }
+            };
 
         fetchTasks();
-    }, []);
+    }, [searchQuery]);
 
     const toggleTaskStatus = async (taskId, currentStatus) => {
         const newStatus = currentStatus === "Completed" ? "Pending" : "Completed";
@@ -74,18 +75,41 @@ const TaskCard = () => {
     };
 
     const filteredTasks = useMemo(() => {
-        if (filter === "All") return tasks;
-        if (filter === "Completed") return tasks.filter((task) => task.status === "Completed");
-        if (filter === "Incomplete") return tasks.filter((task) => task.status !== "Completed");
-        return tasks;
-    }, [tasks, filter]);
-
+        return tasks.filter((task) => {
+          if (filter === "All") return true;
+          if (filter === "Completed") return task.status === "Completed";
+          if (filter === "Incomplete") return task.status !== "Completed";
+          return true;
+        });
+      }, [tasks, filter]);
+      
     if (loading) return <p>Loading tasks...</p>;
     if (error) return <p className="error-message">{error}</p>;
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value); 
+  };
+
 
     return (
         <div className="home-task-container">
             <h2>Your Tasks</h2>
+            {/* Search input for filtering tasks */}
+            <div className="task-search-container">
+              <div className="task-search-wrapper">
+                <img
+                  src="/magnifying-glass 1.png"
+                  alt="Search Icon"
+                  className="search-icon"
+                />
+                <input
+                  type="text"
+                  className="task-search"
+                  placeholder="Search for a task..."
+                  value={searchQuery} 
+                  onChange={handleSearchChange} 
+                />
+              </div>
 
             {/* Filter Buttons */}
             <div className="home-task-filter-buttons">
@@ -142,6 +166,7 @@ const TaskCard = () => {
                         )}
                     </div>
                 ))}
+            </div>
             </div>
             </div>
             );

@@ -50,17 +50,50 @@ exports.createTask = async (req, res) => {
 
 exports.getEmployeeTasks = async (req, res) => {
   const { id } = req.user;
+  const { search } = req.query;
 
   try {
-    const assignedTasks = await Task.find({ assigned_to_id: id })
-      .sort({ deadline: 1 });
+    const now = new Date();
+    const cutoffDate = new Date(now.getTime() - 24 * 60 * 60 * 1000); 
 
-    const ownTasks = await Task.find({ created_by_id: id, assigned_to_id: null });
+    const assignedQuery = {
+      $or: [
+        { status: "Pending" }, 
+        {
+          status: "Completed",
+          completion_date: { $gte: cutoffDate }, 
+        },
+        ...(search
+          ? [{ title: { $regex: search, $options: "i" }, archived: true }] 
+          : []),
+      ],
+      assigned_to_id: id, 
+    };
 
-    res.status(200).json({
-      assignedTasks,
-      ownTasks,
-    });
+   
+    const ownQuery = {
+      $or: [
+        { status: "Pending" },
+        {
+          status: "Completed",
+          completion_date: { $gte: cutoffDate },
+        },
+        ...(search
+          ? [{ title: { $regex: search, $options: "i" }, archived: true }]
+          : []),
+      ],
+      created_by_id: id,
+      assigned_to_id: null, 
+    };
+
+ 
+    const assignedTasks = await Task.find(assignedQuery).sort({ deadline: 1 });
+    const ownTasks = await Task.find(ownQuery).sort({ deadline: 1 });
+
+   
+    const tasks = [...assignedTasks, ...ownTasks];
+
+    res.status(200).json({ tasks });
   } catch (error) {
     console.error("Error fetching employee tasks:", error);
     res.status(500).json({ message: "Server error" });
@@ -96,10 +129,12 @@ exports.completeTask = async (req, res) => {
       return res.status(404).json({ message: "Task not found." });
     }
 
-    if (String(task.assigned_to_id) !== String(id)) {
+    if (
+      String(task.assigned_to_id) !== String(id) &&
+      String(task.created_by_id) !== String(id)
+    ) {
       return res.status(403).json({ message: "Unauthorized to complete this task." });
     }
-
 
     task.status = status;
     if (status === "Completed") {

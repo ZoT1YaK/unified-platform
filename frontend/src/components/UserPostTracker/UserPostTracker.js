@@ -37,6 +37,26 @@ const UserPostTracker = () => {
         }
     };
 
+    const handleDeletePost = async (postId) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+        if (!confirmDelete) return;
+
+        try {
+            await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/posts/delete`, {
+                data: { post_id: postId },
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+            });
+
+            setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+            setFilteredPosts((prevFiltered) => prevFiltered.filter((post) => post._id !== postId));
+            alert("Post deleted successfully!");
+        } catch (error) {
+            console.error("Error deleting post:", error);
+            alert("Failed to delete post. Please try again.");
+        }
+    };
+
+
     useEffect(() => {
         fetchUserPosts();
     }, []);
@@ -94,6 +114,12 @@ const UserPostTracker = () => {
                         <div key={post._id} className="post-summary" onClick={() => openModal(post)}>
                             <p className="post-date">{new Date(post.timestamp).toLocaleDateString()}</p>
                             <p className="post-snippet">{post.content.slice(0, 150)}...</p>
+                            <button
+                                className="delete-post-btn"
+                                onClick={() => handleDeletePost(post._id)}
+                            >
+                                Delete Post
+                            </button>
                             {post.mediaLinks && post.mediaLinks.length > 0 && (
                                 <div className="post-media-preview">
                                     {post.mediaLinks.slice(0, 3).map((url, index) => (

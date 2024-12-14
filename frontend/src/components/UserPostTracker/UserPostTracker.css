@@ -187,3 +187,18 @@
     border-radius: 4px;
   }
   
+
+  .delete-post-btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    margin: 8px 0;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.delete-post-btn:hover {
+    background-color: #e63939;
+}

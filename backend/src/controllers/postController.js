@@ -132,7 +132,7 @@ exports.createCongratulatoryPost = async (req, res) => {
       await PostLocation.insertMany(postLocations);
     }
 
-    const notificationType = await NotificationType.findOne({type_name: "Congratulatory Post"});
+    const notificationType = await NotificationType.findOne({ type_name: "Congratulatory Post" });
     if (!notificationType) {
       return res.status(404).json({ message: "Notification type not found" });
     }
@@ -179,7 +179,7 @@ exports.getTargetedPosts = async (req, res) => {
   const { id } = req.user;
 
   try {
-    const employee = await Employee.findById( id ).populate("dep_id", "name");;
+    const employee = await Employee.findById(id).populate("dep_id", "name");;
     if (!employee) {
       return res.status(404).json({ message: "Employee not found" });
     }
@@ -218,7 +218,7 @@ exports.getTargetedPosts = async (req, res) => {
         return {
           _id: post._id,
           content: post.content,
-          mediaLinks: post.mediaLinks, 
+          mediaLinks: post.mediaLinks,
           likes: post.likes,
           comments: post.comments,
           visibility: post.visibility,
@@ -260,7 +260,7 @@ exports.createComment = async (req, res) => {
 
     await Post.findByIdAndUpdate(post_id, { $inc: { comments: 1 } });
 
-    const notificationType = await NotificationType.findOne({type_name: "Comment on Post"});
+    const notificationType = await NotificationType.findOne({ type_name: "Comment on Post" });
     if (!notificationType) {
       return res.status(404).json({ message: "Notification type not found" });
     }
@@ -392,5 +392,42 @@ exports.getPostResources = async (req, res) => {
   } catch (error) {
     console.error("Error fetching event resources:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.deletePost = async (req, res) => {
+  const { post_id } = req.body;
+  const { id } = req.user;
+
+  console.log("Deleting post:", post_id, "by user:", id);
+
+  try {
+
+    if (!mongoose.Types.ObjectId.isValid(post_id)) {
+      console.error("Invalid post ID:", post_id);
+      return res.status(400).json({ message: "Invalid post ID." });
+    }
+
+    const post = await Post.findOne({ _id: post_id, emp_id: id });
+    if (!post) {
+      return res.status(404).json({ message: "Post not found or unauthorized." });
+    }
+
+    console.log("Deleting associated likes, comments, and targeting data...");
+    await Promise.all([
+      Like.deleteMany({ post_id }),
+      Comment.deleteMany({ post_id }),
+      PostTeam.deleteMany({ post_id }),
+      PostDepartment.deleteMany({ post_id }),
+      PostLocation.deleteMany({ post_id }),
+    ]);
+    console.log("Deleting the post...");
+    await Post.findByIdAndDelete(post_id);
+    console.log("Post deleted successfully.");
+
+    res.status(200).json({ message: "Post deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    res.status(500).json({ message: "Server error." });
   }
 };

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import "./EmployeeTasks.css";
 import TaskStatus from "../TaskStatus/TaskStatus";
+import useDebounce from "../../hooks/useDebounce";
 
 const EmployeeTasks = () => {
     const [tasks, setTasks] = useState([]);
@@ -11,6 +12,7 @@ const EmployeeTasks = () => {
     const [filter, setFilter] = useState("All");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const debouncedSearchQuery = useDebounce(searchQuery, 300); 
 
     // Fetch tasks from the backend
     useEffect(() => {
@@ -23,7 +25,7 @@ const EmployeeTasks = () => {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,
                         },
-                        params: { search: searchQuery },
+                        params: { search: debouncedSearchQuery  },
                     }
                 );
                 const { tasks } = response.data;
@@ -36,7 +38,7 @@ const EmployeeTasks = () => {
             }
         };
         fetchTasks();
-    }, [searchQuery]);
+    }, [debouncedSearchQuery ]);
 
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter((task) => task.status === "Completed").length;

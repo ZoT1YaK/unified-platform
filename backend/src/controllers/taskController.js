@@ -57,40 +57,40 @@ exports.getEmployeeTasks = async (req, res) => {
     const cutoffDate = new Date(now.getTime() - 24 * 60 * 60 * 1000); 
 
     const assignedQuery = {
+      assigned_to_id: id,
       $or: [
+        { archived: search ? undefined : false }, 
         { status: "Pending" }, 
         {
           status: "Completed",
           completion_date: { $gte: cutoffDate }, 
-        },
-        ...(search
-          ? [{ title: { $regex: search, $options: "i" }, archived: true }] 
-          : []),
+        }
       ],
-      assigned_to_id: id, 
     };
 
    
     const ownQuery = {
+      created_by_id: id,
+      assigned_to_id: null, 
       $or: [
+        { archived: search ? undefined : false },
         { status: "Pending" },
         {
           status: "Completed",
           completion_date: { $gte: cutoffDate },
         },
-        ...(search
-          ? [{ title: { $regex: search, $options: "i" }, archived: true }]
-          : []),
       ],
-      created_by_id: id,
-      assigned_to_id: null, 
     };
 
- 
-    const assignedTasks = await Task.find(assignedQuery).sort({ deadline: 1 });
-    const ownTasks = await Task.find(ownQuery).sort({ deadline: 1 });
+    if (search) {
+      const searchFilter = { title: { $regex: search, $options: "i" } }; 
+      assignedQuery.$or.push(searchFilter);
+      ownQuery.$or.push(searchFilter);
+    }
 
-   
+    const assignedTasks = await Task.find(assignedQuery).sort({ deadline: 1 }).lean();
+    const ownTasks = await Task.find(ownQuery).sort({ deadline: 1 }).lean();
+
     const tasks = [...assignedTasks, ...ownTasks];
 
     res.status(200).json({ tasks });
@@ -99,6 +99,7 @@ exports.getEmployeeTasks = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 exports.getLeaderAssignedTasks = async (req, res) => {
   const { id } = req.user;

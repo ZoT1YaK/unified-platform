@@ -27,7 +27,7 @@ exports.createPost = async (req, res) => {
     if (global) {
       const allTeams = await Team.find().distinct("_id");
       const allDepartments = await Department.find().distinct("_id");
-      const allLocations = await Employee.distinct("location");
+      const allLocations = await Employee.distinct("location", { location: { $ne: null } });
 
       post = await Post.create({
         emp_id: id,
@@ -82,15 +82,10 @@ exports.createPost = async (req, res) => {
 
 
 exports.createCongratulatoryPost = async (req, res) => {
-  const { target_teams, target_departments, target_locations, related_emp_id, content, file_location } = req.body;
+  const { target_teams, target_departments, target_locations, related_emp_id, content, global } = req.body;
   const { id } = req.user;
 
   try {
-    const peopleLeader = await Employee.findById(id);
-    if (!peopleLeader || !peopleLeader.is_people_leader) {
-      return res.status(403).json({ message: "Only people leaders can create congratulatory posts." });
-    }
-
     if (!content || !related_emp_id) {
       return res.status(400).json({ message: "Content and related employee ID are required." });
     }
@@ -100,36 +95,54 @@ exports.createCongratulatoryPost = async (req, res) => {
       return res.status(404).json({ message: "Related employee not found." });
     }
 
-    const post = await Post.create({
-      emp_id: id,
-      related_emp_id,
-      content,
-      file_location,
-      visibility: false,
-    });
+    if (global) {
+      const allTeams = await Team.find().distinct("_id");
+      const allDepartments = await Department.find().distinct("_id");
+      const allLocations = await Employee.distinct("location", { location: { $ne: null } });
 
-    if (target_teams?.length) {
-      const postTeams = target_teams.map((team_id) => ({
-        post_id: post._id,
-        team_id,
-      }));
-      await PostTeam.insertMany(postTeams);
-    }
+      post = await Post.create({
+        emp_id: id,
+        content,
+        mediaLinks,
+        visibility: true,
+        global: true,
+      });
 
-    if (target_departments?.length) {
-      const postDepartments = target_departments.map((dep_id) => ({
-        post_id: post._id,
-        dep_id,
-      }));
-      await PostDepartment.insertMany(postDepartments);
-    }
-
-    if (target_locations?.length) {
-      const postLocations = target_locations.map((location) => ({
-        post_id: post._id,
-        location,
-      }));
-      await PostLocation.insertMany(postLocations);
+      await PostTeam.insertMany(allTeams.map((team_id) => ({ post_id: post._id, team_id })));
+      await PostDepartment.insertMany(allDepartments.map((dep_id) => ({ post_id: post._id, dep_id })));
+      await PostLocation.insertMany(allLocations.map((location) => ({ post_id: post._id, location })));
+    } else {
+      const post = await Post.create({
+        emp_id: id,
+        related_emp_id,
+        content,
+        file_location,
+        visibility: false,
+      });
+  
+      if (target_teams?.length) {
+        const postTeams = target_teams.map((team_id) => ({
+          post_id: post._id,
+          team_id,
+        }));
+        await PostTeam.insertMany(postTeams);
+      }
+  
+      if (target_departments?.length) {
+        const postDepartments = target_departments.map((dep_id) => ({
+          post_id: post._id,
+          dep_id,
+        }));
+        await PostDepartment.insertMany(postDepartments);
+      }
+  
+      if (target_locations?.length) {
+        const postLocations = target_locations.map((location) => ({
+          post_id: post._id,
+          location,
+        }));
+        await PostLocation.insertMany(postLocations);
+      }
     }
 
     const notificationType = await NotificationType.findOne({ type_name: "Congratulatory Post" });
@@ -204,7 +217,6 @@ exports.getTargetedPosts = async (req, res) => {
         path: "emp_id",
         populate: [
           { path: "dep_id", select: "name" },
-          { path: "location", select: "city country" },
         ],
       })
       .sort({ timestamp: -1 });
@@ -382,7 +394,7 @@ exports.getPostResources = async (req, res) => {
   try {
     const teams = await Team.find().sort({ name: 1 });
     const departments = await Department.find().sort({ name: 1 });
-    const locations = await Location.find().sort({ city: 1 }); // Fetch full location objects
+    const locations = await Employee.distinct("location", { location: { $ne: null } }).sort({ location: 1 });
 
     res.status(200).json({
       teams,

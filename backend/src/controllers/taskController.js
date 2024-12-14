@@ -158,7 +158,7 @@ exports.completeTask = async (req, res) => {
               await Achievement.create({
                   emp_id: id,
                   badge_id: task.badge_id,
-                  task_id: task._id,
+                  related_entity_id: task._id,
                   created_at: new Date(),
               });
           }
@@ -167,7 +167,7 @@ exports.completeTask = async (req, res) => {
           await Achievement.findOneAndDelete({
               emp_id: id,
               badge_id: task.badge_id,
-              task_id: task._id,
+              related_entity_id: task._id,
           });
       }
   }

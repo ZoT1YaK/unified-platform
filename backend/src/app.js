@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const fs = require('fs');
-const connectDB = require("./config/db");
+const { connectDB } = require("./config/db");
 require("./utils/scheduledTasks");
 require("./utils/scheduledReports");
 require("./utils/fileCleanup");
@@ -19,7 +19,6 @@ const taskRoutes = require("./routes/taskRoutes");
 const achievementRoutes = require("./routes/achievementRoutes");
 const eventRoutes = require("./routes/eventRoutes");
 const metricsRoutes = require("./routes/metricsRoutes");
-const dashboardRoutes = require("./routes/dashboardRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 const datamindRoutes = require("./routes/datamindRoutes");
 
@@ -53,7 +52,6 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/achievements", achievementRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/metrics", metricsRoutes);
-app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/analytics", analyticsRoutes); // analytics for home page
 app.use("/api", analyticsRoutes); // analytics for profile pages (own and visited)
 app.use("/api/datamind", datamindRoutes);

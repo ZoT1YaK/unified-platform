@@ -23,3 +23,11 @@ exports.verifyPeopleLeader = (req, res, next) => {
   }
   next();
 };
+
+// Verify Admin Role
+exports.verifyAdmin = (req, res, next) => {
+  if (!req.user.is_admin) {
+    return res.status(403).json({ message: "Access denied, only Admins can perform this action" });
+  }
+  next();
+};

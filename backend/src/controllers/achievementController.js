@@ -2,22 +2,7 @@ const mongoose = require("mongoose");
 const Achievement = require("../models/Achievement");
 const Badge = require("../models/Badge");
 const Task = require("../models/Task");
-
-// exports.getAchievementsByEmployee = async (req, res) => {
-//   const { id } = req.user;
-
-//   try {
-//     const achievements = await Achievement.find({ emp_id: id })
-//       .populate("badge_id", "name description img_link")
-//       .populate("task_id", "title description")
-//       .sort({ achievement_date: -1 });
-
-//     res.status(200).json({ achievements });
-//   } catch (error) {
-//     console.error("Error fetching achievements:", error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
+const Event = require("../models/Event")
 
 exports.getAchievementsByEmployee = async (req, res) => {
   const { id: loggedInId } = req.user;
@@ -31,13 +16,13 @@ exports.getAchievementsByEmployee = async (req, res) => {
       // If viewing own profile, fetch all achievements
       achievements = await Achievement.find({ emp_id: targetId })
         .populate("badge_id", "name description img_link")
-        .populate("task_id", "title description")
+        .populate("related_entity_id", "title description")
         .sort({ achievement_date: -1 });
     } else {
       // If visiting another profile, fetch only visible achievements
       achievements = await Achievement.find({ emp_id: targetId, visibility: true })
         .populate("badge_id", "name description img_link")
-        .populate("task_id", "title description")
+        .populate("related_entity_id", "title description")
         .sort({ achievement_date: -1 });
     }
     res.status(200).json({ achievements });
@@ -46,7 +31,6 @@ exports.getAchievementsByEmployee = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 exports.updateAchievementVisibility = async (req, res) => {
   const { achievement_id, visibility } = req.body;

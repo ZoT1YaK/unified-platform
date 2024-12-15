@@ -50,8 +50,7 @@ const employeeSchema = new mongoose.Schema({
     default: null,
   },
   location: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Location", 
+    type: String,
     required: true,
   },
 

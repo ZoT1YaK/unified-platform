@@ -11,7 +11,7 @@ const achievementSchema = new mongoose.Schema({
     ref: "Badge", 
     required: true 
   },
-  task_id: { 
+  related_entity_id: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: "Task", 
     required: true 
@@ -26,6 +26,6 @@ const achievementSchema = new mongoose.Schema({
   },
 });
 
-achievementSchema.index({ emp_id: 1, task_id: 1 }, { unique: true });
+achievementSchema.index({ emp_id: 1, related_entity_id: 1 }, { unique: true });
 
 module.exports = mongoose.model("Achievement", achievementSchema);

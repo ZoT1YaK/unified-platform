@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const postController = require("../controllers/postController");
-const { verifyToken } = require("../middleware/authMiddleware");
+const { verifyToken, verifyPeopleLeader } = require("../middleware/authMiddleware");
 
 // Create a post
 router.post("/create", verifyToken, postController.createPost);
 
 // Create a congratulatory post
-router.post("/congratulatory", verifyToken, postController.createCongratulatoryPost);
+router.post("/congratulatory", verifyPeopleLeader, verifyToken, postController.createCongratulatoryPost);
 
 // Update visibility of a congratulatory post
 router.patch("/visibility", verifyToken, postController.updatePostVisibility);

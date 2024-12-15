@@ -10,8 +10,8 @@ const metricsReportSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  file_path: {
-    type: String,
+  file_id: {
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
   status: {

@@ -16,11 +16,6 @@ exports.createEvent = async (req, res) => {
   const { id } = req.user;
 
   try {
-    const employee = await Employee.findById(id);
-    if (!employee || !employee.is_people_leader) {
-      return res.status(403).json({ message: "Only People Leaders can create events." });
-    }
-
     if (!title || !date) {
       return res.status(400).json({ message: "Title and date are required." });
     }
@@ -276,7 +271,7 @@ exports.completeEvent = async (eventId) => {
         await Achievement.create({
           emp_id: eventEmployee.emp_id,
           badge_id: event.badge_id,
-          event_id: event._id,
+          related_entity_id: event._id,
           created_at: new Date(),
         });
       }

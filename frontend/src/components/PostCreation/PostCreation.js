@@ -173,7 +173,7 @@ const PostDialog = ({ user, closeDialog }) => {
                                         onChange={() => handleCheckboxToggle(option._id)}
                                     />
                                     {audience === 'location'
-                                        ? `${option.city}, ${option.country}` // Render city and country
+                                        ? `${option}` // Render country
                                         : option.name || option.number || 'Unnamed Option'} {/* Render name or fallback for other options */}
                                 </label>
                             ))}

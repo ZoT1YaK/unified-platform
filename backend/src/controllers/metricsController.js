@@ -12,10 +12,14 @@ const NotificationController = require("./notificationController");
 const NotificationType = require("../models/NotificationType");
 const EventEmployee = require("../models/EventEmployee");
 const Event = require ("../models/Event");
+const { getGridFsBucket  } = require("../config/db");
 
 exports.updateDailyMetricsSnapshot = async () => {
   const startOfMonth = new Date(new Date().setDate(1)); // First day of the current month
+  startOfMonth.setHours(0, 0, 0, 0);
+
   const endOfMonth = new Date(new Date(startOfMonth).setMonth(startOfMonth.getMonth() + 1)); // First day of the next month
+  endOfMonth.setHours(0, 0, 0, 0); 
 
   try {
     const employees = await Employee.find(); // Get all employees or filter as needed
@@ -27,10 +31,11 @@ exports.updateDailyMetricsSnapshot = async () => {
         end_date: new Date().toISOString(), 
       });
 
+      // Normalize start and end dates in the query to ensure proper comparison
       const existingSnapshot = await MetricsSnapshot.findOne({
         emp_id: employee._id,
-        start_date: startOfMonth,
-        end_date: endOfMonth,
+        start_date: { $eq: startOfMonth },
+        end_date: { $eq: endOfMonth },
       });
 
       if (existingSnapshot) {
@@ -148,120 +153,98 @@ const generateMetricsReportForLeader = async (leaderId) => {
   }
 
   const leaderEmployees = await Employee.find({ people_leader_id: leaderId }).select("_id email");
-
   if (!leaderEmployees.length) {
     throw new Error("No employees found for this leader.");
   }
 
   const employeeIds = leaderEmployees.map((emp) => emp._id);
-  const employeeEmailsMap = leaderEmployees.reduce((acc, emp) => {
-    acc[emp._id.toString()] = emp.email; // Map emp_id to email for lookup
-    return acc;
-  }, {});
-
   const snapshots = await MetricsSnapshot.find({ emp_id: { $in: employeeIds } });
 
   if (!snapshots.length) {
     throw new Error("No metrics data found for the leader's employees.");
   }
 
-  const reportFilePath = path.resolve(
-    __dirname,
-    `../reports/metrics_report_${leaderId}_${Date.now()}.pdf`
-  );
-
   const doc = new PDFDocument();
-  const reportsDir = path.resolve(__dirname, "../reports");
-  if (!fs.existsSync(reportsDir)) {
-    fs.mkdirSync(reportsDir, { recursive: true });
-  }
+  const gridFsBucket = getGridFsBucket();
 
-  const writeStream = fs.createWriteStream(reportFilePath);
-  doc.pipe(writeStream);
+  const uploadStream = gridFsBucket.openUploadStream(`metrics_report_${leaderId}_${Date.now()}.pdf`, {
+    metadata: { generatedFor: leaderId },
+  });
 
-  doc
-    .fontSize(20)
-    .text("Metrics Report", { align: "center" })
-    .moveDown();
+  doc.pipe(uploadStream);
 
-  doc
-    .fontSize(14)
-    .text(`Generated for People Leader: ${leader.email}`, { align: "left" })
-    .moveDown();
+  doc.fontSize(20).text("Metrics Report", { align: "center" }).moveDown();
+  doc.fontSize(14).text(`Generated for: ${leader.email}`).moveDown();
 
   snapshots.forEach((snapshot, index) => {
-    const email = employeeEmailsMap[snapshot.emp_id?.toString()] || "N/A";
-
     doc
       .fontSize(12)
-      .text(`Snapshot #${index + 1}:`, { underline: true })
-      .moveDown(0.5)
-      .text(`Employee Email: ${email}`)
+      .text(`Snapshot #${index + 1}:`)
       .text(`Task Completion Rate: ${snapshot.task_completion_rate.toFixed(2)}%`)
       .text(`Average Task Speed: ${snapshot.average_task_speed.toFixed(2)} days`)
       .text(`Milestones Achieved: ${snapshot.milestones_achieved}`)
       .text(`Engagement Score: ${snapshot.engagement_score.toFixed(2)}`)
-      .text(`Total tasks: ${snapshot.total_tasks}`)
-      .text(`Completed tasks: ${snapshot.completed_tasks}`)
-      .text(`Total Achievements: ${snapshot.total_achievements}`)
       .moveDown();
   });
 
   doc.end();
 
   return new Promise((resolve, reject) => {
-    writeStream.on("finish", async () => {
-      const report = await MetricsReport.create({
-        generated_for: leaderId,
-        report_date: new Date(),
-        file_path: reportFilePath,
-        status: "Sent",
-      });
-
-      const notificationType = await NotificationType.findOne({
-        type_name: "Report Available",
-      });
-
-      if (notificationType) {
-        await NotificationController.createNotification({
-          recipient_id: leaderId,
-          noti_type_id: notificationType._id,
-          related_entity_id: report._id,
-          message: "Your monthly metrics report is now available.",
+    uploadStream.on("finish", async () => {
+      
+        // Retrieve the file metadata from the reports.files collection
+        const file = await gridFsBucket
+          .find({ _id: uploadStream.id })
+          .next();
+          
+        if (!file || !file._id) {
+          throw new Error("File metadata is undefined or invalid.");
+        }
+    
+        const report = await MetricsReport.create({
+          generated_for: leaderId,
+          report_date: new Date(),
+          file_id: file._id,
+          status: "Sent",
         });
-      }
-
-      resolve(report);
+    
+        const notificationType = await NotificationType.findOne({ type_name: "Report Available" });
+        
+        if (notificationType) {
+          await NotificationController.createNotification({
+            recipient_id: leaderId,
+            noti_type_id: notificationType._id,
+            related_entity_id: report._id,
+            message: "Your monthly metrics report is now available.",
+          });
+        }
+        resolve(report);
     });
 
-    writeStream.on("error", (err) => {
-      console.error("Error writing PDF file:", err);
-      reject(new Error("Error generating PDF file."));
+    uploadStream.on("error", (err) => {
+      console.error("Error uploading PDF to GridFS:", err);
+      reject(err);
     });
   });
 };
 
 exports.downloadMetricsReport = async (req, res) => {
   const { report_id } = req.params;
-  
+
   try {
     const report = await MetricsReport.findById(report_id);
-  
     if (!report) {
       return res.status(404).json({ message: "Report not found." });
     }
-  
-    const filePath = report.file_path;
-  
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ message: "File not found." });
-    }
-  
-    res.download(filePath, (err) => {
-      if (err) {
-        console.error("Error downloading file:", err);
-        res.status(500).json({ message: "Error downloading file." });
-      }
+
+    const gridFsBucket = getGridFsBucket();
+    const downloadStream = gridFsBucket.openDownloadStream(report.file_id);
+
+    downloadStream.on("data", (chunk) => res.write(chunk));
+    downloadStream.on("end", () => res.end());
+    downloadStream.on("error", (err) => {
+      console.error("Error downloading file from GridFS:", err);
+      res.status(500).json({ message: "Error downloading report." });
     });
   } catch (error) {
     console.error("Error fetching report for download:", error);

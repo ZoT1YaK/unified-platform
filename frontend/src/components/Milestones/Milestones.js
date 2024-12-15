@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
-import "./Milestones.css";
-import { useFilterAndSearch } from "../../hooks/useFilterAndSearch";
+import React, { useEffect, useState } from 'react';
+import './Milestones.css';
+import { useFilterAndSearch } from '../../hooks/useFilterAndSearch';
+import useDebounce from '../../hooks/useDebounce';
 
-let fetchTimeout;
-
-const Milestones = ({ simpleMode = false, empId, mode = "own", onMilestonesFetched }) => {
+const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
     const [milestones, setMilestones] = useState([]);
-    const [filter, setFilter] = useState("All");
-    const [searchQuery, setSearchQuery] = useState("");
+    const [filter, setFilter] = useState('All');
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const debouncedEmpId = useDebounce(empId, 500); 
+    const debouncedSearchQuery = useDebounce(searchQuery, 500); 
+    const filteredMilestones = useFilterAndSearch(milestones, filter, debouncedSearchQuery, "visibility", "name");
+
 
     useEffect(() => {
         const fetchMilestones = async () => {
@@ -17,43 +21,42 @@ const Milestones = ({ simpleMode = false, empId, mode = "own", onMilestonesFetch
                 return;
             }
 
-            const query = mode === "visited" ? `?emp_id=${empId}` : "";
-            if (fetchTimeout) clearTimeout(fetchTimeout);
+            const loggedInUser = JSON.parse(localStorage.getItem("employee"));
+            const fallbackEmpId = debouncedEmpId || loggedInUser?._id;
 
-            fetchTimeout = setTimeout(async () => {
-                try {
-                    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/milestones/get${query}`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
+            try {
+                const fetchURL = `${process.env.REACT_APP_BACKEND_URL}/api/milestones/get?emp_id=${fallbackEmpId}`;
+                const response = await fetch(fetchURL, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
 
-                    if (!response.ok) {
-                        throw new Error("Failed to fetch milestones");
-                    }
 
-                    const data = await response.json();
-                    const filteredData = simpleMode
-                        ? data.milestones.filter((milestone) => milestone.visibility)
-                        : data.milestones;
-
-                    setMilestones(filteredData);
-
-                    if (onMilestonesFetched) {
-                        onMilestonesFetched(filteredData);
-                    }
-                } catch (error) {
-                    console.error("Error fetching milestones:", error.message);
+                if (!response.ok) {
+                    throw new Error("Failed to fetch milestones");
                 }
-            }, 300);
+                const data = await response.json();
+                const fetchedMilestones = simpleMode
+                    ? data.milestones.filter((milestone) => milestone.visibility)
+                    : data.milestones;
+
+                setMilestones(fetchedMilestones);
+
+                if (onMilestonesFetched) {
+                    onMilestonesFetched(fetchedMilestones);
+                }
+            } catch (error) {
+                console.error("Error fetching milestones:", error.message);
+            }
+
         };
 
         fetchMilestones();
-    }, [empId, mode, simpleMode, onMilestonesFetched]);
-
-    const filteredMilestones = useFilterAndSearch(milestones, filter, searchQuery, "visibility", "name");
+    }, [debouncedEmpId, simpleMode, onMilestonesFetched]); 
 
     const toggleVisibility = async (id) => {
         if (simpleMode) return; // No visibility toggle in simpleMode
-
         try {
             const token = localStorage.getItem("token");
             const milestone = milestones.find((m) => m._id === id);
@@ -68,11 +71,9 @@ const Milestones = ({ simpleMode = false, empId, mode = "own", onMilestonesFetch
                     visibility: !milestone.visibility,
                 }),
             });
-
             if (!response.ok) {
                 throw new Error("Failed to update visibility");
             }
-
             const updatedMilestone = await response.json();
             setMilestones((prevMilestones) =>
                 prevMilestones.map((item) =>
@@ -86,14 +87,14 @@ const Milestones = ({ simpleMode = false, empId, mode = "own", onMilestonesFetch
         }
     };
 
-    // Render simplified layout for simpleMode or visited profiles
-    if (simpleMode || mode === "visited") {
+
+    if (simpleMode) {
         return (
             <div className="milestones-section">
                 <h2>Milestones</h2>
-                {milestones.length > 0 ? (
+                {filteredMilestones.length > 0 ? (
                     <ul className="milestones-list">
-                        {milestones.map((milestone) => (
+                        {filteredMilestones.map((milestone) => (
                             <li key={milestone._id} className="milestone-item">
                                 {milestone.name}
                             </li>

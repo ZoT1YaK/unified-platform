@@ -116,10 +116,25 @@ const TopBar = () => {
                     className="icon"
                     onClick={handleNavigateToDashboard} // Navigate to Dashboard
                 />
-                <img src="/Screenshot_1.png" alt="icon1" className="icon-peakon" />
-                <img src="/Udemy-Emblem.png" alt="icon2" className="icon" />
-                <img src="/5019634-middle.png" alt="icon3" className="icon" />
-                <img src="/Microsoft_Office_SharePoint_(2019–present).svg.png" alt="icon4" className="icon" />
+                {/* Peakon Employee Voice */}
+                <a href="https://www.peakon.com" target="_blank" rel="noopener noreferrer">
+                    <img src="/Screenshot_1.png" alt="Peakon Employee Voice" className="icon-peakon" />
+                </a>
+
+                {/* Udemy */}
+                <a href="https://www.udemy.com" target="_blank" rel="noopener noreferrer">
+                    <img src="/Udemy-Emblem.png" alt="Udemy" className="icon" />
+                </a>
+
+                {/* Workday */}
+                <a href="https://www.workday.com" target="_blank" rel="noopener noreferrer">
+                    <img src="/5019634-middle.png" alt="Workday" className="icon" />
+                </a>
+
+                {/* SharePoint */}
+                <a href="https://www.microsoft.com/en-us/microsoft-365/sharepoint/collaboration" target="_blank" rel="noopener noreferrer">
+                    <img src="/Microsoft_Office_SharePoint_(2019–present).svg.png" alt="SharePoint" className="icon" />
+                </a>
             </div>
 
             {/* Center Search Bar */}
@@ -153,7 +168,10 @@ const TopBar = () => {
 
             {/* Right Icons */}
             <div className="right-icons">
-                <img src="/business (1).png" alt="icon6" className="icon" />
+                {/* Microsoft Teams */}
+                <a href="https://teams.microsoft.com" target="_blank" rel="noopener noreferrer">
+                    <img src="/business (1).png" alt="Microsoft Teams" className="icon" />
+                </a>
 
                 {/* Notification Button */}
                 <button

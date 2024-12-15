@@ -11,9 +11,7 @@ import "./VisitedProfPage.css"
 
 const VisitedProfile = () => {
     const { empId } = useParams();
-
-    console.log("empId in VisitedProfile:", empId); // Log the empId.
-
+  
     return (
         <div className="visited-profile-page">
             <TopBar />
@@ -25,8 +23,8 @@ const VisitedProfile = () => {
                     <PostHistory empId={empId} />
                 </div>
                 <div className="visited-prof-achmil-column">
-                    <Achievements empId={empId} mode="visited" simpleMode={true} />
-                    <Milestones empId={empId} mode="visited" simpleMode={true} />
+                    <Achievements empId={empId} simpleMode={true} />
+                    <Milestones empId={empId} simpleMode={true} />
                 </div>
             </div>
         </div>

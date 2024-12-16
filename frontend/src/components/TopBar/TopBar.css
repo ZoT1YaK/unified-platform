@@ -123,15 +123,15 @@
 .notification-history-dropdown {
     position: absolute;
     top: 60px;
-    /* Adjust to fit under the top bar */
     right: 10px;
     width: 300px;
-    /* Adjust width as needed */
     background-color: white;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     z-index: 10;
     padding: 10px;
+    max-height: 800px;
+    overflow-y: auto;
 }
 
 /* Leader Button */
@@ -258,7 +258,8 @@
     text-decoration: none;
 }
 
-.settings-button, .gratification-button {
+.settings-button,
+.gratification-button {
     color: #32444d;
     font-size: 13px;
     border: none;
@@ -266,7 +267,8 @@
     padding: 0px;
 }
 
-.settings-button:hover, .gratification-button:hover {
+.settings-button:hover,
+.gratification-button:hover {
     color: #5bc488;
 }
 

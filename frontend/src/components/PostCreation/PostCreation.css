@@ -46,7 +46,7 @@
 
 .post-dialog {
     width: 885px;
-    height: 450px;
+    height: auto;
     background-color: white;
     border-radius: 10px;
     position: relative;
@@ -195,7 +195,6 @@ select {
     font-family: "Noto", sans-serif;
     font-weight: bold;
     z-index: 5;
-    /* Ensure it's on top of other elements */
 }
 
 .post-btn.active {
@@ -219,9 +218,10 @@ select {
 }
 
 .media-preview-container h4 {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+    margin-top: 0px;
     font-size: 14px;
-    color: #555;
+    color: #32444D;
 }
 
 .media-preview {
@@ -232,11 +232,11 @@ select {
 
 .preview-media-item {
     position: relative;
-    width: 75px;
-    height: 75px;
+    width: auto;
+    height: auto;
     overflow: hidden;
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); */
 }
 
 .media-preview-image {
@@ -260,21 +260,39 @@ select {
     word-break: break-word;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-left: 30px;
 }
 
 .remove-media-btn {
     position: absolute;
-    top: 5px;
-    right: 5px;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
+    top: 0px;
+    /* right: 5px; */
+    /* background: rgba(0, 0, 0, 0.7); */
+    /* color: white; */
     border: none;
-    border-radius: 50%;
+    border-radius: 5px;
     padding: 5px;
     cursor: pointer;
     font-size: 12px;
 }
 
+.media-attachment button {
+    border: none;
+    background: transparent;
+    width: 80px;
+    margin-left: 5px;
+    padding: 5px;
+}
+
+.media-attachment button:hover {
+    background: #82ED9B;
+}
+
+.media-attach-close-bttn {
+    width: 15px;
+    height: 15px;
+}
+
 .remove-media-btn:hover {
-    background: rgba(255, 0, 0, 0.8);
+    background: #f2f2f2;
 }

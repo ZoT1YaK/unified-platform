@@ -224,7 +224,7 @@ const PostDialog = ({ user, closeDialog }) => {
                                             </a>
                                         )}
                                         <button onClick={() => handleRemoveMediaLink(index)} className="remove-media-btn">
-                                            Remove
+                                            <img src="/close.png" alt="Close button" className="media-attach-close-bttn" />
                                         </button>
                                     </div>
                                 ))}

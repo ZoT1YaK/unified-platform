@@ -10,7 +10,7 @@ const TaskCard = () => {
     const [hoveredTask, setHoveredTask] = useState(null);
     const [filter, setFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
-    const debouncedSearchQuery = useDebounce(searchQuery, 500); 
+    const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -23,24 +23,24 @@ const TaskCard = () => {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,
                         },
-                        params: { search: debouncedSearchQuery  },
+                        params: { search: debouncedSearchQuery },
                     }
                 );
 
                 console.log("Fetched tasks:", response.data.tasks);
                 setTasks(response.data.tasks);
-              } catch (err) {
+            } catch (err) {
                 console.error("Error fetching tasks:", err);
                 setError("Failed to fetch tasks. Please try again.");
-              } finally {
+            } finally {
                 setLoading(false);
-              }
-            };
+            }
+        };
 
         fetchTasks();
-    }, [debouncedSearchQuery ]);
+    }, [debouncedSearchQuery]);
 
-    
+
 
     const filteredTasks = useMemo(() => {
         return tasks.filter((task) => {

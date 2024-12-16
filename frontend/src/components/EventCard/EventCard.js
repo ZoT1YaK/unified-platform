@@ -25,11 +25,11 @@ const EventCard = ({ isLeader }) => {
         })
         .filter((item) => {
           if (searchQuery) return item.title.toLowerCase().includes(searchQuery.toLowerCase());
-          return !item.archived; 
+          return !item.archived;
         });
-    }, [items, filter, searchQuery, filterKey]); 
+    }, [items, filter, searchQuery, filterKey]);
   };
-  
+
 
   // Fetch events on component mount
   useEffect(() => {
@@ -142,24 +142,35 @@ const EventCard = ({ isLeader }) => {
   return (
     <div className="event-list">
       {/* Search and Filter UI */}
-      <div className="filter-search-container">
-        <button onClick={() => setFilter('All')} className={filter === 'All' ? 'active' : ''}>
-          All
-        </button>
-        <button onClick={() => setFilter('Accepted')} className={filter === 'Accepted' ? 'active' : ''}>
-          Accepted
-        </button>
-        <button onClick={() => setFilter('Declined')} className={filter === 'Declined' ? 'active' : ''}>
-          Declined
-        </button>
+      <div className="event-search-container">
+        <div className="event-search-wrapper">
+          <img
+            src="/magnifying-glass 1.png"
+            alt="Search Icon"
+            className="search-icon"
+          />
+          <input
+            type="text"
+            placeholder="Search for an event..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="event-search"
+          />
+        </div>
 
-        <input
-          type="text"
-          placeholder="Search events..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="search-bar"
-        />
+        {/* Filter Buttons */}
+        <div className="home-event-filter-buttons">
+          <button onClick={() => setFilter('All')} className={filter === 'All' ? 'active' : ''}>
+            All
+          </button>
+          <button onClick={() => setFilter('Accepted')} className={filter === 'Accepted' ? 'active' : ''}>
+            Accepted
+          </button>
+          <button onClick={() => setFilter('Declined')} className={filter === 'Declined' ? 'active' : ''}>
+            Declined
+          </button>
+        </div>
+
       </div>
       {currentEvents.map((event) => (
         <div

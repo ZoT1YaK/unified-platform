@@ -12,7 +12,7 @@
 
 /* Other Home-specific styles */
 .profile-container {
-  margin-left: 123px;
+  /* margin-left: 123px; */
   border-radius: 10px;
   width: 400px;
   height: 320px;
@@ -101,16 +101,17 @@
   width: 100%;
   top: -73px;
   display: flex;
-  justify-content: flex-start;
-  gap: 25px;
+  /* justify-content: flex-start; */
+  justify-content: center;
+  gap: 20px;
   flex-wrap: wrap;
-  padding-left: 20px;
+  /* padding-left: 20px; */
 }
 
-.profile-column,
+/* .profile-column,
 .post-column {
   margin-left: 123px;
-}
+} */
 
 .profile-column {
   width: 400px;
@@ -120,38 +121,115 @@
 }
 
 .post-column {
-  width: 885px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 10px;
+  width: 885px;
   flex-shrink: 0;
+  /* margin-top: 20px; */
+}
 
+/* .post-creation-gray-box,
+.filter-controls,
+.post-feed-gray-box,
+.pagination-controls {
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px;
+} */
+
+.post-search-wrapper {
+  width: 70%;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.post-search {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: transparent;
+  font-size: 16px;
+  color: #32444D;
+  opacity: 0.5;
+  border: none;
+  align-items: center;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  height: 30px;
+  order: 2;
+}
+
+.date-filter-controls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.date-filter-controls p {
+  margin-left: 10px;
+}
+
+.date-filter-controls input {
+  /* margin-left: 10px; */
+  height: 30px;
+  border: none;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-radius: 10px;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  padding: 10px;
+  order: 4;
+}
+
+.pagination-controls button {
+  margin-left: 10px;
+  margin-right: 10px;
+  border: none;
+  background: #B4FBC4;
+  padding: 5px;
+  border-radius: 10px;
+  width: 100px;
 }
 
 .tasks-column {
-  width: 400px;
-  /* width: 100%; */
+  width: 500px;
   display: flex;
   flex-direction: column;
   gap: 5px;
   flex-shrink: 0;
   align-items: flex-start;
-  /* Align to the start of the container */
   justify-content: flex-start;
-  /* Allow the content to grow naturally */
 }
 
 .post-feed-gray-box {
   background-color: transparent;
   border-radius: 10px;
   flex-shrink: 0;
+  order: 3;
 }
 
 .achievements-container {
   height: 118px;
   width: 400px;
   order: 1;
-  margin-left: 123px;
+  /* margin-left: 123px; */
 }
 
 .achievements-container h2 {
@@ -196,7 +274,7 @@
   width: 400px;
   margin-top: 60px;
   order: 2;
-  margin-left: 123px;
+  /* margin-left: 123px; */
 }
 
 .milestones-container h2 {
@@ -231,7 +309,7 @@
 
 .post-creation-gray-box {
   /*positioned at the right of the profile overview, at a distance of 25px, at the same hight*/
-  width: 885px;
+  /* width: 885px; */
   height: 107px;
   background-color: white;
   border-radius: 10px;
@@ -239,7 +317,7 @@
   justify-content: center;
   align-items: center;
   /* margin-left: 25px; */
-  order: 3;
+  order: 1;
 }
 
 .post-creation-component {
@@ -307,23 +385,19 @@
   width: 885px;
   height: auto;
   max-height: 100%;
-  margin-top: 5px;
+  margin-top: -10px;
   order: 4;
 }
 
 .tasks-gray-box {
-  /*positioned at the right of the post creation box, at a distance of 25px, at the same hight*/
   background-color: white;
   border-radius: 10px;
   padding: 20px;
   box-sizing: border-box;
-  width: 440px;
+  width: 100%;
   height: auto;
-  /* Let the height adjust based on content */
   overflow-y: auto;
-  /* Ensures no content overflows */
   max-height: 100%;
-  /* Prevents the box from expanding beyond the container if there’s too much content */
   /* margin-left: 25px; */
   order: 5;
 }
@@ -395,7 +469,7 @@
   list-style-type: disc;
 }
 
-.events-gray-box {
+/* .events-gray-box {
   width: 100%;
   height: auto;
   margin-top: 5px;
@@ -403,6 +477,19 @@
   border-radius: 10px;
   padding: 20px;
   overflow-y: auto;
+  order: 6;
+} */
+
+.events-gray-box {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  height: auto;
+  overflow-y: auto;
+  max-height: 100%;
+  margin-top: 5px;
   order: 6;
 }
 

@@ -68,49 +68,67 @@ hr {
 
 /* Task Search Bar */
 .task-search-container {
-    justify-content: center;
     margin-bottom: 20px;
-  }
-  
-  .task-search-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.task-search-wrapper {
     width: 70%;
-    /* Adjust width of the wrapper */
     background-color: #F2F2F2;
-    /* Set gray background for the wrapper */
     border-radius: 10px;
     display: flex;
     align-items: center;
-    /* Vertically align the icon and text */
     padding: 0 10px;
-    /* Add some padding to the left and right */
-  }
-  
-  .task-search {
+}
+
+.task-search {
     width: 100%;
     padding: 10px;
-    /* Padding left added to make room for the icon */
     border-radius: 10px;
     background-color: transparent;
     font-size: 16px;
     color: #32444D;
     opacity: 0.5;
     border: none;
-    /* No border */
-    /* display: flex; */
     align-items: center;
-    /* Center the content vertically */
-  }
-  
-  .task-search .search-icon {
+}
+
+.task-search .search-icon {
     /* position: absolute; */
     margin-right: 10px;
-    /* Space between the icon and text */
     font-size: 18px;
-    /* Icon size */
-  }
-  
-  .task-search::placeholder {
+}
+
+.task-search::placeholder {
     color: #32444D;
     opacity: 0.5;
     text-align: left;
-  }
+}
+
+.home-task-container h2 {
+    margin-top: 0px;
+}
+
+.home-task-filter-buttons {
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    justify-content: center;
+}
+
+.home-task-filter-buttons button {
+    border: none;
+    border-radius: 5px;
+    background: none;
+    font-size: 16px;
+    color: #32444D;
+    padding: 5px;
+}
+
+.home-task-filter-buttons button:hover,
+.home-task-filter-buttons button:active {
+    background-color: #f2f2f2;
+}

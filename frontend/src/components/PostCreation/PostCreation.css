@@ -46,7 +46,7 @@
 
 .post-dialog {
     width: 885px;
-    height: 485px;
+    height: 450px;
     background-color: white;
     border-radius: 10px;
     position: relative;
@@ -216,42 +216,42 @@ select {
 
 .media-preview-container {
     margin-top: 20px;
-  }
-  
-  .media-preview-container h4 {
+}
+
+.media-preview-container h4 {
     margin-bottom: 10px;
     font-size: 14px;
     color: #555;
-  }
-  
-  .media-preview {
+}
+
+.media-preview {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px; 
-  }
-  
-  .preview-media-item {
+    gap: 10px;
+}
+
+.preview-media-item {
     position: relative;
-    width: 75px; 
+    width: 75px;
     height: 75px;
     overflow: hidden;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  }
-  
-  .media-preview-image {
+}
+
+.media-preview-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
-  
-  .media-preview-video {
+}
+
+.media-preview-video {
     width: 100%;
     height: 100%;
     border: none;
-  }
-  
-  .media-preview-link {
+}
+
+.media-preview-link {
     display: block;
     width: 100%;
     height: 100%;
@@ -260,9 +260,9 @@ select {
     word-break: break-word;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  
-  .remove-media-btn {
+}
+
+.remove-media-btn {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -273,9 +273,8 @@ select {
     padding: 5px;
     cursor: pointer;
     font-size: 12px;
-  }
-  
-  .remove-media-btn:hover {
+}
+
+.remove-media-btn:hover {
     background: rgba(255, 0, 0, 0.8);
-  }
-  
+}

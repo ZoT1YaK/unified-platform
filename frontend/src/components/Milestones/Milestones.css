@@ -2,7 +2,7 @@
     background-color: white;
     border-radius: 10px;
     padding: 20px;
-    margin-top: 20px;
+    /* margin-top: 20px; */
 }
 
 .milestones-section h2 {
@@ -117,5 +117,3 @@
     font-size: 12px;
     color: #a9a9a9;
 }
-
-

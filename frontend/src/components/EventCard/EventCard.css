@@ -1,103 +1,171 @@
 .event-list {
-    font-family: "Noto", sans-serif;
-    padding: 20px;
-  }
-  
-  .event-card {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    padding: 15px;
-    transition: box-shadow 0.3s ease;
-    cursor: pointer;
-  }
-  
-  .event-card:hover {
+  font-family: "Noto", sans-serif;
+  padding: 20px;
+}
+
+.event-card {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  padding: 15px;
+  transition: box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+/* .event-card:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .event-main {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .event-info h3 {
-    font-size: 18px;
-    font-weight: bold;
-    color: #32444d;
-  }
-  
-  .event-info p {
-    font-size: 14px;
-    color: #555;
-    margin: 5px 0;
-  }
-  
-  .event-rsvp {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .rsvp-btn {
-    padding: 8px 12px;
-    font-size: 14px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .rsvp-btn.accept {
-    background-color: #4caf50;
-    color: white;
-  }
-  
-  .rsvp-btn.accept.active {
-    background-color: #388e3c;
-  }
-  
-  .rsvp-btn.decline {
-    background-color: #f44336;
-    color: white;
-  }
-  
-  .rsvp-btn.decline.active {
-    background-color: #d32f2f;
-  }
-  
-  .event-description {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #555;
-    background-color: #f9f9f9;
-    padding: 10px;
-    border-radius: 5px;
-  }
-  .event-card.no-hover:hover {
-    background-color: transparent; /* Prevent hover background changes */
-    cursor: pointer; /* Keep pointer cursor for clicks */
-  }
-  
-  .event-card.no-hover .event-description {
-    display: none; /* Hide hover details */
-  }
-  .event-actions .delete-button {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 4px;
-    margin-top: 10px;
-  }
-  
-  .event-actions .delete-button:hover {
-    background-color: #c0392b;
-  }
-  .filter-search-container{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-  }
+  } */
+
+.event-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.event-info h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #32444d;
+}
+
+.event-info p {
+  font-size: 14px;
+  color: #555;
+  margin: 5px 0;
+}
+
+.event-rsvp {
+  display: flex;
+  gap: 10px;
+}
+
+.event-rsvp button {
+  width: 100px;
+}
+
+.rsvp-btn {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.rsvp-btn.accept {
+  background-color: #4caf50;
+  color: white;
+}
+
+.rsvp-btn.accept.active {
+  background-color: #388e3c;
+}
+
+.rsvp-btn.decline {
+  background-color: #f44336;
+  color: white;
+}
+
+.rsvp-btn.decline.active {
+  background-color: #d32f2f;
+}
+
+.event-description {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.event-card.no-hover:hover {
+  background-color: transparent;
+  /* Prevent hover background changes */
+  cursor: pointer;
+  /* Keep pointer cursor for clicks */
+}
+
+.event-card.no-hover .event-description {
+  display: none;
+  /* Hide hover details */
+}
+
+.event-actions .delete-button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.event-actions .delete-button:hover {
+  background-color: #c0392b;
+}
+
+.event-search-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* margin-bottom: 20px; */
+}
+
+.event-search-wrapper {
+  width: 70%;
+  background-color: #F2F2F2;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.event-search {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: transparent;
+  font-size: 16px;
+  color: #32444D;
+  opacity: 0.5;
+  border: none;
+  align-items: center;
+}
+
+.home-event-filter-buttons {
+  display: flex;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+
+.home-event-filter-buttons button {
+  border: none;
+  border-radius: 5px;
+  background: none;
+  font-size: 16px;
+  color: #32444D;
+  padding: 5px;
+}
+
+.home-event-filter-buttons button:hover,
+.home-event-filter-buttons button:active {
+  background-color: #f2f2f2;
+}
+
+.pagination {
+  display: flex;
+  margin-top: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination button {
+  border: none;
+  background: #B4FBC4;
+  width: 30px;
+  padding: 5px;
+  border-radius: 10px;
+}

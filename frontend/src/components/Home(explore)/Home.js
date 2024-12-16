@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Home.css";
-import EventCard from "../EventCard/EventCard"; 
+import EventCard from "../EventCard/EventCard";
 import TopBar from "../TopBar/TopBar";
 import TaskCard from "../TaskCard/TaskCard";
 import Header from "../Header/Header";
@@ -191,6 +191,7 @@ const Home = () => {
       {/* Active UI Container */}
       <div className="active-ui-container">
         <div className="profile-column">
+
           {/* User Profile Overview */}
           <div className="profile-container">
             <div className="profile-container-top"></div>
@@ -205,7 +206,8 @@ const Home = () => {
                 {user.position || "Role"} | {user.dep_id?.name || "Team"}
               </p>
               <p>{user.location || "Location"}</p>
-              <p className="message">I am #{user.data_mind_type}Datamind</p>            </div>
+              <p className="message">I am #{user.data_mind_type}Datamind</p>
+            </div>
             <div className="stats">
               <div className="stat">
                 {analytics.achievementsCount}{" "}
@@ -236,38 +238,51 @@ const Home = () => {
 
         </div>
 
-
         {/* Posts */}
         <div className="post-column">
+
+          {/* Post creation*/}
           <div className="post-creation-gray-box">
             <PostCreation
               user={{
                 name: `${user.f_name || "User"} ${user.l_name || ""}`,
-                img_link:  user.img_link || "/placeholder.png",
+                img_link: user.img_link || "/placeholder.png",
               }}
             />
           </div>
+
           {/* Search and Date Filter */}
           <div className="filter-controls">
-            <input
-              type="text"
-              placeholder="Search posts..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-bar"
-            />
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="date-filter"
-            />
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="date-filter"
-            />
+            <div className="post-search-wrapper">
+              <img
+                src="/magnifying-glass 1.png"
+                alt="Search Icon"
+                className="search-icon"
+              />
+              <input
+                type="text"
+                className="post-search"
+                placeholder="Search for a post..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="date-filter-controls">
+              <p>From: </p>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="date-filter"
+              />
+              <p>To: </p>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="date-filter"
+              />
+            </div>
           </div>
 
           {/* Filtered Posts */}
@@ -278,25 +293,23 @@ const Home = () => {
               <div>No posts match the filters.</div>
             )}
           </div>
-        
-        {/* Pagination Controls */}
-        <div className="pagination-controls">
-          <button onClick={prevPage} disabled={currentPage === 1}>
-            Previous
-          </button>
-          <span>
-            Page {currentPage} of {Math.ceil(filteredPosts.length / postsPerPage)}
-          </span>
-          <button
-            onClick={nextPage}
-            disabled={currentPage === Math.ceil(filteredPosts.length / postsPerPage)}
-          >
-            Next
-          </button>
-        </div>
-        </div>
-      
 
+          {/* Pagination Controls */}
+          <div className="pagination-controls">
+            <button onClick={prevPage} disabled={currentPage === 1}>
+              Previous
+            </button>
+            <span>
+              Page {currentPage} of {Math.ceil(filteredPosts.length / postsPerPage)}
+            </span>
+            <button
+              onClick={nextPage}
+              disabled={currentPage === Math.ceil(filteredPosts.length / postsPerPage)}
+            >
+              Next
+            </button>
+          </div>
+        </div>
 
         <div className="tasks-column">
           {/* Tasks and Events boxes */}
@@ -314,7 +327,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-      </div>
+    </div>
   );
 };
 

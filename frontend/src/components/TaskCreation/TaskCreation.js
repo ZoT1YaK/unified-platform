@@ -32,8 +32,15 @@ const TaskCreator = () => {
                         },
                     }),
                 ]);
-                setAvailableBadges(badgeRes.data.badges || []); // Adjust based on the backend response
-                setAvailableEmployees(employeeRes.data.employees || []); // Adjust based on the backend response
+    
+                const currentUserId = JSON.parse(localStorage.getItem("employee"))?._id;
+                const employees = employeeRes.data.employees || [];
+    
+                // Filter out the current user (leader) from the employees list
+                const filteredEmployees = employees.filter(emp => emp._id !== currentUserId);
+    
+                setAvailableEmployees(filteredEmployees);
+                setAvailableBadges(badgeRes.data.badges || []);
             } catch (err) {
                 console.error("Error fetching data:", err);
                 setError("Failed to fetch data. Please try again later.");

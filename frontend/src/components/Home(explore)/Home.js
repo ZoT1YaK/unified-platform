@@ -22,8 +22,6 @@ const Home = () => {
   const [endDate, setEndDate] = useState("");
   const postsPerPage = 7;
   const analytics = useAnalytics(user?._id); // Use _id instead of id
-  console.log("Using Employee _id for Analytics:", user?._id);
-  console.log("Analytics in Home:", analytics);
 
   // Fetch user data from localStorage
   useEffect(() => {

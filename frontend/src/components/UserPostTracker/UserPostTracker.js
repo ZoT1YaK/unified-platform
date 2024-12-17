@@ -86,7 +86,7 @@ const UserPostTracker = () => {
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
     const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
 
-    const nextPage = () => {
+    /*const nextPage = () => {
         if (currentPage < Math.ceil(filteredPosts.length / postsPerPage)) {
             setCurrentPage((prev) => prev + 1);
         }
@@ -96,7 +96,7 @@ const UserPostTracker = () => {
         if (currentPage > 1) {
             setCurrentPage((prev) => prev - 1);
         }
-    };
+    };*/
 
     return (
         <div className="user-post-tracker">

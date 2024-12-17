@@ -5,6 +5,8 @@ env_variables:
   PORT: "8080"
   PROJECT_ID: "bpr-unified-platform"
   NODE_ENV: "production"
+  SECRET_NAME: "MONGO_URI_PRODUCTION"
+  JWT_SECRET: "JWT_SECRET"
 
 # Entrypoint
 entrypoint: node server.js

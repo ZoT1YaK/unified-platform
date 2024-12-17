@@ -11,7 +11,7 @@ import EventCard from '../EventCard/EventCard';
 import TeamMetrics from '../TeamMetrics/TeamMetrics';
 import EventMetricsChart from './EventMetricsChart';
 import TaskMetricsChart from './TaskMetricsChart';
-import ReportDownloadButton from './ReportDownloadButton';
+import ReportViewer from './ReportViewer';
 
 const LeaderHub = () => {
     const [isLeader, setIsLeader] = useState(false);
@@ -95,8 +95,8 @@ const LeaderHub = () => {
 
                     {/* Download Button */}
                     <div className="report-download-container">
-                        <h3>Download Metrics Report</h3>
-                        <ReportDownloadButton />
+                        <h3>Get and View Metrics Reports</h3>
+                        <ReportViewer />
                     </div>
 
                     {/* Employee Statistics */}

@@ -7,29 +7,31 @@ const ReportViewer = () => {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  
+
+  const fetchReports = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/metrics/reports?start_date=2024-01-01&end_date=2024-12-31`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      setReports(response.data.reports);
+      if (response.data.reports.length) {
+        setSelectedReport(response.data.reports[0].reportId);
+      }
+    } catch (error) {
+      console.error("Error fetching reports:", error);
+      alert("Failed to fetch reports.");
+    }
+  };
 
   useEffect(() => {
-    const fetchReports = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/metrics/reports?start_date=2024-01-01&end_date=2024-12-31`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-
-        setReports(response.data.reports);
-        if (response.data.reports.length) {
-          setSelectedReport(response.data.reports[0].reportId);
-        }
-      } catch (error) {
-        console.error("Error fetching reports:", error);
-        alert("Failed to fetch reports.");
-      }
-    };
-
     fetchReports();
   }, []);
 
@@ -62,6 +64,30 @@ const ReportViewer = () => {
     }
   };
 
+  const handleGenerateReport = async () => {
+    setIsGenerating(true);
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/metrics/report`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      console.log("Report generation response:", response.data);
+      alert("Report generated successfully. Refreshing reports list...");
+      await fetchReports(); // Fetch updated list of reports
+    } catch (error) {
+      console.error("Error generating report:", error);
+      alert("Failed to generate report.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setPdfUrl(null); 
@@ -69,23 +95,37 @@ const ReportViewer = () => {
 
   return (
     <div>
-      <label htmlFor="reportDropdown">Select Report:</label>
-      <select
-        id="reportDropdown"
-        value={selectedReport}
-        onChange={(e) => setSelectedReport(e.target.value)}
-        style={{ margin: "10px" }}
-      >
-        {reports.map((report) => (
-          <option key={report.reportId} value={report.reportId}>
-            {new Date(report.reportDate).toLocaleDateString()}
-          </option>
-        ))}
-      </select>
+      <div>
+        <label htmlFor="reportDropdown">Select Report:</label>
+        <select
+          id="reportDropdown"
+          value={selectedReport}
+          onChange={(e) => setSelectedReport(e.target.value)}
+          style={{ margin: "10px" }}
+        >
+          {reports.map((report) => (
+            <option key={report.reportId} value={report.reportId}>
+              {new Date(report.reportDate).toLocaleDateString()}
+            </option>
+          ))}
+        </select>
 
-      <button onClick={handleViewReport} disabled={isLoading || !selectedReport} style={styles.button}>
-        {isLoading ? "Loading..." : "View Report"}
-      </button>
+        <button
+          onClick={handleViewReport}
+          disabled={isLoading || !selectedReport}
+          style={styles.button}
+        >
+          {isLoading ? "Loading..." : "View Report"}
+        </button>
+
+        <button
+          onClick={handleGenerateReport}
+          disabled={isGenerating}
+          style={{ ...styles.button, backgroundColor: "#008CBA", marginLeft: "10px" }}
+        >
+          {isGenerating ? "Generating..." : "Generate Report"}
+        </button>
+      </div>
 
       {/* Modal */}
       {isModalOpen && (

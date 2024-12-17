@@ -34,7 +34,7 @@ const TaskCreator = () => {
                 );
 
                 setAvailableEmployees(filteredEmployees);
-                setAvailableBadges(badges);
+                setAvailableBadges(badges.activeBadges || []); 
             } catch (err) {
                 console.error("Error fetching data:", err.message);
                 setError("Failed to fetch data. Please try again later.");
@@ -52,12 +52,14 @@ const TaskCreator = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const badge_id = availableBadges.find((b) => b.name === formData.badge)?._id || null;
-        const assigned_to_id = availableEmployees.find(
-            (emp) => emp.email === formData.assignedTo
-        )?._id || null;
-
+    
+        const badge_id =
+            (Array.isArray(availableBadges) &&
+            availableBadges.find((b) => b.name === formData.badge)?._id) || null;
+    
+        const assigned_to_id =
+            (availableEmployees.find((emp) => emp.email === formData.assignedTo)?._id) || null;
+    
         const taskPayload = {
             title: formData.title,
             description: formData.description,

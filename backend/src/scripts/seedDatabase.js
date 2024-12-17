@@ -35,7 +35,7 @@ const seedData = async () => {
 
     console.log("Seeding employees...");
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(process.env.DEFAULT_EMPLOYEE_PASSWORD, salt);
+    const hashedPassword = await bcrypt.hash(process.env?.DEFAULT_EMPLOYEE_PASSWORD || "Password123", salt);
 
     const peopleLeader = await Employee.create({
       email: "leader@example.com",

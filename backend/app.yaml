@@ -1,0 +1,18 @@
+runtime: nodejs16
+
+# Environment variables (non-sensitive)
+env_variables:
+  PORT: "8080"
+  PROJECT_ID: "bpr-unified-platform"
+  NODE_ENV: "production"
+  SECRET_NAME: "MONGO_URI_PRODUCTION"
+  JWT_SECRET: "JWT_SECRET"
+
+# Entrypoint
+entrypoint: node server.js
+
+# Secure all routes
+handlers:
+  - url: /.*
+    script: auto
+    secure: always

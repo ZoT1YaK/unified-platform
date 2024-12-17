@@ -34,8 +34,8 @@ exports.updateDailyMetricsSnapshot = async () => {
       // Normalize start and end dates in the query to ensure proper comparison
       const existingSnapshot = await MetricsSnapshot.findOne({
         emp_id: employee._id,
-        start_date: { $eq: startOfMonth },
-        end_date: { $eq: endOfMonth },
+        start_date: startOfMonth.toISOString(),
+        end_date: endOfMonth.toISOString(),
       });
 
       if (existingSnapshot) {
@@ -65,8 +65,8 @@ exports.updateDailyMetricsSnapshot = async () => {
           completed_tasks: metrics.completedTasks,
           total_achievements: metrics.totalAchievements,
           snapshot_date: new Date(),
-          start_date: startOfMonth,
-          end_date: endOfMonth,
+          start_date: startOfMonth.toISOString(),
+          end_date: endOfMonth.toISOString(),
         });
       }
     }

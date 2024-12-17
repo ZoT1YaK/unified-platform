@@ -166,7 +166,7 @@ exports.getEmployeeDatamind = async (req, res) => {
   try {
     const employeeDatamind = await EmployeeDatamind.findOne({
       emp_id: id,
-    }).populate("datamind_id", "data_mind_type");;
+    }).populate("datamind_id", "data_mind_type");
 
     res.status(200).json({
       employeeDatamind,

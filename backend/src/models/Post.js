@@ -15,11 +15,9 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  mediaLinks: [{ type: String }],
-  file_location: {
-    type: String,
-    required: false
-  },
+  mediaLinks: [{ 
+    type: String 
+  }],
   likes: {
     type: Number,
     default: 0

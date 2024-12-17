@@ -82,7 +82,7 @@ exports.createPost = async (req, res) => {
 
 
 exports.createCongratulatoryPost = async (req, res) => {
-  const { target_teams, target_departments, target_locations, related_emp_id, content, global } = req.body;
+  const { target_teams, target_departments, target_locations, related_emp_id, content, mediaLinks, global } = req.body;
   const { id } = req.user;
 
   try {
@@ -94,6 +94,8 @@ exports.createCongratulatoryPost = async (req, res) => {
     if (!relatedEmployee) {
       return res.status(404).json({ message: "Related employee not found." });
     }
+
+    let post = null;
 
     if (global) {
       const allTeams = await Team.find().distinct("_id");
@@ -116,7 +118,7 @@ exports.createCongratulatoryPost = async (req, res) => {
         emp_id: id,
         related_emp_id,
         content,
-        file_location,
+        mediaLinks,
         visibility: false,
       });
   

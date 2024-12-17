@@ -11,11 +11,10 @@ const achievementSchema = new mongoose.Schema({
     ref: "Badge", 
     required: true 
   },
-  related_entity_id: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: "Task", 
+  related_entity_id: { // ID of related entity (e.g., Event_ID, Task_ID)
+    type: String, 
     required: true 
-  },
+  }, 
   visibility: { 
     type: Boolean, 
     default: true 

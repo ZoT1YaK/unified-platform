@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { fetchDataMindType } from "../../services/employeeService";
+import { fetchPosts } from "../../services/postService";
+import { getStoredEmployee, getToken } from "../../services/authService";
 import "./Home.css";
 import EventCard from "../EventCard/EventCard";
 import TopBar from "../TopBar/TopBar";
@@ -23,79 +25,53 @@ const Home = () => {
   const postsPerPage = 7;
   const analytics = useAnalytics(user?._id); // Use _id instead of id
 
-  // Fetch user data from localStorage
-  useEffect(() => {
-    try {
-      const storedEmployee = localStorage.getItem("employee");
+    // Fetch user data
+    useEffect(() => {
+      const storedEmployee = getStoredEmployee();
       if (storedEmployee) {
-        setUser(JSON.parse(storedEmployee));
+        setUser(storedEmployee);
       } else {
         console.warn("No employee data found in localStorage.");
-        window.location.href = "/login"; // Redirect to login if not authenticated
+        window.location.href = "/login";
       }
-    } catch (error) {
-      console.error("Failed to parse employee data:", error);
-      window.location.href = "/login";
-    }
-  }, []);
-
-  useEffect(() => {
-    const fetchDataMindType = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/employees/get-data-mind-type`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.data && response.data.employeeDatamind) {
-          const dataMindType = response.data.employeeDatamind.datamind_id.data_mind_type;
+    }, []);
+  
+    // Fetch Data Mind Type
+    useEffect(() => {
+      const loadDataMindType = async () => {
+        try {
+          const token = getToken();
+          const dataMind = await fetchDataMindType(token);
           setUser((prevUser) => ({
             ...prevUser,
-            data_mind_type: dataMindType,
+            data_mind_type: dataMind.datamind_id.data_mind_type,
           }));
-        } else {
-          console.warn("Data mind type not found for the employee.");
+        } catch (error) {
+          console.error("Error fetching data mind type:", error);
         }
-      } catch (error) {
-        console.error("Error fetching data mind type:", error);
-      }
-    };
-
-    // Only fetch data mind type if user is already loaded
-    if (user && user._id && !user.data_mind_type) {
-      fetchDataMindType();
-    }
-  }, [user]);
-
-
-  // Fetch posts from the backend
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/posts/get`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        setPosts(response.data.posts);
-        setFilteredPosts(response.data.posts);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
   
-    fetchPosts();
-  }, []);
+      if (user?._id && !user.data_mind_type) {
+        loadDataMindType();
+      }
+    }, [user]);
+  
+    // Fetch Posts
+    useEffect(() => {
+      const loadPosts = async () => {
+        try {
+          const token = getToken();
+          const fetchedPosts = await fetchPosts(token);
+          setPosts(fetchedPosts);
+          setFilteredPosts(fetchedPosts);
+        } catch (error) {
+          console.error("Error fetching posts:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      loadPosts();
+    }, []);
   
 
   // Filter posts based on search term and date range

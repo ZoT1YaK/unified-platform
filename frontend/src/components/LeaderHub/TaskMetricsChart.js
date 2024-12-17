@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Chart, registerables } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import axios from "axios";
+import { fetchTaskMetrics } from "../../services/metricsService";
 
 Chart.register(...registerables, ChartDataLabels);
 
@@ -11,26 +11,21 @@ const TaskMetricsChart = () => {
     const [taskMetrics, setTaskMetrics] = useState([]);
     const [error, setError] = useState(null);
 
+    const token = localStorage.getItem("token");
+
     useEffect(() => {
-        const fetchTaskMetrics = async () => {
+        const loadTaskMetrics = async () => {
             try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/metrics/team-tasks`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        },
-                    }
-                );
-                setTaskMetrics(response.data.taskBreakdown || []);
+                const metrics = await fetchTaskMetrics(token);
+                setTaskMetrics(metrics);
             } catch (err) {
                 console.error("Error fetching task metrics:", err);
                 setError("Failed to fetch task metrics. Please try again.");
             }
         };
 
-        fetchTaskMetrics();
-    }, []);
+        loadTaskMetrics();
+    }, [token]);
 
     useEffect(() => {
         if (taskMetrics.length && chartRef.current) {
@@ -69,7 +64,7 @@ const TaskMetricsChart = () => {
                             data: avgTaskSpeeds,
                             backgroundColor: "rgba(255, 206, 86, 0.6)",
                             type: "line",
-                            yAxisID: "y2", 
+                            yAxisID: "y2",
                         },
                     ],
                 },
@@ -82,28 +77,28 @@ const TaskMetricsChart = () => {
                         },
                         tooltip: {
                             callbacks: {
-                              label: (tooltipItem) => {
-                                const value = tooltipItem.raw;
-                          
-                                switch (tooltipItem.datasetIndex) {
-                                  case 0:
-                                    return `Total Tasks: ${value}`;
-                                  case 1:
-                                    return `Completed Tasks: ${value}`;
-                                  case 2:
-                                    return `Avg Task Speed: ${value} days`;
-                                  default:
-                                    return '';
-                                }
-                              },
-                              footer: (tooltipItems) => {
-                                const index = tooltipItems[0]?.dataIndex;
-                                const employeeName = taskMetrics[index]?.employeeName || "Unknown";
-                                return `Employee: ${employeeName}`;
-                              },
+                                label: (tooltipItem) => {
+                                    const value = tooltipItem.raw;
+
+                                    switch (tooltipItem.datasetIndex) {
+                                        case 0:
+                                            return `Total Tasks: ${value}`;
+                                        case 1:
+                                            return `Completed Tasks: ${value}`;
+                                        case 2:
+                                            return `Avg Task Speed: ${value} days`;
+                                        default:
+                                            return '';
+                                    }
+                                },
+                                footer: (tooltipItems) => {
+                                    const index = tooltipItems[0]?.dataIndex;
+                                    const employeeName = taskMetrics[index]?.employeeName || "Unknown";
+                                    return `Employee: ${employeeName}`;
+                                },
                             },
-                          },
-                          
+                        },
+
                         datalabels: {
                             display: true,
                             color: "#000",

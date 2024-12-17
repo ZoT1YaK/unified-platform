@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import axios from "axios";
+import { fetchEvents, updateRSVP, deleteEvent } from "../../services/eventService";
 import "./EventCard.css";
 
 
@@ -33,95 +33,63 @@ const EventCard = ({ isLeader }) => {
 
   // Fetch events on component mount
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/events/get`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            params: { search: searchQuery },
-          }
-        );
+    const loadEvents = async () => {
+        try {
+            setLoading(true);
+            const token = localStorage.getItem("token");
+            const data = await fetchEvents(token, searchQuery);
 
-        const standardizedEvents = response.data.events.map((event) => ({
-          ...event,
-          response: event.response === "Accepted" ? "Joined" : event.response,
-        }));
+            const standardizedEvents = data.map((event) => ({
+                ...event,
+                response: event.response === "Accepted" ? "Joined" : event.response,
+            }));
 
-        setEvents(standardizedEvents);
-      } catch (err) {
-        console.error("Error fetching events:", err);
-        setError("Failed to fetch events. Please try again.");
-      } finally {
-        setLoading(false);
-      }
+            setEvents(standardizedEvents);
+        } catch (err) {
+            console.error("Error fetching events:", err);
+            setError("Failed to fetch events. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    fetchEvents();
-  }, [searchQuery]);
+    loadEvents();
+}, [searchQuery]);
 
   const filteredAndSearchedEvents = useFilterAndSearch(events, filter, searchQuery);
 
   // Handle RSVP updates
   const handleRSVP = async (eventId, response) => {
     try {
-      const currentEvent = events.find((event) => event._id === eventId);
+        const token = localStorage.getItem("token");
+        const currentEvent = events.find((event) => event._id === eventId);
 
-      // Skip update if response is unchanged
-      if (currentEvent.response === response) {
-        console.log("No change in response; skipping update.");
-        return;
-      }
+        if (currentEvent.response === response) return;
 
-      // Send update request to the backend
-      await axios.put(
-        `${process.env.REACT_APP_BACKEND_URL}/api/events/response`,
-        { event_id: eventId, response },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+        await updateRSVP(token, eventId, response);
 
-      const updatedResponse =
-        response === "Accepted" ? "Joined" : response === "Declined" ? "Declined" : response;
+        const updatedResponse = response === "Accepted" ? "Joined" : response;
 
-      // Update state with the new response
-      setEvents((prevEvents) =>
-        prevEvents.map((event) =>
-          event._id === eventId ? { ...event, response: updatedResponse } : event
-        )
-      );
+        setEvents((prevEvents) =>
+            prevEvents.map((event) =>
+                event._id === eventId ? { ...event, response: updatedResponse } : event
+            )
+        );
     } catch (err) {
-      console.error("Error updating RSVP:", err.response?.data || err.message);
-      setError(err.response?.data?.message || "Failed to update RSVP. Please try again.");
+        console.error("Error updating RSVP:", err);
+        setError("Failed to update RSVP. Please try again.");
     }
-  };
+};
+const handleDeleteEvent = async (eventId) => {
+  try {
+      const token = localStorage.getItem("token");
+      await deleteEvent(token, eventId);
 
-  const handleDeleteEvent = async (eventId) => {
-    try {
-      await axios.delete(
-        `${process.env.REACT_APP_BACKEND_URL}/api/events/delete/${eventId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      // Update the event list after deletion
-      setEvents((prevEvents) =>
-        prevEvents.filter((event) => event._id !== eventId)
-      );
-      console.log("Event deleted successfully.");
-    } catch (err) {
+      setEvents((prevEvents) => prevEvents.filter((event) => event._id !== eventId));
+  } catch (err) {
       console.error("Error deleting event:", err);
       alert("Failed to delete the event. Please try again.");
-    }
+  }
   };
 
   // Render the component

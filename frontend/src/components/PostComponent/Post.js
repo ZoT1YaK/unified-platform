@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { fetchPostComments, likePost, unlikePost, postComment } from "../../services/postService";
 import "./Post.css";
 
 const PostComponent = ({ post, mode = "default" }) => {
@@ -7,40 +7,31 @@ const PostComponent = ({ post, mode = "default" }) => {
     const [newComment, setNewComment] = useState("");
     const [comments, setComments] = useState([]);
 
+    const token = localStorage.getItem("token");
+
     useEffect(() => {
-        const fetchComments = async () => {
+        const loadComments = async () => {
             try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/posts/${post._id}/comments`,
-                    { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-                );
-                setComments(response.data.comments || []);
+                const fetchedComments = await fetchPostComments(token, post._id);
+                setComments(fetchedComments);
             } catch (error) {
                 console.error("Error fetching comments:", error);
-                setComments([]); // Default to no comments in case of error
+                setComments([]);
             }
         };
 
-        fetchComments();
-    }, [post._id]);
+        loadComments();
+    }, [post._id, token]);
 
     const handleLikeClick = async () => {
-        if (mode === "visited") return; // Disable liking in visited mode
+        if (mode === "visited") return;
 
         try {
             if (likes === post.likes) {
-                await axios.post(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/posts/like`,
-                    { post_id: post._id },
-                    { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-                );
+                await likePost(token, post._id);
                 setLikes((prevLikes) => prevLikes + 1);
             } else {
-                await axios.post(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/posts/unlike`,
-                    { post_id: post._id },
-                    { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-                );
+                await unlikePost(token, post._id);
                 setLikes((prevLikes) => prevLikes - 1);
             }
         } catch (error) {
@@ -53,26 +44,17 @@ const PostComponent = ({ post, mode = "default" }) => {
     };
 
     const handlePostComment = async () => {
-        if (mode === "visited") return; // Disable commenting in visited mode
-        if (!newComment.trim()) return;
+        if (mode === "visited" || !newComment.trim()) return;
 
         try {
-            const response = await axios.post(
-                `${process.env.REACT_APP_BACKEND_URL}/api/posts/comments`,
-                {
-                    post_id: post._id,
-                    content: newComment,
-                },
-                {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-                }
-            );
-            setComments([...comments, response.data.comment]);
+            const comment = await postComment(token, post._id, newComment);
+            setComments((prevComments) => [...prevComments, comment]);
             setNewComment("");
         } catch (error) {
             console.error("Error posting comment:", error);
         }
     };
+
 
     return (
         <div className="post-component">
@@ -106,7 +88,7 @@ const PostComponent = ({ post, mode = "default" }) => {
                                     ) : link.match(/youtu\.be|youtube\.com/i) ? (
                                         <iframe
                                             src={link
-                                                .replace("watch?v=", "embed/") 
+                                                .replace("watch?v=", "embed/")
                                                 .replace("youtu.be/", "www.youtube.com/embed/")}
                                             title={`Video ${index}`}
                                             allowFullScreen
@@ -114,7 +96,7 @@ const PostComponent = ({ post, mode = "default" }) => {
                                         ></iframe>
                                     ) : link.match(/vimeo\.com/i) ? (
                                         <iframe
-                                            src={link.replace("vimeo.com/", "player.vimeo.com/video/")} 
+                                            src={link.replace("vimeo.com/", "player.vimeo.com/video/")}
                                             title={`Video ${index}`}
                                             allowFullScreen
                                             className="media-video"

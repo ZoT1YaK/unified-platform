@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { fetchAchievements, toggleAchievementVisibility } from "../../services/achievementService";
 import "./Achievements.css";
 import { useFilterAndSearch } from "../../hooks/useFilterAndSearch";
 import useDebounce from "../../hooks/useDebounce";
@@ -19,8 +19,9 @@ const Achievements = ({ empId, simpleMode = false, onAchievementsFetched }) => {
         "badge_id.name"
     );
 
+    // Fetch achievements
     useEffect(() => {
-        const fetchAchievements = async () => {
+        const loadAchievements = async () => {
             const token = localStorage.getItem("token");
             if (!token) {
                 console.error("No token found. Skipping fetch.");
@@ -28,41 +29,25 @@ const Achievements = ({ empId, simpleMode = false, onAchievementsFetched }) => {
             }
 
             const loggedInUser = JSON.parse(localStorage.getItem("employee"));
-            const fallbackEmpId = debouncedEmpId || loggedInUser?._id; // Default to logged-in user's ID if empId is missing
+            const fallbackEmpId = debouncedEmpId || loggedInUser?._id;
 
             try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/achievements/get`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                        params: {
-                            emp_id: fallbackEmpId, 
-                        },
-                    }
-                );
-
-                const data = response.data;
+                const fetchedData = await fetchAchievements(token, fallbackEmpId);
                 const filteredData = simpleMode
-                    ? data.achievements.filter((achievement) => achievement.visibility)
-                    : data.achievements;
+                    ? fetchedData.filter((achievement) => achievement.visibility)
+                    : fetchedData;
 
                 setAchievements(filteredData);
-
-                if (onAchievementsFetched) {
-                    onAchievementsFetched(filteredData);
-                }
+                if (onAchievementsFetched) onAchievementsFetched(filteredData);
             } catch (error) {
-                console.error("Error fetching achievements:", error.response?.data?.message || error.message);
+                console.error("Error fetching achievements:", error.message);
             }
         };
 
-        fetchAchievements();
+        loadAchievements();
     }, [debouncedEmpId, simpleMode, onAchievementsFetched]);
 
-
-
+    // Toggle visibility
     const toggleVisibility = async (id) => {
         if (simpleMode) return;
 
@@ -70,35 +55,24 @@ const Achievements = ({ empId, simpleMode = false, onAchievementsFetched }) => {
             const token = localStorage.getItem("token");
             const achievement = achievements.find((a) => a._id === id);
 
-            const response = await axios.put(
-                `${process.env.REACT_APP_BACKEND_URL}/api/achievements/visibility`,
-                {
-                    achievement_id: id,
-                    visibility: !achievement.visibility,
-                },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+            const updatedAchievement = await toggleAchievementVisibility(
+                token,
+                id,
+                !achievement.visibility
             );
 
-            const updatedAchievement = response.data;
             setAchievements((prevAchievements) =>
                 prevAchievements.map((item) =>
-                    item._id === updatedAchievement.achievement._id
-                        ? { ...item, visibility: updatedAchievement.achievement.visibility }
+                    item._id === updatedAchievement._id
+                        ? { ...item, visibility: updatedAchievement.visibility }
                         : item
                 )
             );
         } catch (error) {
-            console.error(
-                "Error updating achievement visibility:",
-                error.response?.data?.message || error.message
-            );
+            console.error("Error updating achievement visibility:", error.message);
         }
     };
+
 
 
     // Simplified layout for simpleMode or visited profiles

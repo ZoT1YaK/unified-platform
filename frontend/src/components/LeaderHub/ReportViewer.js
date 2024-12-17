@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useEffect, useCallback } from "react";
+import { fetchReports, downloadReport, generateReport } from "../../services/metricsService";
 
 const ReportViewer = () => {
   const [reports, setReports] = useState([]);
@@ -8,54 +8,34 @@ const ReportViewer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  
 
-  const fetchReports = async () => {
+
+  const token = localStorage.getItem("token");
+
+  const loadReports = useCallback(async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/metrics/reports?start_date=2024-01-01&end_date=2024-12-31`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      setReports(response.data.reports);
-      if (response.data.reports.length) {
-        setSelectedReport(response.data.reports[0].reportId);
-      }
+      const reportsList = await fetchReports(token);
+      setReports(reportsList);
+      if (reportsList.length) setSelectedReport(reportsList[0].reportId);
     } catch (error) {
       console.error("Error fetching reports:", error);
       alert("Failed to fetch reports.");
     }
-  };
+  }, [token]);
 
   useEffect(() => {
-    fetchReports();
-  }, []);
+    loadReports();
+  }, [loadReports]);
 
   const handleViewReport = async () => {
-    if (!selectedReport) {
-      alert("Please select a report to view.");
-      return;
-    }
+    if (!selectedReport) return alert("Please select a report to view.");
 
     setIsLoading(true);
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/metrics/report/download/${selectedReport}`,
-        {
-          responseType: "blob", 
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      const fileUrl = URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
+      const reportBlob = await downloadReport(token, selectedReport);
+      const fileUrl = URL.createObjectURL(new Blob([reportBlob], { type: "application/pdf" }));
       setPdfUrl(fileUrl);
-      setIsModalOpen(true); 
+      setIsModalOpen(true);
     } catch (error) {
       console.error("Error fetching report:", error);
       alert("Failed to fetch report.");
@@ -67,19 +47,9 @@ const ReportViewer = () => {
   const handleGenerateReport = async () => {
     setIsGenerating(true);
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/metrics/report`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      console.log("Report generation response:", response.data);
+      await generateReport(token);
       alert("Report generated successfully. Refreshing reports list...");
-      await fetchReports(); // Fetch updated list of reports
+      await loadReports();
     } catch (error) {
       console.error("Error generating report:", error);
       alert("Failed to generate report.");
@@ -90,7 +60,7 @@ const ReportViewer = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setPdfUrl(null); 
+    setPdfUrl(null);
   };
 
   return (

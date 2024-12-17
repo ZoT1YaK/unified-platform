@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { fetchBadges } from "../../services/badgeService";
+import { fetchEmployees } from "../../services/employeeService";
+import { createTask } from "../../services/taskService";
 import "./TaskCreation.css";
 
 const TaskCreator = () => {
@@ -15,40 +17,33 @@ const TaskCreator = () => {
     const [availableEmployees, setAvailableEmployees] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const token = localStorage.getItem("token");
+
 
     useEffect(() => {
-        // Fetch badges and employees from the backend
         const fetchData = async () => {
             try {
-                const [badgeRes, employeeRes] = await Promise.all([
-                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/badges/get-active`, {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        },
-                    }),
-                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/employees/all`, {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        },
-                    }),
+                const [badges, employees] = await Promise.all([
+                    fetchBadges(token),
+                    fetchEmployees(token),
                 ]);
-    
+
                 const currentUserId = JSON.parse(localStorage.getItem("employee"))?._id;
-                const employees = employeeRes.data.employees || [];
-    
-                // Filter out the current user (leader) from the employees list
-                const filteredEmployees = employees.filter(emp => emp._id !== currentUserId);
-    
+                const filteredEmployees = employees.filter(
+                    (emp) => emp._id !== currentUserId
+                );
+
                 setAvailableEmployees(filteredEmployees);
-                setAvailableBadges(badgeRes.data.badges || []);
+                setAvailableBadges(badges);
             } catch (err) {
-                console.error("Error fetching data:", err);
+                console.error("Error fetching data:", err.message);
                 setError("Failed to fetch data. Please try again later.");
             }
         };
 
         fetchData();
-    }, []);
+    }, [token]);
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -59,7 +54,9 @@ const TaskCreator = () => {
         e.preventDefault();
 
         const badge_id = availableBadges.find((b) => b.name === formData.badge)?._id || null;
-        const assigned_to_id = availableEmployees.find((emp) => emp.email === formData.assignedTo)?._id || null;
+        const assigned_to_id = availableEmployees.find(
+            (emp) => emp.email === formData.assignedTo
+        )?._id || null;
 
         const taskPayload = {
             title: formData.title,
@@ -67,24 +64,16 @@ const TaskCreator = () => {
             deadline: formData.deadline,
             badge_id,
             assigned_to_id,
-            type: "Leader-Assigned", // Adjust type as needed
+            type: "Leader-Assigned",
         };
 
         setLoading(true);
         setError(null);
 
         try {
-            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/create`, taskPayload, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-
+            await createTask(token, taskPayload);
             alert("Task created successfully!");
-            console.log("API Response:", response.data);
 
-            // Reset form after successful creation
             setFormData({
                 title: "",
                 assignedTo: "",
@@ -93,8 +82,8 @@ const TaskCreator = () => {
                 deadline: "",
             });
         } catch (err) {
-            console.error("Error creating task:", err);
-            setError(err.response?.data?.message || "Failed to create task. Please try again.");
+            console.error("Error creating task:", err.message);
+            setError("Failed to create task. Please try again.");
         } finally {
             setLoading(false);
         }

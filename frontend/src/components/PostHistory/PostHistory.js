@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { fetchPosts } from "../../services/postService";
+import { fetchEmployeeProfile } from "../../services/employeeService";
 import PostComponent from "../PostComponent/Post";
 import "./PostHistory.css";
 
@@ -9,53 +10,37 @@ const PostHistory = ({ empId }) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchPosts = async () => {
+        const fetchUserPosts = async () => {
             try {
                 const token = localStorage.getItem("token");
+                if (!token) throw new Error("No token found. Please log in.");
 
-                // Fetch all posts
-                const postsResponse = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/posts/get`,
-                    {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }
-                );
+                // Fetch all posts and visited user's profile
+                const [allPosts, visitedUserProfile] = await Promise.all([
+                    fetchPosts(token),
+                    fetchEmployeeProfile(token, empId, "visited"),
+                ]);
 
-                console.log("API Response Posts:", postsResponse.data.posts);
+                const { f_name, l_name } = visitedUserProfile;
 
-                // Fetch visited user's data
-                const visitedUserResponse = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/employees/profile/${empId}`,
-                    {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }
-                );
-
-                console.log("Visited User Data:", visitedUserResponse.data);
-
-                const visitedUser = visitedUserResponse.data.profile;
-                const { f_name, l_name } = visitedUser;
-
-                // Filter posts by visited user's name
-                const filteredPosts = postsResponse.data.posts.filter(
+                // Filter posts authored by the visited user
+                const userPosts = allPosts.filter(
                     (post) =>
                         post.author &&
                         post.author.f_name === f_name &&
                         post.author.l_name === l_name
                 );
 
-                console.log("Filtered Posts for Visited User:", filteredPosts);
-
-                setPosts(filteredPosts); // Update the state with filtered posts
-            } catch (error) {
-                console.error("Error fetching posts or visited user data:", error.response?.data?.message || error.message);
-                setError("Failed to fetch posts or user data.");
+                setPosts(userPosts);
+            } catch (err) {
+                console.error("Error fetching posts or user profile:", err);
+                setError("Failed to fetch posts or user profile.");
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchPosts();
+        fetchUserPosts();
     }, [empId]);
 
 

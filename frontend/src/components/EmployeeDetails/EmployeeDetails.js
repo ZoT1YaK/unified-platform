@@ -1,4 +1,4 @@
-import axios from "axios";
+import { fetchDataMindType, fetchEmployeeProfile } from "../../services/employeeService";
 import React, { useEffect, useState } from "react";
 import "./EmployeeDetails.css";
 
@@ -15,33 +15,21 @@ const EmployeeDetails = ({ empId, mode = "own", children }) => {
                     window.location.href = "/login";
                     return;
                 }
-                const query = mode === "visited" ? `/${empId}` : "";
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/employees/profile${query}`,
-                    {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }
-                );
 
-                const data = response.data;
-                setUser(data.profile);
+                // Fetch employee profile
+                const profile = await fetchEmployeeProfile(token, empId, mode);
+                setUser(profile);
 
+                // Fetch Datamind type for "visited" mode
                 if (mode === "visited") {
-                    const datamind = data.profile?.datamind || (await getEmployeeDatamind());
-                    setDatamind(datamind);
-                }
-                
-                async function getEmployeeDatamind() {
-                    const response = await axios.get(
-                        `${process.env.REACT_APP_BACKEND_URL}/api/employees/get-data-mind-type`,
-                        {
-                            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-                        }
-                    );
-                    return response.data.employeeDatamind?.datamind_id.data_mind_type || "";
+                    const employeeDatamind = profile?.datamind || (await fetchDataMindType(token));
+                    setDatamind(employeeDatamind);
                 }
             } catch (error) {
-                console.error("Failed to fetch employee details:", error.response?.data?.message || error.message);
+                console.error(
+                    "Failed to fetch employee details:",
+                    error.response?.data?.message || error.message
+                );
                 window.location.href = "/login";
             }
         };

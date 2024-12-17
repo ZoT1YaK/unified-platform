@@ -8,8 +8,8 @@ const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
     const [filter, setFilter] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
 
-    const debouncedEmpId = useDebounce(empId, 500); 
-    const debouncedSearchQuery = useDebounce(searchQuery, 500); 
+    const debouncedEmpId = useDebounce(empId, 500);
+    const debouncedSearchQuery = useDebounce(searchQuery, 500);
     const filteredMilestones = useFilterAndSearch(milestones, filter, debouncedSearchQuery, "visibility", "name");
 
 
@@ -53,7 +53,7 @@ const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
         };
 
         fetchMilestones();
-    }, [debouncedEmpId, simpleMode, onMilestonesFetched]); 
+    }, [debouncedEmpId, simpleMode, onMilestonesFetched]);
 
     const toggleVisibility = async (id) => {
         if (simpleMode) return; // No visibility toggle in simpleMode
@@ -112,25 +112,32 @@ const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
         <div className="milestones-section">
             <h2>Milestones</h2>
             <div className="milestones-header">
-                <p>You've gained {milestones.length} milestones</p>
+                {/* <p>You've gained {milestones.length} milestones</p> */}
                 <div className="milestones-filters">
-                    <button onClick={() => setFilter("All")} className={filter === "All" ? "active" : ""}>
-                        All
-                    </button>
-                    <button onClick={() => setFilter("Visible")} className={filter === "Visible" ? "active" : ""}>
-                        Visible
-                    </button>
-                    <button onClick={() => setFilter("Hidden")} className={filter === "Hidden" ? "active" : ""}>
-                        Hidden
-                    </button>
-                    <div className="search-bar">
+                    <div className="event-search-wrapper">
+                        <img
+                            src="/magnifying-glass 1.png"
+                            alt="Search Icon"
+                            className="search-icon"
+                        />
                         <input
                             type="text"
-                            placeholder="Search milestones..."
+                            placeholder="Search for a milestone..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
+                            className="event-search"
                         />
-                        <img src="/magnifying-glass 2.png" alt="Search" />
+                    </div>
+                    <div className='mil-filters'>
+                        <button onClick={() => setFilter("All")} className={filter === "All" ? "active" : ""}>
+                            All
+                        </button>
+                        <button onClick={() => setFilter("Visible")} className={filter === "Visible" ? "active" : ""}>
+                            Visible
+                        </button>
+                        <button onClick={() => setFilter("Hidden")} className={filter === "Hidden" ? "active" : ""}>
+                            Hidden
+                        </button>
                     </div>
                 </div>
             </div>

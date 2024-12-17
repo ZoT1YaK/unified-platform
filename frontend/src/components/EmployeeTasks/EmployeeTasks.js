@@ -12,7 +12,7 @@ const EmployeeTasks = () => {
     const [filter, setFilter] = useState("All");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const debouncedSearchQuery = useDebounce(searchQuery, 300); 
+    const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
     // Fetch tasks from the backend
     useEffect(() => {
@@ -25,7 +25,7 @@ const EmployeeTasks = () => {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,
                         },
-                        params: { search: debouncedSearchQuery  },
+                        params: { search: debouncedSearchQuery },
                     }
                 );
                 const { tasks } = response.data;
@@ -38,7 +38,7 @@ const EmployeeTasks = () => {
             }
         };
         fetchTasks();
-    }, [debouncedSearchQuery ]);
+    }, [debouncedSearchQuery]);
 
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter((task) => task.status === "Completed").length;
@@ -167,11 +167,11 @@ const EmployeeTasks = () => {
             task.title.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [tasks, filter, searchQuery]);
-    
+
     const visibleTasks = filteredTasks.slice(0, 20);
 
 
-   
+
     if (loading) return <p>Loading tasks...</p>;
     if (error) return <p className="error-message">{error}</p>;
 
@@ -183,6 +183,26 @@ const EmployeeTasks = () => {
                 uncompletedTasks={uncompletedTasks}
             />
             <h2>Assigned Tasks</h2>
+            <div className="search-add-container">
+                <div className="event-search-wrapper">
+                    <img
+                        src="/magnifying-glass 1.png"
+                        alt="Search Icon"
+                        className="search-icon"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Search for an event..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="event-search"
+                    />
+                </div>
+                <button className="add-task-button" onClick={() => openModal()}>
+                    <img src="more.png" alt="Add" className="icon" />
+                </button>
+            </div>
+
             <div className="employee-tasks-filter-buttons">
                 {["All", "Completed", "Incomplete"].map((status) => (
                     <button
@@ -195,18 +215,6 @@ const EmployeeTasks = () => {
                 ))}
             </div>
 
-            <div className="search-add-container">
-                <input
-                    type="text"
-                    className="task-search-bar"
-                    placeholder="Search tasks..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <button className="add-task-button" onClick={() => openModal()}>
-                    <img src="more.png" alt="Add" className="icon" />
-                </button>
-            </div>
             <ul className="task-list" >
                 {visibleTasks.map((task) => (
                     <li key={task._id} className="task-item">

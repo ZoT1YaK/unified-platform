@@ -50,6 +50,7 @@ const EmployeeProfile = () => {
             }
           />
         </div>
+        
         <div className="center-panel">
           {/* Employee Details Section */}
           <EmployeeDetails>
@@ -77,6 +78,7 @@ const EmployeeProfile = () => {
             </div>
           </div>
         </div>
+
         <div className="right-panel">
           <EmployeeTasks />
         </div>

@@ -126,25 +126,32 @@ const Achievements = ({ empId, simpleMode = false, onAchievementsFetched }) => {
         <div className="achievements-section">
             <h2>Achievements</h2>
             <div className="achievements-header">
-                <p>You've gained {achievements.length} achievements</p>
+                {/* <p>You've gained {achievements.length} achievements</p> */}
                 <div className="achievements-filters">
-                    <button onClick={() => setFilter("All")} className={filter === "All" ? "active" : ""}>
-                        All
-                    </button>
-                    <button onClick={() => setFilter("Visible")} className={filter === "Visible" ? "active" : ""}>
-                        Visible
-                    </button>
-                    <button onClick={() => setFilter("Hidden")} className={filter === "Hidden" ? "active" : ""}>
-                        Hidden
-                    </button>
-                    <div className="search-bar">
+                    <div className="event-search-wrapper">
+                        <img
+                            src="/magnifying-glass 1.png"
+                            alt="Search Icon"
+                            className="search-icon"
+                        />
                         <input
                             type="text"
-                            placeholder="Search achievements..."
+                            placeholder="Search for an achievement..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
+                            className="event-search"
                         />
-                        <img src="/magnifying-glass 2.png" alt="Search" />
+                    </div>
+                    <div className="ach-filters">
+                        <button onClick={() => setFilter("All")} className={filter === "All" ? "active" : ""}>
+                            All
+                        </button>
+                        <button onClick={() => setFilter("Visible")} className={filter === "Visible" ? "active" : ""}>
+                            Visible
+                        </button>
+                        <button onClick={() => setFilter("Hidden")} className={filter === "Hidden" ? "active" : ""}>
+                            Hidden
+                        </button>
                     </div>
                 </div>
             </div>

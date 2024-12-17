@@ -101,25 +101,26 @@ const UserPostTracker = () => {
     return (
         <div className="user-post-tracker">
             <h2>Posts</h2>
-            <input
-                type="text"
-                placeholder="Search posts..."
-                value={searchQuery}
-                onChange={handleSearchChange}
-                className="post-search-bar"
-            />
+            <div className="empl-post-search-wrapper">
+                <img
+                    src="/magnifying-glass 1.png"
+                    alt="Search Icon"
+                    className="search-icon"
+                />
+                <input
+                    type="text"
+                    className="post-search"
+                    placeholder="Search for a post..."
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                />
+            </div>
             <div className="post-list">
                 {currentPosts.length > 0 ? (
                     currentPosts.map((post) => (
                         <div key={post._id} className="post-summary" onClick={() => openModal(post)}>
                             <p className="post-date">{new Date(post.timestamp).toLocaleDateString()}</p>
                             <p className="post-snippet">{post.content.slice(0, 150)}...</p>
-                            <button
-                                className="delete-post-btn"
-                                onClick={() => handleDeletePost(post._id)}
-                            >
-                                Delete Post
-                            </button>
                             {post.mediaLinks && post.mediaLinks.length > 0 && (
                                 <div className="post-media-preview">
                                     {post.mediaLinks.slice(0, 3).map((url, index) => (
@@ -142,6 +143,16 @@ const UserPostTracker = () => {
                                 <span>{post.likes} Likes</span>
                                 <span>{post.comments} Comments</span>
                             </div>
+                            <button
+                                className="delete-post-btn"
+                                onClick={() => handleDeletePost(post._id)}
+                            >
+                                <img
+                                    src="/trash1.png"
+                                    alt="Trash Icon"
+                                    className="trash-icon"
+                                />
+                            </button>
                         </div>
                     ))
                 ) : (
@@ -149,19 +160,16 @@ const UserPostTracker = () => {
                 )}
             </div>
             {/* Pagination Controls */}
-            <div className="pagination-controls">
-                <button onClick={prevPage} disabled={currentPage === 1}>
-                    Previous
-                </button>
-                <span>
-                    Page {currentPage} of {Math.ceil(filteredPosts.length / postsPerPage)}
-                </span>
-                <button
-                    onClick={nextPage}
-                    disabled={currentPage === Math.ceil(filteredPosts.length / postsPerPage)}
-                >
-                    Next
-                </button>
+            <div className="pagination">
+                {Array.from({ length: Math.ceil(filteredPosts.length / postsPerPage) }, (_, index) => (
+                    <button
+                        key={index + 1}
+                        className={`pagination-button ${currentPage === index + 1 ? "active" : ""}`}
+                        onClick={() => setCurrentPage(index + 1)}
+                    >
+                        {index + 1}
+                    </button>
+                ))}
             </div>
 
             {showModal && selectedPost && (

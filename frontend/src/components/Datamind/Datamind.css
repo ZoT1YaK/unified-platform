@@ -4,7 +4,8 @@
     font-size: 24px;
     font-weight: bold;
     color: #333;
-    z-index: 2; /* Ensure it stays above the .employee-user-container-top */
+    z-index: 2;
+    /* Ensure it stays above the .employee-user-container-top */
 }
 
 
@@ -13,23 +14,25 @@
     align-items: center;
     justify-content: flex-end;
     gap: 0px;
-    margin-top: 50px;
+    margin-top: 30px;
+    margin-right: 20px;
 }
 
 /* Dropdown Styled as Input */
 .datamind-dropdown {
     appearance: none;
-    /* Remove default dropdown styling */
+    position: absolute;
     padding: 8px 12px;
     font-size: 14px;
     color: #626E74;
     background-color: #f2f2f2;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: none;
+    border-radius: 20px;
     outline: none;
     cursor: pointer;
-    max-width: 200px;
-    text-align: center;
+    width: 250px;
+    right: 20px;
+    z-index: 1;
 }
 
 /* Placeholder Option */
@@ -45,9 +48,10 @@
     color: white;
     background-color: #32444D;
     border: none;
-    border-radius: 4px;
+    border-radius: 20px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    z-index: 5;
 }
 
 .datamind-button:hover {

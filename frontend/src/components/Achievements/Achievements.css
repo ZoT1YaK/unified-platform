@@ -14,6 +14,7 @@
 
 .achievements-header {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
@@ -21,6 +22,7 @@
 
 .achievements-filters {
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 10px;
 }

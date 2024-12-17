@@ -9,32 +9,31 @@
     margin: 0;
 }
 
-
-/* Content Flex */
+/* Content area */
 .content-flex {
     position: relative;
-    top: -73px;
-    padding: 20px;
+    top: -90px;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 50px;
-    width: 95%;
-    max-width: 1725px;
-    margin: 0 auto;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    flex-wrap: wrap;
 }
 
 .left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     flex: 0 0 537px;
-    background-color: white;
+    /* background-color: white; */
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
 
 }
 
 .center-panel {
     position: relative;
-    top: -27px;
+    /* top: -27px; */
     flex: 0 0 795px;
     background-color: white;
     border-radius: 10px;
@@ -47,9 +46,9 @@
     flex-direction: column;
     gap: 20px;
     flex: 0 0 537px;
-    background-color: white;
+    /* background-color: white; */
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
 }
 
 .left-panel,
@@ -58,14 +57,12 @@
     box-sizing: border-box;
 }
 
-
 /* Analytics Section */
 .analytics-container {
     display: flex;
     justify-content: space-around;
-    margin-top: 20px;
+    margin-top: 10px;
     /* padding: 10px 0; */
-    /* Add separation line */
 }
 
 .analytics-stat {
@@ -75,7 +72,6 @@
 
 .analytics-stat p {
     font-size: 36px;
-    /* Increase font size for prominence */
     font-weight: bold;
     margin: 0;
     color: #32444D;
@@ -84,7 +80,6 @@
 .analytics-stat span {
     display: block;
     font-size: 16px;
-    /* Larger text for better readability */
     color: #626E74;
     margin-top: 5px;
 }
@@ -93,10 +88,8 @@
 .activity-events-container {
     display: flex;
     flex-direction: column;
-    /* Stack boxes vertically */
     gap: 20px;
-    /* Space between activity and events */
-    margin-top: 20px;
+    /* margin-top: 20px; */
 }
 
 .employee-profile-page .events-gray-box {
@@ -108,55 +101,64 @@
     padding: 20px;
     overflow-y: auto;
     order: 6;
-  }
-  
-  .employee-profile-page .events-list {
+}
+
+.employee-profile-page .events-list {
     display: flex;
     flex-direction: column;
-  }
-  
-  .employee-profile-page .events-gray-box hr {
+}
+
+.employee-profile-page .events-gray-box hr {
     border: none;
     border-top: 1px solid #ccc;
     margin: 20px 0;
-  }
-  
-  .employee-profile-page .events-gray-box h2 {
+}
+
+.employee-profile-page .events-gray-box h2 {
     font-weight: bold;
     color: #32444D;
-  }
-  
-  .employee-profile-page .events-gray-box h2+.events-list {
+}
+
+.employee-profile-page .events-gray-box h2+.events-list {
     margin-top: 10px;
     padding-top: 20px;
-  }
-  
+}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .content-flex {
-        flex-direction: column; /* Stack panels vertically */
-        gap: 20px; /* Add space between stacked panels */
+        flex-direction: column;
+        /* Stack panels vertically */
+        gap: 20px;
+        /* Add space between stacked panels */
     }
 
     .center-panel {
-        order: 1; /* Show center panel first */
-        width: 100%; /* Full width */
+        order: 1;
+        /* Show center panel first */
+        width: 100%;
+        /* Full width */
     }
 
     .right-panel {
-        order: 2; /* Show right panel second */
-        width: 100%; /* Full width */
+        order: 2;
+        /* Show right panel second */
+        width: 100%;
+        /* Full width */
     }
 
     .left-panel {
-        order: 3; /* Show left panel last */
-        width: 100%; /* Full width */
+        order: 3;
+        /* Show left panel last */
+        width: 100%;
+        /* Full width */
     }
 
     .achievements-header,
     .milestones-header {
-        flex-direction: column; /* Stack filter buttons vertically */
+        flex-direction: column;
+        /* Stack filter buttons vertically */
         align-items: flex-start;
         gap: 10px;
     }
@@ -168,7 +170,8 @@
     }
 
     .analytics-stat {
-        padding: 15px; /* Adjust padding for smaller cards */
+        padding: 15px;
+        /* Adjust padding for smaller cards */
     }
 
     .activity,

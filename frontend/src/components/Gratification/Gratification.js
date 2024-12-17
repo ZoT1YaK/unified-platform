@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { fetchBadges, uploadBadges, archiveBadges, activateBadges } from "../../services/badgeService";
+import { uploadDatamind, resetDatamind } from "../../services/datamindService";
 import "./Gratification.css"
 
 const Gratification = ({ onClose }) => {
@@ -10,7 +11,7 @@ const Gratification = ({ onClose }) => {
   const [archivedBadges, setArchivedBadges] = useState([]);
   const [badgeFile, setBadgeFile] = useState(null);
 
-
+  const token = localStorage.getItem("token");
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -18,62 +19,34 @@ const Gratification = ({ onClose }) => {
 
   // Fetch badges on mount
   useEffect(() => {
-    const fetchBadges = async () => {
+    const loadBadges = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/badges/get`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        setActiveBadges(response.data.activeBadges || []);
-        setArchivedBadges(response.data.archivedBadges || []);
+        const { activeBadges, archivedBadges } = await fetchBadges(token);
+        setActiveBadges(activeBadges);
+        setArchivedBadges(archivedBadges);
       } catch (error) {
         console.error("Error fetching badges:", error);
         setMessage("Error fetching badges. Please try again later.");
       }
     };
 
-    fetchBadges();
-  }, []);
+    loadBadges();
+  }, [token]);
+
   const handleBadgeFileChange = (e) => {
     setBadgeFile(e.target.files[0]);
   };
 
   const handleUploadBadges = async () => {
-    if (!badgeFile) {
-      setMessage("Please select a file.");
-      return;
-    }
-
+    if (!badgeFile) return setMessage("Please select a file.");
     const formData = new FormData();
     formData.append("file", badgeFile);
-
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/badges/upload`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setMessage(response.data.message);
-      // Refresh the badge list after uploading
-      const badgesResponse = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/badges/get`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setActiveBadges(badgesResponse.data.activeBadges || []);
-      setArchivedBadges(badgesResponse.data.archivedBadges || []);
+      const response = await uploadBadges(token, formData);
+      setMessage(response.message);
+      const { activeBadges, archivedBadges } = await fetchBadges(token);
+      setActiveBadges(activeBadges);
+      setArchivedBadges(archivedBadges);
     } catch (error) {
       console.error("Error uploading badges:", error);
       setMessage("Error uploading badges. Please try again.");
@@ -82,105 +55,49 @@ const Gratification = ({ onClose }) => {
 
   const handleArchiveBadges = async () => {
     try {
-      const response = await axios.put(
-        `${process.env.REACT_APP_BACKEND_URL}/api/badges/archive`,
-        { ids: selectedBadgeIds },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setMessage(response.data.message);
+      const response = await archiveBadges(token, selectedBadgeIds);
+      setMessage(response.message);
       setSelectedBadgeIds([]);
-
-      const badgesResponse = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/badges/get`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setActiveBadges(badgesResponse.data.activeBadges || []);
-      setArchivedBadges(badgesResponse.data.archivedBadges || []);
+      const { activeBadges, archivedBadges } = await fetchBadges(token);
+      setActiveBadges(activeBadges);
+      setArchivedBadges(archivedBadges);
     } catch (error) {
-      console.error("Error archiving badges:", error);
       setMessage("Error archiving badges. Please try again.");
     }
   };
 
   const handleActivateBadges = async () => {
     try {
-      const response = await axios.put(
-        `${process.env.REACT_APP_BACKEND_URL}/api/badges/restore`,
-        { ids: selectedBadgeIds },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setMessage(response.data.message);
+      const response = await activateBadges(token, selectedBadgeIds);
+      setMessage(response.message);
       setSelectedBadgeIds([]);
-      const badgesResponse = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/badges/get`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setActiveBadges(badgesResponse.data.activeBadges || []);
-      setArchivedBadges(badgesResponse.data.archivedBadges || []);
+      const { activeBadges, archivedBadges } = await fetchBadges(token);
+      setActiveBadges(activeBadges);
+      setArchivedBadges(archivedBadges);
     } catch (error) {
-      console.error("Error activating badges:", error);
       setMessage("Error activating badges. Please try again.");
     }
   };
 
   const handleUploadDatamind = async () => {
-    if (!file) {
-      setMessage("Please select a file.");
-      return;
-    }
-
+    if (!file) return setMessage("Please select a file.");
     const formData = new FormData();
     formData.append("file", file);
-
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/datamind/upload`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setMessage(response.data.message);
+      const response = await uploadDatamind(token, formData);
+      setMessage(response.message);
     } catch (error) {
-      setMessage(error.response?.data?.message || "Error uploading Datamind values.");
+      setMessage("Error uploading Datamind values. Please try again.");
     }
   };
 
   const handleResetDatamind = async () => {
-    if (!window.confirm("Are you sure you want to reset all Datamind values?")) {
-      return;
-    }
-
+    if (!window.confirm("Are you sure you want to reset all Datamind values?")) return;
     try {
-      const response = await axios.delete(
-        `${process.env.REACT_APP_BACKEND_URL}/api/datamind/reset`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setMessage(response.data.message || "All Datamind values have been reset.");
+      const response = await resetDatamind(token);
+      setMessage(response.message);
     } catch (error) {
-      setMessage(error.response?.data?.message || "Error resetting Datamind values.");
+      setMessage("Error resetting Datamind values. Please try again.");
     }
   };
 

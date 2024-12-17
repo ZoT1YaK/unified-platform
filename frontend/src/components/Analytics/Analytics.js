@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { fetchAnalytics } from "../../services/analyticsService";
 import { debounce } from "lodash";
 import "./Analytics.css";
 
@@ -11,20 +11,12 @@ const Analytics = ({ empId = null }) => {
     });
 
     useEffect(() => {
-        const fetchAnalytics = debounce(async () => {
+        const fetchAnalyticsData = debounce(async () => {
             const token = localStorage.getItem("token");
             if (!token) return;
-    
-            const endpoint = empId
-                ? `${process.env.REACT_APP_BACKEND_URL}/api/analytics/${empId}`
-                : `${process.env.REACT_APP_BACKEND_URL}/api/analytics`;
-    
-            try {
-                const response = await axios.get(endpoint, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
 
-                const data = response.data;
+            try {
+                const data = await fetchAnalytics(token, empId);
                 setAnalytics({
                     achievementsCount: data.achievementsCount || 0,
                     postsCount: data.postsCount || 0,
@@ -37,9 +29,10 @@ const Analytics = ({ empId = null }) => {
                 );
             }
         }, 1000); // 1-second debounce
-    
-        fetchAnalytics();
+
+        fetchAnalyticsData();
     }, [empId]);
+
 
     return (
         <div className="analytics-container">

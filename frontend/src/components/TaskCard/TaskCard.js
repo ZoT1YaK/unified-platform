@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import axios from "axios";
+import { fetchEmployeeTasks, toggleTaskStatus } from "../../services/taskService";
 import "./TaskCard.css";
 import useDebounce from "../../hooks/useDebounce";
 
@@ -11,26 +11,19 @@ const TaskCard = () => {
     const [filter, setFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
     const debouncedSearchQuery = useDebounce(searchQuery, 500);
+    const token = localStorage.getItem("token");
 
+
+    // Fetch tasks
     useEffect(() => {
         const fetchTasks = async () => {
+            setLoading(true);
             try {
-                setLoading(true);
-
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/tasks/employee`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        },
-                        params: { search: debouncedSearchQuery },
-                    }
-                );
-
-                console.log("Fetched tasks:", response.data.tasks);
-                setTasks(response.data.tasks);
+                const fetchedTasks = await fetchEmployeeTasks(token, debouncedSearchQuery);
+                console.log("Fetched tasks:", fetchedTasks);
+                setTasks(fetchedTasks);
             } catch (err) {
-                console.error("Error fetching tasks:", err);
+                console.error("Error fetching tasks:", err.message);
                 setError("Failed to fetch tasks. Please try again.");
             } finally {
                 setLoading(false);
@@ -38,10 +31,9 @@ const TaskCard = () => {
         };
 
         fetchTasks();
-    }, [debouncedSearchQuery]);
+    }, [debouncedSearchQuery, token]);
 
-
-
+    // Filter tasks
     const filteredTasks = useMemo(() => {
         return tasks.filter((task) => {
             const matchesSearch = task.title
@@ -56,9 +48,9 @@ const TaskCard = () => {
         });
     }, [tasks, searchQuery, filter]);
 
-    const toggleTaskStatus = async (taskId, currentStatus) => {
+    // Toggle task status
+    const handleToggleStatus = async (taskId, currentStatus) => {
         const newStatus = currentStatus === "Completed" ? "Pending" : "Completed";
-
         try {
             setTasks((prevTasks) =>
                 prevTasks.map((task) =>
@@ -66,22 +58,13 @@ const TaskCard = () => {
                 )
             );
 
-            await axios.put(
-                `${process.env.REACT_APP_BACKEND_URL}/api/tasks/complete`,
-                { task_id: taskId, status: newStatus },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                }
-            );
-
+            await toggleTaskStatus(token, taskId, newStatus);
             alert(`Task marked as ${newStatus}!`);
         } catch (err) {
-            console.error("Error toggling task status:", err.response?.data || err.message);
+            console.error("Error toggling task status:", err.message);
             setError("Failed to update task status. Please try again.");
 
+            // Revert status on failure
             setTasks((prevTasks) =>
                 prevTasks.map((task) =>
                     task._id === taskId ? { ...task, status: currentStatus } : task
@@ -89,6 +72,7 @@ const TaskCard = () => {
             );
         }
     };
+
 
     if (loading) return <p>Loading tasks...</p>;
     if (error) return <p className="error-message">{error}</p>;
@@ -137,7 +121,7 @@ const TaskCard = () => {
                                 <input
                                     type="checkbox"
                                     checked={task.status === "Completed"}
-                                    onChange={() => toggleTaskStatus(task._id, task.status)}
+                                    onChange={() => handleToggleStatus(task._id, task.status)}
                                     className="task-checkbox"
                                 />
                                 <h3>{task.title}</h3>

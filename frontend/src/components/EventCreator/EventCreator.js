@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { fetchEmployees } from "../../services/employeeService";
+import { fetchEventResources, createEvent } from "../../services/eventService";
+import { fetchActiveBadges } from "../../services/badgeService";
 import "./EventCreator.css";
 
 const EventCreator = ({ onSave, departments, locations, teams, existingEvent }) => {
@@ -37,37 +39,29 @@ const EventCreator = ({ onSave, departments, locations, teams, existingEvent }) 
 
     // Fetch data for employees, badges, departments, teams, and locations
     useEffect(() => {
-        const fetchData = async () => {
+        const loadData = async () => {
+            const token = localStorage.getItem("token");
+            const currentUserId = JSON.parse(localStorage.getItem("employee"))?._id;
+
             try {
-                const [employeesRes, activeBadgesRes, resourcesRes] = await Promise.all([
-                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/employees/all`, {
-                        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-                    }),
-                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/badges/get-active`, {
-                        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-                    }),
-                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events/resources`, {
-                        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-                    }),
+                const [employees, badges, resources] = await Promise.all([
+                    fetchEmployees(token),
+                    fetchActiveBadges(token),
+                    fetchEventResources(token),
                 ]);
-    
-                const currentUserId = JSON.parse(localStorage.getItem("employee"))?._id; 
-                const employees = employeesRes.data.employees || [];
-    
-                // Filter out the current user (leader) from the employees list
-                const filteredEmployees = employees.filter(emp => emp._id !== currentUserId);
-    
-                setAvailableEmployees(filteredEmployees);
-                setAvailableBadges(activeBadgesRes.data.badges || []);
-                setAvailableDepartments(resourcesRes.data.departments || []);
-                setAvailableTeams(resourcesRes.data.teams || []);
-                setAvailableLocations(resourcesRes.data.locations || []);
+
+                // Filter out the current user
+                setAvailableEmployees(employees.filter((emp) => emp._id !== currentUserId));
+                setAvailableBadges(badges);
+                setAvailableDepartments(resources.departments || []);
+                setAvailableTeams(resources.teams || []);
+                setAvailableLocations(resources.locations || []);
             } catch (err) {
-                console.error("Error fetching data:", err);
+                console.error("Error loading data:", err);
             }
         };
 
-        fetchData();
+        loadData();
     }, []);
 
     // Handle input changes
@@ -96,23 +90,11 @@ const EventCreator = ({ onSave, departments, locations, teams, existingEvent }) 
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const payload = { ...formData };
+        const token = localStorage.getItem("token");
 
         try {
-            const response = await axios.post(
-                `${process.env.REACT_APP_BACKEND_URL}/api/events/create`,
-                payload,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                }
-            );
-
-            console.log("Event created successfully:", response.data);
-
+            const newEvent = await createEvent(token, formData);
+            onSave(newEvent);
             setFormData({
                 title: "",
                 description: "",
@@ -125,10 +107,8 @@ const EventCreator = ({ onSave, departments, locations, teams, existingEvent }) 
                 target_employees: [],
                 badge_id: "",
             });
-
-            onSave(response.data);
-        } catch (error) {
-            console.error("Error creating event:", error.response?.data || error.message);
+        } catch (err) {
+            console.error("Error creating event:", err);
             alert("Failed to create the event. Please try again.");
         }
     };

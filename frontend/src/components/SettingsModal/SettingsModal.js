@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { updateNotificationPreference, fetchNotificationPreferences } from "../../services/notificationService";
 import "./SettingsModal.css";
 
 const SettingsModal = ({ onClose, isLeader }) => {
@@ -9,15 +9,11 @@ const SettingsModal = ({ onClose, isLeader }) => {
     useEffect(() => {
         const fetchPreferences = async () => {
             try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/notifications/preferences`,
-                    {
-                        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-                    }
-                );
+                const token = localStorage.getItem("token");
+                const preferences = await fetchNotificationPreferences(token);
 
                 const togglesState = {};
-                response.data.forEach((item) => {
+                preferences.forEach((item) => {
                     togglesState[item.type_name] = {
                         id: item.noti_type_id,
                         enabled: item.preference, // Assuming the backend provides a 'preference' field
@@ -27,44 +23,30 @@ const SettingsModal = ({ onClose, isLeader }) => {
                 console.log("Toggles State:", togglesState);
                 setAllToggles(togglesState);
             } catch (error) {
-                console.error(
-                    "Error fetching preferences:",
-                    error.response?.data?.message || error.message
-                );
+                console.error("Error fetching preferences:", error.message);
             }
         };
 
         fetchPreferences();
     }, []);
 
-    // Update preference on toggle click
-    const updatePreference = async (notiTypeId, preference) => {
-        try {
-            await axios.put(
-                `${process.env.REACT_APP_BACKEND_URL}/api/notifications/preferences`,
-                { noti_type_id: notiTypeId, preference },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                }
-            );
-        } catch (error) {
-            console.error(
-                "Error updating preference:",
-                error.response?.data?.message || error.message
-            );
-        }
-    };
 
-    const handleToggle = (key) => {
+    // Update preference on toggle click
+    const handleToggle = async (key) => {
         const updatedValue = !allToggles[key].enabled;
-        setAllToggles((prev) => ({
-            ...prev,
-            [key]: { ...prev[key], enabled: updatedValue }
-        }));
-        updatePreference(allToggles[key].id, updatedValue);
+
+        try {
+            const token = localStorage.getItem("token");
+            await updateNotificationPreference(token, allToggles[key].id, updatedValue);
+
+            // Update the state only if the API call succeeds
+            setAllToggles((prev) => ({
+                ...prev,
+                [key]: { ...prev[key], enabled: updatedValue }
+            }));
+        } catch (error) {
+            console.error("Error updating preference:", error.message);
+        }
     };
 
     return (

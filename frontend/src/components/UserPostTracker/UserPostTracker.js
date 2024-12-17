@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { fetchUserPosts, fetchPostComments, deletePost } from '../../services/postService';
 import './UserPostTracker.css';
 
 const UserPostTracker = () => {
@@ -11,8 +11,9 @@ const UserPostTracker = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const postsPerPage = 5;
 
-    const fetchUserPosts = async () => {
+    const loadUserPosts = async () => {
         try {
+            const token = localStorage.getItem('token');
             const storedEmployee = localStorage.getItem("employee");
             const loggedInUser = storedEmployee ? JSON.parse(storedEmployee) : null;
 
@@ -21,44 +22,33 @@ const UserPostTracker = () => {
                 return;
             }
 
-            const response = await axios.get(
-                `${process.env.REACT_APP_BACKEND_URL}/api/posts/get`,
-                { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
-            );
-
-            const userPosts = response.data.posts.filter(
-                (post) => post.author?.f_name === loggedInUser.f_name && post.author?.l_name === loggedInUser.l_name
-            );
-
+            const userPosts = await fetchUserPosts(token, loggedInUser);
             setPosts(userPosts);
             setFilteredPosts(userPosts);
         } catch (error) {
-            console.error('Error fetching posts:', error);
+            console.error("Error loading posts:", error);
         }
     };
 
     const handleDeletePost = async (postId) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this post?");
-        if (!confirmDelete) return;
+        if (!window.confirm("Are you sure you want to delete this post?")) return;
 
         try {
-            await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/posts/delete`, {
-                data: { post_id: postId },
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-            });
+            const token = localStorage.getItem('token');
+            await deletePost(token, postId);
 
-            setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
-            setFilteredPosts((prevFiltered) => prevFiltered.filter((post) => post._id !== postId));
+            setPosts((prev) => prev.filter((post) => post._id !== postId));
+            setFilteredPosts((prev) => prev.filter((post) => post._id !== postId));
             alert("Post deleted successfully!");
         } catch (error) {
             console.error("Error deleting post:", error);
-            alert("Failed to delete post. Please try again.");
+            alert("Failed to delete post.");
         }
     };
 
 
     useEffect(() => {
-        fetchUserPosts();
+        loadUserPosts();
     }, []);
 
     const handleSearchChange = (e) => {
@@ -86,17 +76,6 @@ const UserPostTracker = () => {
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
     const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
 
-    /*const nextPage = () => {
-        if (currentPage < Math.ceil(filteredPosts.length / postsPerPage)) {
-            setCurrentPage((prev) => prev + 1);
-        }
-    };
-
-    const prevPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage((prev) => prev - 1);
-        }
-    };*/
 
     return (
         <div className="user-post-tracker">
@@ -183,19 +162,17 @@ const PostModal = ({ post, closeModal }) => {
     const [comments, setComments] = useState([]);
 
     useEffect(() => {
-        const fetchComments = async () => {
+        const loadComments = async () => {
             try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/posts/${post._id}/comments`,
-                    { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
-                );
-                setComments(response.data.comments || []);
+                const token = localStorage.getItem('token');
+                const fetchedComments = await fetchPostComments(token, post._id);
+                setComments(fetchedComments);
             } catch (error) {
                 console.error("Error fetching comments:", error);
             }
         };
 
-        fetchComments();
+        loadComments();
     }, [post._id]);
 
 

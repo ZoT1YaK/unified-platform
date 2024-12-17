@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { fetchTasks, editTask, deleteTask } from "../../services/taskService";
+import { fetchBadges } from "../../services/badgeService";
+import { fetchEmployees } from "../../services/employeeService";
 import "./AssignedTaskList.css";
 
 const AssignedTaskList = () => {
@@ -23,34 +25,22 @@ const AssignedTaskList = () => {
     const [currentPage, setCurrentPage] = useState(1); 
     const tasksPerPage = 5; 
 
+    // Fetch tasks, badges, and employees
     useEffect(() => {
-        const fetchData = async () => {
+        const loadData = async () => {
             try {
                 setLoading(true);
+                const token = localStorage.getItem("token");
 
-                // Fetch tasks, badges, and employees
-                const [tasksRes, badgesRes, employeesRes] = await Promise.all([
-                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/leader`, {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        },
-                        params: { search: searchQuery },
-                    }),
-                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/badges/get`, {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        },
-                    }),
-                    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/employees/all`, {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        },
-                    }),
+                const [tasksData, badgesData, employeesData] = await Promise.all([
+                    fetchTasks(token, searchQuery),
+                    fetchBadges(token),
+                    fetchEmployees(token),
                 ]);
 
-                setTasks(tasksRes.data.tasks || []);
-                setAvailableBadges(badgesRes.data.badges || []);
-                setAvailableEmployees(employeesRes.data.employees || []);
+                setTasks(tasksData || []);
+                setAvailableBadges(badgesData || []);
+                setAvailableEmployees(employeesData || []);
             } catch (err) {
                 console.error("Error fetching data:", err);
                 setError("Failed to fetch data. Please try again later.");
@@ -59,8 +49,8 @@ const AssignedTaskList = () => {
             }
         };
 
-        fetchData();
-    },  [searchQuery]);
+        loadData();
+    }, [searchQuery]);
 
     // Handle employee selection
     const handleEmployeeChange = (e) => {
@@ -115,86 +105,48 @@ const AssignedTaskList = () => {
         });
     };
 
-    const handleSaveTask = async (e) => {
+     // Save Task
+     const handleSaveTask = async (e) => {
         e.preventDefault();
 
-        // Map the form data to the backend payload structure
-        const badge_id = availableBadges.find((b) => b.name === formData.badge)?._id || null;
+        const token = localStorage.getItem("token");
+        const badge_id = availableBadges.find((b) => b.name === formData.badge)?._id;
 
-        // Prepare the updated task payload
         const updatedTask = {
-            task_id: editingTask._id, // Ensure task_id is explicitly sent
+            task_id: editingTask._id,
             title: formData.title,
             description: formData.description,
             deadline: formData.deadline || null,
-            badge_id: badge_id || null, // Include null if no badge is selected
+            badge_id: badge_id || null,
         };
 
         try {
             setLoading(true);
-
-            // Log the payload for debugging
-            console.log("Payload being sent to /edit-assigned:", updatedTask);
-
-            // Send the update to the backend
-            const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/edit-assigned`, updatedTask, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-
-            // Handle successful update
+            await editTask(token, updatedTask);
             alert("Task updated successfully!");
-            console.log("Response from backend:", response.data);
-
-            // Close the edit modal
-            closeEditModal();
-
-            // Refresh the tasks list
-            const tasksRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/leader`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            setTasks(tasksRes.data.tasks || []);
+            setTasks(await fetchTasks(token));
+            setEditingTask(null);
         } catch (err) {
-            console.error("Error updating task:", err.response?.data || err.message);
-            setError(err.response?.data?.message || "Failed to update task. Please try again.");
+            console.error("Error updating task:", err);
+            setError("Failed to update task. Please try again.");
         } finally {
             setLoading(false);
         }
     };
 
-    const handleDeleteTask = async (task) => {
-        if (!window.confirm(`Are you sure you want to delete the task "${task.title}"?`)) {
-            return; // Exit if user cancels
-        }
+     // Delete Task
+     const handleDeleteTask = async (task) => {
+        if (!window.confirm(`Are you sure you want to delete "${task.title}"?`)) return;
 
+        const token = localStorage.getItem("token");
         try {
             setLoading(true);
-
-            // Call the delete API
-            await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/delete`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                data: { task_id: task._id }, // Axios requires `data` field for DELETE body
-            });
-
+            await deleteTask(token, task._id);
             alert("Task deleted successfully!");
-
-            // Refresh the task list
-            const tasksRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/leader`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            setTasks(tasksRes.data.tasks || []);
+            setTasks(await fetchTasks(token));
         } catch (err) {
-            console.error("Error deleting task:", err.response?.data || err.message);
-            setError(err.response?.data?.message || "Failed to delete task. Please try again.");
+            console.error("Error deleting task:", err);
+            setError("Failed to delete task. Please try again.");
         } finally {
             setLoading(false);
         }

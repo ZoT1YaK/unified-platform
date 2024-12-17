@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from "axios";
+import { fetchMilestones, toggleMilestoneVisibility } from '../../services/milestoneService';
 import './Milestones.css';
 import { useFilterAndSearch } from '../../hooks/useFilterAndSearch';
 import useDebounce from '../../hooks/useDebounce';
@@ -15,79 +15,48 @@ const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
 
 
     useEffect(() => {
-        const fetchMilestones = async () => {
+        const loadMilestones = async () => {
             const token = localStorage.getItem("token");
-            if (!token) {
-                console.error("No token found. Skipping fetch.");
-                return;
-            }
+            if (!token) return console.error("No token found. Skipping fetch.");
 
             const loggedInUser = JSON.parse(localStorage.getItem("employee"));
             const fallbackEmpId = debouncedEmpId || loggedInUser?._id;
 
             try {
-                const fetchURL = `${process.env.REACT_APP_BACKEND_URL}/api/milestones/get`;
-                const response = await axios.get(fetchURL, {
-                    headers: { Authorization: `Bearer ${token}` },
-                    params: { emp_id: fallbackEmpId }, 
-                });
+                const fetchedMilestones = await fetchMilestones(token, fallbackEmpId);
+                const visibleMilestones = simpleMode
+                    ? fetchedMilestones.filter((milestone) => milestone.visibility)
+                    : fetchedMilestones;
 
-                const fetchedMilestones = simpleMode
-                    ? response.data.milestones.filter((milestone) => milestone.visibility)
-                    : response.data.milestones;
-
-                setMilestones(fetchedMilestones);
-
-                if (onMilestonesFetched) {
-                    onMilestonesFetched(fetchedMilestones);
-                }
+                setMilestones(visibleMilestones);
+                if (onMilestonesFetched) onMilestonesFetched(visibleMilestones);
             } catch (error) {
-                console.error(
-                    "Error fetching milestones:",
-                    error.response?.data?.message || error.message
-                );
+                console.error("Error fetching milestones:", error.message);
             }
-
         };
 
-        fetchMilestones();
+        loadMilestones();
     }, [debouncedEmpId, simpleMode, onMilestonesFetched]);
 
-    const toggleVisibility = async (id) => {
-        if (simpleMode) return; // No visibility toggle in simpleMode
+    const handleToggleVisibility = async (id) => {
+        if (simpleMode) return;
+
         try {
             const token = localStorage.getItem("token");
             const milestone = milestones.find((m) => m._id === id);
+            const updatedMilestone = await toggleMilestoneVisibility(token, id, !milestone.visibility);
 
-            const response = await axios.put(
-                `${process.env.REACT_APP_BACKEND_URL}/api/milestones/visibility`,
-                {
-                    milestone_id: id,
-                    visibility: !milestone.visibility,
-                },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-            const updatedMilestone = response.data;
             setMilestones((prevMilestones) =>
                 prevMilestones.map((item) =>
-                    item._id === updatedMilestone.milestone._id
-                        ? { ...item, visibility: updatedMilestone.milestone.visibility }
+                    item._id === updatedMilestone._id
+                        ? { ...item, visibility: updatedMilestone.visibility }
                         : item
                 )
             );
         } catch (error) {
-            console.error(
-                "Error updating milestone visibility:",
-                error.response?.data?.message || error.message
-            );
+            console.error("Error updating milestone visibility:", error.message);
         }
     };
-
 
     if (simpleMode) {
         return (
@@ -153,7 +122,7 @@ const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
                             className="visibility-icon"
                             src={milestone.visibility ? "/eye-icon.png" : "/eye-off-icon.png"}
                             alt="Toggle visibility"
-                            onClick={() => toggleVisibility(milestone._id)}
+                            onClick={() => handleToggleVisibility(milestone._id)}
                         />
                         <p className="milestone-date">
                             Unlocked on {new Date(milestone.date_unlocked).toLocaleDateString()}

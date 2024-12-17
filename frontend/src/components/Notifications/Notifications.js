@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { fetchNotifications, markNotificationAsRead } from "../../services/notificationService";
 import "./Notifications.css";
 
 const Notification = ({ showHistory, toggleHistory }) => {
@@ -7,19 +7,11 @@ const Notification = ({ showHistory, toggleHistory }) => {
 
     // Fetch notifications
     useEffect(() => {
-        const fetchNotifications = async () => {
+        const loadNotifications = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/notifications/get`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-
-                setNotifications(response.data.notifications);
+                const fetchedNotifications = await fetchNotifications(token);
+                setNotifications(fetchedNotifications);
             } catch (error) {
                 console.error(
                     "Error fetching notifications:",
@@ -28,7 +20,7 @@ const Notification = ({ showHistory, toggleHistory }) => {
             }
         };
 
-        fetchNotifications();
+        loadNotifications();
     }, []);
 
     // Mark notification as read
@@ -36,19 +28,9 @@ const Notification = ({ showHistory, toggleHistory }) => {
         console.log("Checkbox clicked for notification:", id); // Debug log
         try {
             const token = localStorage.getItem("token");
-            await axios.put(
-                `${process.env.REACT_APP_BACKEND_URL}/api/notifications/read`,
-                { notification_id: id },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+            await markNotificationAsRead(token, id);
 
             console.log("Notification marked as read:", id); // Debug log
-            // Update local state
             setNotifications((prev) =>
                 prev.map((notification) =>
                     notification._id === id
@@ -63,6 +45,7 @@ const Notification = ({ showHistory, toggleHistory }) => {
             );
         }
     };
+
 
     return (
         showHistory && (

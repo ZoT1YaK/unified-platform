@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from "axios";
+import { fetchPostResources, createPost } from "../../services/postService";
 import './PostCreation.css';
 
 const PostCreation = ({ user }) => {
@@ -58,26 +58,20 @@ const PostDialog = ({ user, closeDialog }) => {
     // Fetch options dynamically based on audience selection
     const fetchOptions = async (audienceType) => {
         try {
-            const response = await axios.get(
-                `${process.env.REACT_APP_BACKEND_URL}/api/posts/resources`,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
-
-            console.log("Fetched Resources:", response.data);
+            const resources = await fetchPostResources(token);
 
             if (audienceType === "location") {
-                setAvailableOptions(response.data.locations || []);
+                setAvailableOptions(resources.locations || []);
             } else if (audienceType === "department") {
-                setAvailableOptions(response.data.departments || []);
+                setAvailableOptions(resources.departments || []);
             } else if (audienceType === "team") {
-                setAvailableOptions(response.data.teams || []);
+                setAvailableOptions(resources.teams || []);
             }
         } catch (error) {
-            console.error("Error fetching options:", error.response?.data?.message || error.message);
+            console.error("Error fetching options:", error.message);
         }
     };
+
 
     const handleAudienceChange = (e) => {
         const selectedAudience = e.target.value;
@@ -101,35 +95,26 @@ const PostDialog = ({ user, closeDialog }) => {
 
     const handlePost = async () => {
         if (!postText.trim() && mediaLinks.length === 0) return;
+
+        const payload = { content: postText, mediaLinks };
+        if (audience === "all") {
+            payload.global = true;
+        } else {
+            payload[`target_${audience}s`] = selectedOptions;
+        }
+
         try {
             setIsLoading(true);
-            const payload = { content: postText, mediaLinks };
-            if (audience === "all") {
-                payload.global = true;
-            } else {
-                payload[`target_${audience}s`] = selectedOptions;
-            }
-
-            await axios.post(
-                `${process.env.REACT_APP_BACKEND_URL}/api/posts/create`,
-                payload,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-
+            await createPost(token, payload);
             console.log("Post created successfully");
             closeDialog();
         } catch (error) {
-            console.error("Error creating post:", error.response?.data?.message || error.message);
+            console.error("Error creating post:", error.message);
         } finally {
             setIsLoading(false);
         }
     };
-
+    
     return (
         <div className="post-dialog-overlay" onClick={closeDialog}>
             <div className="post-dialog" onClick={(e) => e.stopPropagation()}>

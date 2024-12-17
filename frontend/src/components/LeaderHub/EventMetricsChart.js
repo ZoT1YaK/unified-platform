@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Chart, registerables } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import axios from "axios";
+import { fetchEventMetrics } from "../../services/metricsService";
 
 Chart.register(...registerables, ChartDataLabels);
 
@@ -12,25 +12,19 @@ const EventMetricsChart = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchEventMetrics = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/metrics/team-events`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`, 
-            },
-          }
-        );
-        setEventMetrics(response.data);
-      } catch (err) {
-        console.error("Error fetching event metrics:", err);
-        setError("Failed to fetch event metrics.");
-      }
+    const loadEventMetrics = async () => {
+        const token = localStorage.getItem("token");
+        try {
+            const metrics = await fetchEventMetrics(token);
+            setEventMetrics(metrics);
+        } catch (err) {
+            console.error("Error fetching event metrics:", err);
+            setError("Failed to fetch event metrics.");
+        }
     };
 
-    fetchEventMetrics();
-  }, []);
+    loadEventMetrics();
+}, []);
 
   useEffect(() => {
     if (eventMetrics && chartRef.current) {

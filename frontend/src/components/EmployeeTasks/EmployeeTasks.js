@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import axios from "axios";
+import { fetchEmployeeTasks, editOwnTask, createTask, deleteTask, toggleTaskStatus } from "../../services/taskService";
 import "./EmployeeTasks.css";
 import TaskStatus from "../TaskStatus/TaskStatus";
 import useDebounce from "../../hooks/useDebounce";
@@ -14,21 +14,12 @@ const EmployeeTasks = () => {
     const [error, setError] = useState(null);
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-    // Fetch tasks from the backend
     useEffect(() => {
-        const fetchTasks = async () => {
+        const loadTasks = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/tasks/employee`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        },
-                        params: { search: debouncedSearchQuery },
-                    }
-                );
-                const { tasks } = response.data;
+                const token = localStorage.getItem("token");
+                const tasks = await fetchEmployeeTasks(token, debouncedSearchQuery);
                 setTasks(tasks);
             } catch (err) {
                 console.error("Error fetching tasks:", err);
@@ -37,7 +28,7 @@ const EmployeeTasks = () => {
                 setLoading(false);
             }
         };
-        fetchTasks();
+        loadTasks();
     }, [debouncedSearchQuery]);
 
     const totalTasks = tasks.length;
@@ -55,66 +46,36 @@ const EmployeeTasks = () => {
     };
 
     const handleSaveTask = async (task) => {
+        const token = localStorage.getItem("token");
         try {
             setLoading(true);
             if (editingTask) {
-                // Edit existing task
-                await axios.put(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/tasks/edit-own`,
-                    {
-                        task_id: editingTask._id,
-                        title: task.title,
-                        description: task.description,
-                        deadline: task.deadline,
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        },
-                    }
-                );
-                setTasks((prevTasks) =>
-                    prevTasks.map((t) =>
-                        t._id === editingTask._id ? { ...t, ...task } : t
-                    )
-                );
+                await editOwnTask(token, {
+                    task_id: editingTask._id,
+                    ...task,
+                });
             } else {
-                // Add new task
-                const response = await axios.post(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/tasks/create`,
-                    {
-                        title: task.title,
-                        description: task.description,
-                        deadline: task.deadline,
-                        type: "Self-Created",
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        },
-                    }
-                );
-                setTasks((prevTasks) => [...prevTasks, response.data.task]);
+                const newTask = await createTask(token, {
+                    ...task,
+                    type: "Self-Created",
+                });
+                setTasks((prevTasks) => [...prevTasks, newTask]);
             }
         } catch (err) {
             console.error("Error saving task:", err);
             setError("Failed to save task. Please try again.");
         } finally {
             setLoading(false);
-            closeModal();
+            setIsModalOpen(false);
+            setEditingTask(null);
         }
     };
 
     const handleDeleteTask = async (taskId) => {
-        if (!window.confirm("Are you sure you want to delete this task?")) return;
+        const token = localStorage.getItem("token");
         try {
             setLoading(true);
-            await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/delete`, {
-                data: { task_id: taskId },
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
+            await deleteTask(token, taskId);
             setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
         } catch (err) {
             console.error("Error deleting task:", err);
@@ -124,31 +85,18 @@ const EmployeeTasks = () => {
         }
     };
 
-    const toggleTaskStatus = async (taskId, currentStatus) => {
+    const handleToggleStatus = async (taskId, currentStatus) => {
+        const token = localStorage.getItem("token");
         const newStatus = currentStatus === "Completed" ? "Pending" : "Completed";
         try {
-            const response = await axios.put(
-                `${process.env.REACT_APP_BACKEND_URL}/api/tasks/complete`,
-                { task_id: taskId, status: newStatus },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                }
-            );
-
+            await toggleTaskStatus(token, taskId, newStatus);
             setTasks((prevTasks) =>
                 prevTasks.map((task) =>
                     task._id === taskId ? { ...task, status: newStatus } : task
                 )
             );
-
-            // Notify user if a badge is awarded
-            if (newStatus === "Completed" && response.data.task.badge_id) {
-                alert("Congratulations! You’ve earned a new achievement!");
-            }
         } catch (err) {
-            console.error("Error toggling task status:", err);
+            console.error("Error updating status:", err);
             setError("Failed to update task status. Please try again.");
         }
     };
@@ -229,7 +177,7 @@ const EmployeeTasks = () => {
                         <input
                             type="checkbox"
                             checked={task.status === "Completed"}
-                            onChange={() => toggleTaskStatus(task._id, task.status)}
+                            onChange={() => handleToggleStatus(task._id, task.status)}
                         />
                         <span>{task.title}</span>
                         <span className="task-deadline">

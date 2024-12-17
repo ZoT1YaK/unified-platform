@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from "axios";
+import { fetchEmployees } from '../../services/employeeService';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './TopBar.css';
 import Notification from '../Notifications/Notifications';
@@ -39,32 +39,20 @@ const TopBar = () => {
     }, []);
 
     useEffect(() => {
-        const fetchEmployees = async () => {
+        const loadEmployees = async () => {
             const token = localStorage.getItem('token');
-            if (!token) {
-                console.error('No token found.');
-                return;
-            }
+            if (!token) return;
 
             try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/employees/all`,
-                    {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }
-                );
-
-                setSearchResults(response.data.employees); // Populate initial list of employees
+                const employees = await fetchEmployees(token); 
+                setSearchResults(employees);
             } catch (error) {
-                console.error(
-                    "Error fetching employees:",
-                    error.response?.data?.message || error.message
-                );
+                console.error("Error fetching employees:", error.message);
             }
         };
-
-        fetchEmployees();
+        loadEmployees();
     }, []);
+
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);

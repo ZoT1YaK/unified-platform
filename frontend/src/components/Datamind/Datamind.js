@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { fetchDatamindOptions, updateEmployeeDatamind } from "../../services/datamindService";
+import { fetchDataMindType } from "../../services/employeeService";
 import "./Datamind.css";
 
 const Datamind = () => {
@@ -7,91 +8,63 @@ const Datamind = () => {
   const [dataMindOptions, setDatamindOptions] = useState([]); 
   const [message, setMessage] = useState("");
 
-  // Fetch available Datamind options and current employee's Datamind on mount
-  useEffect(() => {
-    const fetchDatamind = async () => {
-      try {
-        // Fetch available Datamind options
-        const optionsResponse = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/datamind/get`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+    // Fetch available Datamind options and current employee's Datamind on mount
+    useEffect(() => {
+      const loadDatamindData = async () => {
+          const token = localStorage.getItem("token");
+          if (!token) return;
+
+          try {
+              const options = await fetchDatamindOptions(token);
+              setDatamindOptions(options);
+
+              const currentDatamind = await fetchDataMindType(token); // Reusing employeeService
+              setDatamind(currentDatamind?.datamind_id?._id || "");
+          } catch (error) {
+              console.error("Error fetching Datamind data:", error);
+              setMessage("Error fetching Datamind data. Please try again later.");
           }
-        );
-        setDatamindOptions(optionsResponse.data.dataMinds);
+      };
 
-        // Fetch the current employee's Datamind
-        const employeeDatamindResponse = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/employees/get-data-mind-type`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-
-        const employeeDatamind = employeeDatamindResponse.data.employeeDatamind?.datamind_id._id || "";
-        setDatamind(employeeDatamind);
-      } catch (error) {
-        console.error("Error fetching Datamind data:", error);
-        setMessage("Error fetching Datamind data. Please try again later.");
-      }
-    };
-
-    fetchDatamind();
+      loadDatamindData();
   }, []);
 
-  
-
   const handleDatamindChange = async (event) => {
-    const selectedId = event.target.value;
-    const selectedDatamind = dataMindOptions.find((item) => item._id === selectedId);
-    try {
-      // Update the dataMind type for the employee
-      await axios.put(
-        `${process.env.REACT_APP_BACKEND_URL}/api/employees/data-mind-type`,
-        { datamind_id: selectedId },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setDatamind(selectedId);
-      setMessage(`Datamind updated to ${selectedDatamind.data_mind_type}`);
-    } catch (error) {
-      console.error("Error updating Datamind:", error);
-      setMessage("Error updating Datamind. Please try again.");
-    }
+      const selectedId = event.target.value;
+      const selectedDatamind = dataMindOptions.find((item) => item._id === selectedId);
+
+      try {
+          const token = localStorage.getItem("token");
+          await updateEmployeeDatamind(token, selectedId);
+          setDatamind(selectedId);
+          setMessage(`Datamind updated to ${selectedDatamind.data_mind_type}`);
+      } catch (error) {
+          console.error("Error updating Datamind:", error);
+          setMessage("Error updating Datamind. Please try again.");
+      }
   };
+
 
   const generateRandomDatamind = async () => {
     if (dataMindOptions.length === 0) {
-      setMessage("No Datamind options available.");
-      return;
+        setMessage("No Datamind options available.");
+        return;
     }
-  
+
     const randomIndex = Math.floor(Math.random() * dataMindOptions.length);
     const randomDatamind = dataMindOptions[randomIndex];
 
     try {
-      await axios.put(
-        `${process.env.REACT_APP_BACKEND_URL}/api/employees/data-mind-type`,
-        { datamind_id: randomDatamind._id },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setDatamind(randomDatamind._id); 
+        const token = localStorage.getItem("token");
+        await updateEmployeeDatamind(token, randomDatamind._id);
+        setDatamind(randomDatamind._id);
+        setMessage(`Random Datamind generated: ${randomDatamind.data_mind_type}`);
     } catch (error) {
-      console.error("Error generating random Datamind:", error.response || error);
-      setMessage("Error generating random Datamind. Please try again.");
+        console.error("Error generating random Datamind:", error);
+        setMessage("Error generating random Datamind. Please try again.");
     }
-  };
+};
+
   
 
   return (

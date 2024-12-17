@@ -1,26 +1,21 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { fetchTeamMetrics } from "../../services/metricsService";
 import "./TeamMetrics.css";
 
 const TeamMetrics = () => {
     const [metrics, setMetrics] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
-        const fetchMetrics = async () => {
+        const loadMetrics = async () => {
             try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/metrics/metrics`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        },
-                    }
-                );
+                const data = await fetchTeamMetrics(token);
 
+                // Group metrics by employeeEmail and keep the latest snapshot
                 const groupedMetrics = {};
-                response.data.metrics.forEach((metric) => {
+                data.metrics.forEach((metric) => {
                     const key = metric.employeeEmail;
                     if (
                         !groupedMetrics[key] ||
@@ -30,18 +25,17 @@ const TeamMetrics = () => {
                     }
                 });
 
-                const filteredMetrics = Object.values(groupedMetrics);
-                setMetrics(filteredMetrics);
+                setMetrics(Object.values(groupedMetrics));
             } catch (err) {
-                console.error("Error fetching metrics:", err);
+                console.error("Error fetching metrics:", err.message);
                 setError("Failed to fetch metrics. Please try again later.");
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchMetrics();
-    }, []);
+        loadMetrics();
+    }, [token]);
 
     if (loading) {
         return <p>Loading team metrics...</p>;

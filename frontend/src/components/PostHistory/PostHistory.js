@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import PostComponent from "../PostComponent/Post";
 import "./PostHistory.css";
 
@@ -10,47 +11,33 @@ const PostHistory = ({ empId }) => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
+                const token = localStorage.getItem("token");
+
                 // Fetch all posts
-                const postsResponse = await fetch(
+                const postsResponse = await axios.get(
                     `${process.env.REACT_APP_BACKEND_URL}/api/posts/get`,
                     {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        },
+                        headers: { Authorization: `Bearer ${token}` },
                     }
                 );
 
-                if (!postsResponse.ok) {
-                    throw new Error("Failed to fetch posts");
-                }
-
-                const postsData = await postsResponse.json();
-                console.log("API Response Posts:", postsData.posts);
+                console.log("API Response Posts:", postsResponse.data.posts);
 
                 // Fetch visited user's data
-                const visitedUserResponse = await fetch(
+                const visitedUserResponse = await axios.get(
                     `${process.env.REACT_APP_BACKEND_URL}/api/employees/profile/${empId}`,
                     {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        },
+                        headers: { Authorization: `Bearer ${token}` },
                     }
                 );
 
-                if (!visitedUserResponse.ok) {
-                    console.warn("No matching user found for the visited empId.");
-                    setPosts([]); // Set posts to an empty array
-                    return;
-                }
+                console.log("Visited User Data:", visitedUserResponse.data);
 
-                const visitedUserData = await visitedUserResponse.json();
-                const visitedUser = visitedUserData.profile;
-                console.log("Visited User Data:", visitedUser);
-
+                const visitedUser = visitedUserResponse.data.profile;
                 const { f_name, l_name } = visitedUser;
 
                 // Filter posts by visited user's name
-                const filteredPosts = postsData.posts.filter(
+                const filteredPosts = postsResponse.data.posts.filter(
                     (post) =>
                         post.author &&
                         post.author.f_name === f_name &&
@@ -61,10 +48,10 @@ const PostHistory = ({ empId }) => {
 
                 setPosts(filteredPosts); // Update the state with filtered posts
             } catch (error) {
-                console.error("Error fetching posts or visited user data:", error);
+                console.error("Error fetching posts or visited user data:", error.response?.data?.message || error.message);
                 setError("Failed to fetch posts or user data.");
             } finally {
-                setLoading(false); // Set loading to false after fetching data
+                setLoading(false);
             }
         };
 

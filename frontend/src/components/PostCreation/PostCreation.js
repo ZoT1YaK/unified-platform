@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from "axios";
 import './PostCreation.css';
 
 const PostCreation = ({ user }) => {
@@ -31,9 +32,7 @@ const PostDialog = ({ user, closeDialog }) => {
     const [mediaLinks, setMediaLinks] = useState([]);
     const [currentMediaLink, setCurrentMediaLink] = useState("");
     const [audience, setAudience] = useState('all');  // For "Post to..." dropdown
-    /*const [mediaType, setMediaType] = useState('');  // For "Attach Media" dropdown*/
     const [showAudienceDropdown, setShowAudienceDropdown] = useState(false);
-    /*const [showMediaDropdown, setShowMediaDropdown] = useState(false);*/
     const [availableOptions, setAvailableOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const token = localStorage.getItem('token');
@@ -59,25 +58,24 @@ const PostDialog = ({ user, closeDialog }) => {
     // Fetch options dynamically based on audience selection
     const fetchOptions = async (audienceType) => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/posts/resources`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            const data = await response.json();
+            const response = await axios.get(
+                `${process.env.REACT_APP_BACKEND_URL}/api/posts/resources`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
 
-            console.log('Fetched Resources:', data); // Log backend response
+            console.log("Fetched Resources:", response.data);
 
-            if (audienceType === 'location') {
-                setAvailableOptions(data.locations || []);
-            } else if (audienceType === 'department') {
-                setAvailableOptions(data.departments || []);
-            } else if (audienceType === 'team') {
-                setAvailableOptions(data.teams || []);
+            if (audienceType === "location") {
+                setAvailableOptions(response.data.locations || []);
+            } else if (audienceType === "department") {
+                setAvailableOptions(response.data.departments || []);
+            } else if (audienceType === "team") {
+                setAvailableOptions(response.data.teams || []);
             }
         } catch (error) {
-            console.error('Error fetching options:', error);
+            console.error("Error fetching options:", error.response?.data?.message || error.message);
         }
     };
 
@@ -105,32 +103,28 @@ const PostDialog = ({ user, closeDialog }) => {
         if (!postText.trim() && mediaLinks.length === 0) return;
         try {
             setIsLoading(true);
-            // Prepare the payload
             const payload = { content: postText, mediaLinks };
-            if (audience === 'all') {
-                payload.global = true; // Global visibility
+            if (audience === "all") {
+                payload.global = true;
             } else {
-                payload[`target_${audience}s`] = selectedOptions; // Add selected options
+                payload[`target_${audience}s`] = selectedOptions;
             }
 
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/posts/create`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(payload),
-            });
+            await axios.post(
+                `${process.env.REACT_APP_BACKEND_URL}/api/posts/create`,
+                payload,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
 
-            if (!response.ok) {
-                throw new Error("Failed to create post");
-            }
-
-            const data = await response.json();
-            console.log("Post created:", data);
-            closeDialog(); // Close the dialog after posting
+            console.log("Post created successfully");
+            closeDialog();
         } catch (error) {
-            console.error("Error creating post:", error.message);
+            console.error("Error creating post:", error.response?.data?.message || error.message);
         } finally {
             setIsLoading(false);
         }

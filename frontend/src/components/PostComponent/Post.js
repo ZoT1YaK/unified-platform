@@ -11,7 +11,7 @@ const PostComponent = ({ post, mode = "default" }) => {
         const fetchComments = async () => {
             try {
                 const response = await axios.get(
-                    `http://localhost:5000/api/posts/${post._id}/comments`,
+                    `${process.env.REACT_APP_BACKEND_URL}/api/posts/${post._id}/comments`,
                     { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
                 );
                 setComments(response.data.comments || []);
@@ -30,14 +30,14 @@ const PostComponent = ({ post, mode = "default" }) => {
         try {
             if (likes === post.likes) {
                 await axios.post(
-                    `http://localhost:5000/api/posts/like`,
+                    `${process.env.REACT_APP_BACKEND_URL}/api/posts/like`,
                     { post_id: post._id },
                     { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
                 );
                 setLikes((prevLikes) => prevLikes + 1);
             } else {
                 await axios.post(
-                    `http://localhost:5000/api/posts/unlike`,
+                    `${process.env.REACT_APP_BACKEND_URL}/api/posts/unlike`,
                     { post_id: post._id },
                     { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
                 );
@@ -58,7 +58,7 @@ const PostComponent = ({ post, mode = "default" }) => {
 
         try {
             const response = await axios.post(
-                `http://localhost:5000/api/posts/comments`,
+                `${process.env.REACT_APP_BACKEND_URL}/api/posts/comments`,
                 {
                     post_id: post._id,
                     content: newComment,

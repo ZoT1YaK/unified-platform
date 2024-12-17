@@ -50,8 +50,14 @@ const EventCreator = ({ onSave, departments, locations, teams, existingEvent }) 
                         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                     }),
                 ]);
-
-                setAvailableEmployees(employeesRes.data.employees || []);
+    
+                const currentUserId = JSON.parse(localStorage.getItem("employee"))?._id; 
+                const employees = employeesRes.data.employees || [];
+    
+                // Filter out the current user (leader) from the employees list
+                const filteredEmployees = employees.filter(emp => emp._id !== currentUserId);
+    
+                setAvailableEmployees(filteredEmployees);
                 setAvailableBadges(activeBadgesRes.data.badges || []);
                 setAvailableDepartments(resourcesRes.data.departments || []);
                 setAvailableTeams(resourcesRes.data.teams || []);
@@ -77,7 +83,7 @@ const EventCreator = ({ onSave, departments, locations, teams, existingEvent }) 
             [key]: isSelectAll ? ["ALL"] : [],
         }));
     };
-    
+
     const toggleSelection = (key, value) => {
         setFormData((prev) => ({
             ...prev,

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./Notifications.css";
 
 const Notification = ({ showHistory, toggleHistory }) => {
@@ -9,7 +10,7 @@ const Notification = ({ showHistory, toggleHistory }) => {
         const fetchNotifications = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await fetch(
+                const response = await axios.get(
                     `${process.env.REACT_APP_BACKEND_URL}/api/notifications/get`,
                     {
                         headers: {
@@ -18,14 +19,12 @@ const Notification = ({ showHistory, toggleHistory }) => {
                     }
                 );
 
-                if (!response.ok) {
-                    throw new Error("Failed to fetch notifications");
-                }
-
-                const data = await response.json();
-                setNotifications(data.notifications);
+                setNotifications(response.data.notifications);
             } catch (error) {
-                console.error("Error fetching notifications:", error.message);
+                console.error(
+                    "Error fetching notifications:",
+                    error.response?.data?.message || error.message
+                );
             }
         };
 
@@ -37,21 +36,16 @@ const Notification = ({ showHistory, toggleHistory }) => {
         console.log("Checkbox clicked for notification:", id); // Debug log
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(
+            await axios.put(
                 `${process.env.REACT_APP_BACKEND_URL}/api/notifications/read`,
+                { notification_id: id },
                 {
-                    method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
-                    body: JSON.stringify({ notification_id: id }),
                 }
             );
-
-            if (!response.ok) {
-                throw new Error("Failed to mark notification as read");
-            }
 
             console.log("Notification marked as read:", id); // Debug log
             // Update local state
@@ -63,7 +57,10 @@ const Notification = ({ showHistory, toggleHistory }) => {
                 )
             );
         } catch (error) {
-            console.error("Error marking notification as read:", error.message);
+            console.error(
+                "Error marking notification as read:",
+                error.response?.data?.message || error.message
+            );
         }
     };
 

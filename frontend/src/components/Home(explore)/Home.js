@@ -39,46 +39,6 @@ const Home = () => {
     }
   }, []);
 
-  /*//Fetch user profile for details Overrides leaderhub switch. needs fixing 
-   useEffect(() => {
-     const fetchUserProfile = async () => {
-       try {
-         const token = localStorage.getItem("token");
-         const response = await fetch(
-           `${process.env.REACT_APP_BACKEND_URL}/api/employees/profile`,
-           {
-             headers: {
-               Authorization: `Bearer ${token}`,
-             },
-           }
-         );
-   
-         if (!response.ok) {
-           throw new Error("Failed to fetch user profile");
-         }
-   
-         const data = await response.json();
-         console.log("Fetched Profile:", data); 
-   
-         localStorage.setItem("employee", JSON.stringify(data.profile));
-         setUser(data.profile);
-       } catch (error) {
-         console.error("Error fetching user profile:", error);
-       }
-     };
-   
-     const storedEmployee = localStorage.getItem("employee");
-     if (storedEmployee) {
-       const parsedEmployee = JSON.parse(storedEmployee);
-       if (!parsedEmployee.data_mind_type) {
-         console.warn("data_mind_type missing, fetching from backend...");
-         fetchUserProfile(); 
-         setUser(parsedEmployee);
-       }
-     } else {
-       fetchUserProfile(); 
-     }
-   }, []); */
   useEffect(() => {
     const fetchDataMindType = async () => {
       try {
@@ -117,11 +77,14 @@ const Home = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/posts/get", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/posts/get`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
         setPosts(response.data.posts);
         setFilteredPosts(response.data.posts);
       } catch (error) {
@@ -130,9 +93,10 @@ const Home = () => {
         setLoading(false);
       }
     };
-
+  
     fetchPosts();
   }, []);
+  
 
   // Filter posts based on search term and date range
   useEffect(() => {

@@ -1,8 +1,8 @@
 .achievements-section {
-
     background-color: white;
     border-radius: 10px;
     padding: 20px;
+    /* width: 100%; */
 }
 
 .achievements-section h2 {
@@ -10,6 +10,10 @@
     font-weight: bold;
     margin-bottom: 15px;
     color: #32444d;
+}
+
+.collected-ach {
+    width: 410px;
 }
 
 .achievements-header {
@@ -72,18 +76,31 @@
 .achievement-row {
     display: flex;
     align-items: center;
-    background-color: #f9f9f9;
     border-radius: 8px;
-    padding: 10px;
+    /* padding: 10px; */
     gap: 15px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     width: 100%;
+}
+
+.achievements-simple-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.achievement-item {
+    display: inline-flex;
+    align-items: center;
 }
 
 .achievement-icon {
     width: 40px;
     height: 40px;
     border-radius: 5px;
+    object-fit: cover;
 }
 
 .achievement-details {

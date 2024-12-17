@@ -91,7 +91,7 @@ const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
     if (simpleMode) {
         return (
             <div className="milestones-section">
-                <p>You've collected {filteredMilestones.length} milestones</p>
+                <p className='collected-mil'>You've collected {filteredMilestones.length} milestones</p>
                 {filteredMilestones.length > 0 ? (
                     <ul className="milestones-list">
                         {filteredMilestones.map((milestone) => (

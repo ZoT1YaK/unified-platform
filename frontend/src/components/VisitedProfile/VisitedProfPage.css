@@ -9,13 +9,13 @@
 }
 
 .visited-prof-active-area {
+    position: relative;
+    top: -90px;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 80%;
-    margin-top: -90px;
-    border-radius: 10px;
+    justify-content: center;
+    gap: 20px;
+    width: 75%;
+    flex-wrap: wrap;
 }
 
 .visited-prof-employee-column {
@@ -32,12 +32,13 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-
+    gap: 10px;
 }
 
 .achievements-section,
 .milestones-section {
     /* width: 100%; */
+    width: auto;
     background-color: #ffffff;
     padding: 15px;
     border-radius: 10px;

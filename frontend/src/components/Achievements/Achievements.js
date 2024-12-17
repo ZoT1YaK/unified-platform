@@ -101,7 +101,7 @@ const Achievements = ({ empId, simpleMode = false, onAchievementsFetched }) => {
     if (simpleMode) {
         return (
             <div className="achievements-section">
-                <p>You've collected {filteredAchievements.length} achievements</p>
+                <p className="collected-ach">You've collected {filteredAchievements.length} achievements</p>
                 {achievements.length > 0 ? (
                     <ul className="achievements-simple-list">
                         {achievements.map((achievement) => (

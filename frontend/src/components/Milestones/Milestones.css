@@ -12,6 +12,10 @@
     color: #32444d;
 }
 
+.collected-mil {
+    width: 410px;
+}
+
 .milestones-header {
     display: flex;
     flex-direction: column;
@@ -65,8 +69,21 @@
 
 .milestones-list {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 10px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.milestone-item {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #32444d;
 }
 
 .milestone-row {
@@ -76,7 +93,7 @@
     border-radius: 8px;
     padding: 10px;
     gap: 15px;
-    width: auto;
+    width: 100%;
 }
 
 .milestone-badge {

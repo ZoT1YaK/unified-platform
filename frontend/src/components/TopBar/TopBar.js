@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from "axios";
 import { useNavigate, useLocation } from 'react-router-dom';
 import './TopBar.css';
 import Notification from '../Notifications/Notifications';
@@ -46,18 +47,19 @@ const TopBar = () => {
             }
 
             try {
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/employees/all`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                const response = await axios.get(
+                    `${process.env.REACT_APP_BACKEND_URL}/api/employees/all`,
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch employees.');
-                }
-
-                const data = await response.json();
-                setSearchResults(data.employees); // Populate initial list of employees
+                setSearchResults(response.data.employees); // Populate initial list of employees
             } catch (error) {
-                console.error('Error fetching employees:', error.message);
+                console.error(
+                    "Error fetching employees:",
+                    error.response?.data?.message || error.message
+                );
             }
         };
 

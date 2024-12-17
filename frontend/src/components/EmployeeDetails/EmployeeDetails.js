@@ -16,22 +16,18 @@ const EmployeeDetails = ({ empId, mode = "own", children }) => {
                     return;
                 }
                 const query = mode === "visited" ? `/${empId}` : "";
-                const response = await fetch(
+                const response = await axios.get(
                     `${process.env.REACT_APP_BACKEND_URL}/api/employees/profile${query}`,
                     {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 );
 
-                if (!response.ok) {
-                    throw new Error("Failed to fetch employee details.");
-                }
-
-                const data = await response.json();
+                const data = response.data;
                 setUser(data.profile);
 
                 if (mode === "visited") {
-                    const datamind = data.profile?.datamind || await getEmployeeDatamind();
+                    const datamind = data.profile?.datamind || (await getEmployeeDatamind());
                     setDatamind(datamind);
                 }
                 
@@ -39,17 +35,14 @@ const EmployeeDetails = ({ empId, mode = "own", children }) => {
                     const response = await axios.get(
                         `${process.env.REACT_APP_BACKEND_URL}/api/employees/get-data-mind-type`,
                         {
-                            headers: {
-                                Authorization: `Bearer ${localStorage.getItem("token")}`,
-                            },
+                            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                         }
                     );
                     return response.data.employeeDatamind?.datamind_id.data_mind_type || "";
                 }
-                
             } catch (error) {
-                console.error('Failed to parse employee data:', error);
-                window.location.href = '/login';
+                console.error("Failed to fetch employee details:", error.response?.data?.message || error.message);
+                window.location.href = "/login";
             }
         };
 

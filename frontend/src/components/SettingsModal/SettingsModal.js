@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "./SettingsModal.css";
 
 const SettingsModal = ({ onClose, isLeader }) => {
@@ -8,25 +9,28 @@ const SettingsModal = ({ onClose, isLeader }) => {
     useEffect(() => {
         const fetchPreferences = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/notifications/preferences`, {
-                    method: "GET",
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-                });
-                const data = await response.json();
+                const response = await axios.get(
+                    `${process.env.REACT_APP_BACKEND_URL}/api/notifications/preferences`,
+                    {
+                        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                    }
+                );
 
-                // Map backend preferences to state
                 const togglesState = {};
-
-                data.forEach((item) => {
+                response.data.forEach((item) => {
                     togglesState[item.type_name] = {
                         id: item.noti_type_id,
-                        enabled: item.preference // Assuming the backend provides a 'preference' field
+                        enabled: item.preference, // Assuming the backend provides a 'preference' field
                     };
                 });
-                console.log(togglesState);
+
+                console.log("Toggles State:", togglesState);
                 setAllToggles(togglesState);
             } catch (error) {
-                console.error("Error fetching preferences:", error);
+                console.error(
+                    "Error fetching preferences:",
+                    error.response?.data?.message || error.message
+                );
             }
         };
 
@@ -36,16 +40,21 @@ const SettingsModal = ({ onClose, isLeader }) => {
     // Update preference on toggle click
     const updatePreference = async (notiTypeId, preference) => {
         try {
-            await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/notifications/preferences`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: JSON.stringify({ noti_type_id: notiTypeId, preference }),
-            });
+            await axios.put(
+                `${process.env.REACT_APP_BACKEND_URL}/api/notifications/preferences`,
+                { noti_type_id: notiTypeId, preference },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                }
+            );
         } catch (error) {
-            console.error("Error updating preference:", error);
+            console.error(
+                "Error updating preference:",
+                error.response?.data?.message || error.message
+            );
         }
     };
 

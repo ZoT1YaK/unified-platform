@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from "axios";
 import './Milestones.css';
 import { useFilterAndSearch } from '../../hooks/useFilterAndSearch';
 import useDebounce from '../../hooks/useDebounce';
@@ -25,21 +26,15 @@ const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
             const fallbackEmpId = debouncedEmpId || loggedInUser?._id;
 
             try {
-                const fetchURL = `${process.env.REACT_APP_BACKEND_URL}/api/milestones/get?emp_id=${fallbackEmpId}`;
-                const response = await fetch(fetchURL, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                const fetchURL = `${process.env.REACT_APP_BACKEND_URL}/api/milestones/get`;
+                const response = await axios.get(fetchURL, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { emp_id: fallbackEmpId }, 
                 });
 
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch milestones");
-                }
-                const data = await response.json();
                 const fetchedMilestones = simpleMode
-                    ? data.milestones.filter((milestone) => milestone.visibility)
-                    : data.milestones;
+                    ? response.data.milestones.filter((milestone) => milestone.visibility)
+                    : response.data.milestones;
 
                 setMilestones(fetchedMilestones);
 
@@ -47,7 +42,10 @@ const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
                     onMilestonesFetched(fetchedMilestones);
                 }
             } catch (error) {
-                console.error("Error fetching milestones:", error.message);
+                console.error(
+                    "Error fetching milestones:",
+                    error.response?.data?.message || error.message
+                );
             }
 
         };
@@ -60,21 +58,21 @@ const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
         try {
             const token = localStorage.getItem("token");
             const milestone = milestones.find((m) => m._id === id);
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/milestones/visibility`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
+
+            const response = await axios.put(
+                `${process.env.REACT_APP_BACKEND_URL}/api/milestones/visibility`,
+                {
                     milestone_id: id,
                     visibility: !milestone.visibility,
-                }),
-            });
-            if (!response.ok) {
-                throw new Error("Failed to update visibility");
-            }
-            const updatedMilestone = await response.json();
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            const updatedMilestone = response.data;
             setMilestones((prevMilestones) =>
                 prevMilestones.map((item) =>
                     item._id === updatedMilestone.milestone._id
@@ -83,7 +81,10 @@ const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
                 )
             );
         } catch (error) {
-            console.error("Error updating milestone visibility:", error.message);
+            console.error(
+                "Error updating milestone visibility:",
+                error.response?.data?.message || error.message
+            );
         }
     };
 

@@ -21,7 +21,9 @@ const Home = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const postsPerPage = 7;
-  const analytics = useAnalytics();
+  const analytics = useAnalytics(user?._id); // Use _id instead of id
+  console.log("Using Employee _id for Analytics:", user?._id);
+  console.log("Analytics in Home:", analytics);
 
   // Fetch user data from localStorage
   useEffect(() => {
@@ -174,15 +176,15 @@ const Home = () => {
             </div>
             <div className="stats">
               <div className="stat">
-                {analytics.achievementsCount}{" "}
+                {analytics.analytics.achievementsCount}{" "}
                 <span className="stat-description">Achievements</span>
               </div>
               <div className="stat">
-                {analytics.postsCount}{" "}
+                {analytics.analytics.postsCount}{" "}
                 <span className="stat-description">Posts</span>
               </div>
               <div className="stat">
-                {analytics.milestonesCount}{" "}
+                {analytics.analytics.milestonesCount}{" "}
                 <span className="stat-description">Milestones</span>
               </div>
             </div>

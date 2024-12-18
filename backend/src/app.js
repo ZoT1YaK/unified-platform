@@ -9,6 +9,8 @@ require("./utils/scheduledTasks");
 require("./utils/scheduledReports");
 require("./utils/fileCleanup");
 require("./utils/scheduledMetrics");
+require("./utils/archiveEvents");
+require("./utils/archiveTasks");
 
 // Import route files
 const employeeRoutes = require("./routes/employeeRoutes");

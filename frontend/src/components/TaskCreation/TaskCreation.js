@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchBadges } from "../../services/badgeService";
+import { fetchActiveBadges } from "../../services/badgeService";
 import { fetchEmployees } from "../../services/employeeService";
 import { createTask } from "../../services/taskService";
 import "./TaskCreation.css";
@@ -24,7 +24,7 @@ const TaskCreator = () => {
         const fetchData = async () => {
             try {
                 const [badges, employees] = await Promise.all([
-                    fetchBadges(token),
+                    fetchActiveBadges(token), 
                     fetchEmployees(token),
                 ]);
 
@@ -34,7 +34,7 @@ const TaskCreator = () => {
                 );
 
                 setAvailableEmployees(filteredEmployees);
-                setAvailableBadges(badges.activeBadges || []); 
+                setAvailableBadges(badges); 
             } catch (err) {
                 console.error("Error fetching data:", err.message);
                 setError("Failed to fetch data. Please try again later.");

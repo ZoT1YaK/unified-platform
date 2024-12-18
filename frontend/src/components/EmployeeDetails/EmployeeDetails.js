@@ -1,4 +1,4 @@
-import { fetchDataMindType, fetchEmployeeProfile } from "../../services/employeeService";
+import {  fetchEmployeeProfile } from "../../services/employeeService";
 import React, { useEffect, useState } from "react";
 import "./EmployeeDetails.css";
 
@@ -15,22 +15,18 @@ const EmployeeDetails = ({ empId, mode = "own", children }) => {
                     window.location.href = "/login";
                     return;
                 }
-
-                // Fetch employee profile
-                const profile = await fetchEmployeeProfile(token, empId, mode);
+    
+                const profile = await fetchEmployeeProfile(token, empId, mode);    
                 setUser(profile);
-
-                // Fetch Datamind type for "visited" mode
+    
                 if (mode === "visited") {
-                    const employeeDatamind = profile?.datamind || (await fetchDataMindType(token));
-                    setDatamind(employeeDatamind);
+                    setDatamind(profile.datamind);
+                } else {
+                    const storedEmployee = JSON.parse(localStorage.getItem("employee"));
+                    setDatamind(storedEmployee.data_mind_type);
                 }
             } catch (error) {
-                console.error(
-                    "Failed to fetch employee details:",
-                    error.response?.data?.message || error.message
-                );
-                window.location.href = "/login";
+                console.error("Failed to fetch employee details:", error.message);
             }
         };
 

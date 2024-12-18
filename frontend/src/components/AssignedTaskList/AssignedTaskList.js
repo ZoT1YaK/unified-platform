@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchTasks, editTask, deleteTask } from "../../services/taskService";
-import { fetchBadges } from "../../services/badgeService";
+import { fetchActiveBadges } from "../../services/badgeService";
 import { fetchEmployees } from "../../services/employeeService";
 import "./AssignedTaskList.css";
 
@@ -34,12 +34,12 @@ const AssignedTaskList = () => {
 
                 const [tasksData, badgesData, employeesData] = await Promise.all([
                     fetchTasks(token, searchQuery),
-                    fetchBadges(token),
+                    fetchActiveBadges(token), 
                     fetchEmployees(token),
                 ]);
 
                 setTasks(tasksData || []);
-                setAvailableBadges(badgesData || []);
+                setAvailableBadges(badgesData || []); 
                 setAvailableEmployees(employeesData || []);
             } catch (err) {
                 console.error("Error fetching data:", err);

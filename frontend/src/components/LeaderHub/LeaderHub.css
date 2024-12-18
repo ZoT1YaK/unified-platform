@@ -1,10 +1,14 @@
+.leaderhub-page {
+    background-color: #f2f2f2;
+}
+
 .task-creator-container,
 .event-creator-container {
-    background: white;
+    /* background: white; */
     max-width: 795px;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* border-radius: 10px; */
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
 }
 
 .task-creator-container h2,
@@ -15,6 +19,7 @@
     color: #32444d;
     text-align: left;
 }
+
 .event-list {
     list-style: none;
     padding: 0;
@@ -37,11 +42,12 @@
     font-size: 14px;
     color: #555;
 }
+
 .event-creator-title-icon,
-.task-creator-title-icon{
-    width: 35px; 
-    height: 35px; 
-    object-fit: contain; 
+.task-creator-title-icon {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
 }
 
 .events-modal-overlay {
@@ -73,14 +79,14 @@
     width: 100%;
 }
 
-.scheduled-event-container{
+.scheduled-event-container {
     background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.scheduled-event-title{
+.scheduled-event-title {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 15px;

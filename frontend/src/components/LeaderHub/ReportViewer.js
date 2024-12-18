@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { fetchReports, downloadReport, generateReport } from "../../services/metricsService";
+import "./ReportViewer.css";
 
 const ReportViewer = () => {
   const [reports, setReports] = useState([]);
@@ -8,7 +9,6 @@ const ReportViewer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-
 
   const token = localStorage.getItem("token");
 
@@ -64,14 +64,14 @@ const ReportViewer = () => {
   };
 
   return (
-    <div>
-      <div>
+    <div className="report-viewer">
+      <div className="controls">
         <label htmlFor="reportDropdown">Select Report:</label>
         <select
           id="reportDropdown"
           value={selectedReport}
           onChange={(e) => setSelectedReport(e.target.value)}
-          style={{ margin: "10px" }}
+          className="report-select"
         >
           {reports.map((report) => (
             <option key={report.reportId} value={report.reportId}>
@@ -83,7 +83,7 @@ const ReportViewer = () => {
         <button
           onClick={handleViewReport}
           disabled={isLoading || !selectedReport}
-          style={styles.button}
+          className="button"
         >
           {isLoading ? "Loading..." : "View Report"}
         </button>
@@ -91,7 +91,7 @@ const ReportViewer = () => {
         <button
           onClick={handleGenerateReport}
           disabled={isGenerating}
-          style={{ ...styles.button, backgroundColor: "#008CBA", marginLeft: "10px" }}
+          className="button generate-button"
         >
           {isGenerating ? "Generating..." : "Generate Report"}
         </button>
@@ -99,16 +99,16 @@ const ReportViewer = () => {
 
       {/* Modal */}
       {isModalOpen && (
-        <div style={styles.modalOverlay} onClick={closeModal}>
-          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <button onClick={closeModal} style={styles.closeButton}>
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button onClick={closeModal} className="close-button">
               &times;
             </button>
             {pdfUrl && (
               <iframe
                 src={pdfUrl}
                 title="Metrics Report"
-                style={styles.iframe}
+                className="report-iframe"
                 frameBorder="0"
               ></iframe>
             )}
@@ -117,54 +117,6 @@ const ReportViewer = () => {
       )}
     </div>
   );
-};
-
-const styles = {
-  button: {
-    padding: "10px 20px",
-    backgroundColor: "#4CAF50",
-    color: "white",
-    border: "none",
-    cursor: "pointer",
-    borderRadius: "5px",
-    fontSize: "16px",
-  },
-  modalOverlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 1000,
-  },
-  modalContent: {
-    backgroundColor: "white",
-    borderRadius: "8px",
-    position: "relative",
-    width: "80%",
-    height: "80%",
-    boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
-    display: "flex",
-    flexDirection: "column",
-  },
-  closeButton: {
-    position: "absolute",
-    top: "10px",
-    right: "10px",
-    background: "transparent",
-    border: "none",
-    fontSize: "24px",
-    cursor: "pointer",
-  },
-  iframe: {
-    width: "100%",
-    height: "100%",
-    border: "none",
-  },
 };
 
 export default ReportViewer;

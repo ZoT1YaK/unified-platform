@@ -8,6 +8,8 @@ require("dotenv").config();
 require("./utils/scheduledMilestones");
 require("./utils/scheduledReports");
 require("./utils/scheduledMetrics");
+require("./utils/archiveEvents");
+require("./utils/archiveTasks");
 
 // Import route files
 const employeeRoutes = require("./routes/employeeRoutes");

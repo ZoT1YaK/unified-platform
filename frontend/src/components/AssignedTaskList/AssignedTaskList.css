@@ -2,7 +2,7 @@
     background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
 }
 
 .assigned-task-list-title {
@@ -14,16 +14,33 @@
 }
 
 .assigned-task-search-container {
-    margin-bottom: 15px;
-    width: 90%;
+    /* margin-bottom: 15px;
+    width: 90%; */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .assigned-task-search-bar {
-    width: 100%;
+    /* width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    font-size: 14px;
+    font-size: 14px; */
+
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: transparent;
+    font-size: 16px;
+    color: #32444D;
+    opacity: 0.5;
+    border: none;
+    align-items: center;
 }
 
 .assigned-task-list {
@@ -39,10 +56,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #f9f9f9;
+    /* background: #f9f9f9; */
     padding: 10px 15px;
     border-radius: 8px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    /* box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); */
     transition: background 0.2s;
 }
 
@@ -87,6 +104,7 @@
     height: 20px;
     display: block;
 }
+
 /* Modal */
 .assigned-task-modal-overlay {
     position: fixed;
@@ -117,6 +135,7 @@
         transform: translateY(-20px);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
@@ -222,9 +241,11 @@
     z-index: 1000;
     transform: translateY(-100%);
     width: 250px;
-    pointer-events: none; /* Avoid tooltip triggering hover */
+    pointer-events: none;
+    /* Avoid tooltip triggering hover */
 }
 
 .assigned-task-list-item {
-    position: relative; /* Ensure tooltip is positioned relative to the task */
+    position: relative;
+    /* Ensure tooltip is positioned relative to the task */
 }

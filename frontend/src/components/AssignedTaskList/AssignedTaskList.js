@@ -22,8 +22,8 @@ const AssignedTaskList = () => {
         deadline: "",
     });
 
-    const [currentPage, setCurrentPage] = useState(1); 
-    const tasksPerPage = 5; 
+    const [currentPage, setCurrentPage] = useState(1);
+    const tasksPerPage = 5;
 
     // Fetch tasks, badges, and employees
     useEffect(() => {
@@ -105,8 +105,8 @@ const AssignedTaskList = () => {
         });
     };
 
-     // Save Task
-     const handleSaveTask = async (e) => {
+    // Save Task
+    const handleSaveTask = async (e) => {
         e.preventDefault();
 
         const token = localStorage.getItem("token");
@@ -134,8 +134,8 @@ const AssignedTaskList = () => {
         }
     };
 
-     // Delete Task
-     const handleDeleteTask = async (task) => {
+    // Delete Task
+    const handleDeleteTask = async (task) => {
         if (!window.confirm(`Are you sure you want to delete "${task.title}"?`)) return;
 
         const token = localStorage.getItem("token");
@@ -173,13 +173,20 @@ const AssignedTaskList = () => {
                 </select>
                 {/* Search Bar */}
                 <div className="assigned-task-search-container">
-                    <input
-                        type="text"
-                        className="assigned-task-search-bar"
-                        placeholder="Search tasks..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
+                    <div className="event-search-wrapper">
+                        <img
+                            src="/magnifying-glass 1.png"
+                            alt="Search Icon"
+                            className="search-icon"
+                        />
+                        <input
+                            type="text"
+                            className="assigned-task-search-bar"
+                            placeholder="Search tasks..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
                 </div>
                 {loading && <p>Loading tasks...</p>}
                 {error && <p className="error-message">{error}</p>}
@@ -323,8 +330,8 @@ const AssignedTaskList = () => {
                     </div>
                 )}
             </div>
-            </div>
-            );
+        </div>
+    );
 };
 
-            export default AssignedTaskList;
+export default AssignedTaskList;

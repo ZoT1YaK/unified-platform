@@ -5,6 +5,11 @@ const Department = require("../models/Department");
 const EmployeeDatamind = require("../models/EmployeeDatamind");
 const Datamind = require("../models/Datamind");
 
+/**
+ * @desc    Authenticate employee and provide a JWT token.
+ * @route   POST /api/employees/login
+ * @access  Public
+ */
 exports.loginEmployee = async (req, res) => {
   const { email, password } = req.body;
 
@@ -58,7 +63,11 @@ exports.loginEmployee = async (req, res) => {
   }
 };
 
-
+/**
+ * @desc    Fetch the profile of the logged-in employee.
+ * @route   GET /api/employees/profile
+ * @access  Private (Requires token validation)
+ */
 exports.getProfile = async (req, res) => {
   const { id } = req.user;
 
@@ -91,6 +100,11 @@ exports.getProfile = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Update the preferred language of the logged-in employee.
+ * @route   PUT /api/employees/language
+ * @access  Private (Requires token validation)
+ */
 exports.updateLanguage = async (req, res) => {
   const { id } = req.user;
   const { language } = req.body;
@@ -112,6 +126,12 @@ exports.updateLanguage = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+/**
+ * @desc    Retrieve all employees with basic details.
+ * @route   GET /api/employees/all
+ * @access  Private (Requires token validation)
+ */
 exports.getAllEmployees = async (req, res) => {
   try {
       const employees = await Employee.find({}, "f_name l_name email position img_link");
@@ -122,6 +142,11 @@ exports.getAllEmployees = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Update the data mind type for the logged-in employee.
+ * @route   PUT /api/employees/data-mind-type
+ * @access  Private (Requires token validation)
+ */
 exports.updateEmployeeDatamind = async (req, res) => {
   const { datamind_id } = req.body;
   const { id } = req.user;
@@ -160,6 +185,11 @@ exports.updateEmployeeDatamind = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Fetch the data mind type of the logged-in employee.
+ * @route   GET /api/employees/get-data-mind-type
+ * @access  Private (Requires token validation)
+ */
 exports.getEmployeeDatamind = async (req, res) => {
   const { id } = req.user;
 
@@ -177,6 +207,11 @@ exports.getEmployeeDatamind = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Fetch the profile of a specific employee by ID.
+ * @route   GET /api/employees/profile/:emp_id
+ * @access  Private (Requires token validation)
+ */
 exports.getEmployeeProfile = async (req, res) => {
   const { emp_id } = req.params;
 

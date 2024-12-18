@@ -8,7 +8,13 @@ const sanitizeString = (str) => {
   return str.replace(/^"+|"+$/g, "").trim(); 
 };
 
-// Upload Datamind values from an Excel file
+/**
+ * @desc    Upload Datamind values from an Excel (.xlsx) file.
+ *          - Parses and sanitizes data from the uploaded file.
+ *          - Inserts unique Datamind values into the database.
+ * @route   POST /api/datamind/upload
+ * @access  Private (Admin only)
+ */
 exports.uploadDatamind = async (req, res) => {
   try {
     if (!req.file) {
@@ -37,7 +43,11 @@ exports.uploadDatamind = async (req, res) => {
   }
 };
 
-// Fetch all Datamind values
+/**
+ * @desc    Fetch all Datamind values from the database.
+ * @route   GET /api/datamind/get
+ * @access  Private (Requires token validation)
+ */
 exports.getAllDatamind = async (req, res) => {
   try {
     const dataMinds = await Datamind.find();
@@ -48,7 +58,11 @@ exports.getAllDatamind = async (req, res) => {
   }
 };
 
-// Reset all Datamind values
+/**
+ * @desc    Reset all Datamind values by deleting all records.
+ * @route   DELETE /api/datamind/reset
+ * @access  Private (Admin only)
+ */
 exports.resetDatamind = async (req, res) => {
   try {
     await Datamind.deleteMany({});

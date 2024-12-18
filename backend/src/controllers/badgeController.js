@@ -10,7 +10,11 @@ const sanitizeString = (str) => {
   return str.replace(/^"+|"+$/g, "").trim(); 
 };
 
-
+/**
+ * @desc    Create a new badge with details provided in the request body.
+ * @route   POST /api/badges/create
+ * @access  Private (Admin only)
+ */
 exports.createBadge = async (req, res) => {
   const { name, description, img_link } = req.body;
   const { id: adminId } = req.user;
@@ -33,6 +37,11 @@ exports.createBadge = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Fetch all badges, separating active and archived badges.
+ * @route   GET /api/badges/get
+ * @access  Private (Requires token validation)
+ */
 exports.getAllBadges = async (req, res) => {
   try {
     const activeBadges = await Badge.find({ is_archived: false }).populate("created_by_id", "f_name l_name email");
@@ -45,6 +54,11 @@ exports.getAllBadges = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Fetch only active badges.
+ * @route   GET /api/badges/get-active
+ * @access  Private (Requires token validation)
+ */
 exports.getActiveBadges = async (req, res) => {
   try {
     const activeBadges = await Badge.find({ is_archived: false });
@@ -55,7 +69,14 @@ exports.getActiveBadges = async (req, res) => {
   }
 };
 
-
+/**
+ * @desc    Upload badges in bulk using an uploaded .xlsx file.
+ *          - Parses and sanitizes data from the file.
+ *          - Updates or inserts badges into the database.
+ *          - Deletes the file after processing.
+ * @route   POST /api/badges/upload
+ * @access  Private (Admin only)
+ */
 exports.uploadBadges = async (req, res) => {
   try {
     if (!req.file) {
@@ -119,7 +140,11 @@ exports.uploadBadges = async (req, res) => {
   }
 };
 
-
+/**
+ * @desc    Archive multiple badges by their IDs.
+ * @route   PUT /api/badges/archive
+ * @access  Private (Admin only)
+ */
 exports.archiveBadges = async (req, res) => {
   const { ids } = req.body;
 
@@ -132,6 +157,11 @@ exports.archiveBadges = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Restore archived badges by their IDs.
+ * @route   PUT /api/badges/restore
+ * @access  Private (Admin only)
+ */
 exports.restoreBadges = async (req, res) => {
   const { ids } = req.body;
 

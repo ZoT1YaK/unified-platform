@@ -11,7 +11,7 @@ router.post("/create", verifyToken, taskController.createTask);
 router.get("/employee", verifyToken, taskController.getEmployeeTasks);
 
 // Get tasks assigned by the people leader
-router.get("/leader", verifyToken, taskController.getLeaderAssignedTasks);
+router.get("/leader", verifyToken, verifyPeopleLeader, taskController.getLeaderAssignedTasks);
 
 // Mark a task as completed
 router.put("/complete", verifyToken, taskController.completeTask);

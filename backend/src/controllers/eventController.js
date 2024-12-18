@@ -11,6 +11,12 @@ const Team = require("../models/Team");
 const NotificationType = require("../models/NotificationType");
 const NotificationController = require("./notificationController");
 
+/**
+ * @desc    Create a new event with optional targeting for departments, teams, locations, and employees.
+ *          Sends notifications to targeted employees.
+ * @route   POST /api/events/create
+ * @access  Private (People Leaders only)
+ */
 exports.createEvent = async (req, res) => {
   const { title, description, date, time, location, target_departments, target_teams, target_locations, target_employees, badge_id } = req.body;
   const { id } = req.user;
@@ -144,7 +150,12 @@ exports.createEvent = async (req, res) => {
   }
 };
 
-
+/**
+ * @desc    Retrieve events targeted to the logged-in employee.
+ *          Events are filtered by department, team, location, or direct invitations.
+ * @route   GET /api/events/get
+ * @access  Private (Requires token validation)
+ */
 exports.getEventsForEmployee = async (req, res) => {
   const { id } = req.user;
   const { search } = req.query;
@@ -207,6 +218,11 @@ exports.getEventsForEmployee = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Update the response (Accepted, Declined, Pending) of a logged-in employee to an event invitation.
+ * @route   PUT /api/events/response
+ * @access  Private (Requires token validation)
+ */
 exports.updateEventResponse = async (req, res) => {
   const { event_id, response } = req.body;
   const { id } = req.user;
@@ -233,6 +249,11 @@ exports.updateEventResponse = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Fetch resources (teams, departments, locations) required for event creation.
+ * @route   GET /api/events/resources
+ * @access  Private (Requires token validation)
+ */
 exports.getEventResources = async (req, res) => {
   try {
     const teams = await Team.find().sort({ name: 1 });
@@ -252,6 +273,10 @@ exports.getEventResources = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Complete an event by assigning badges to employees who accepted the invitation.
+ * @access  Internal (Used within the server, no public route)
+ */
 exports.completeEvent = async (eventId) => {
   try {
     const event = await Event.findById(eventId).populate("badge_id");
@@ -281,6 +306,12 @@ exports.completeEvent = async (eventId) => {
   }
 };
 
+/**
+ * @desc    Delete an event created by the logged-in user.
+ *          Deletes associated records like event employees, departments, teams, and locations.
+ * @route   DELETE /api/events/delete/:eventId
+ * @access  Private (People Leaders only)
+ */
 exports.deleteEvent = async (req, res) => {
   const { id: userId } = req.user;
   const { eventId } = req.params;

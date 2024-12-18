@@ -13,6 +13,12 @@ const PostLocation = require("../models/PostLocation");
 const NotificationType = require("../models/NotificationType");
 const NotificationController = require("./notificationController");
 
+/**
+ * @desc    Create a new post with optional targeting for teams, departments, and locations.
+ *          - Allows global posts targeting all employees.
+ * @route   POST /api/posts/create
+ * @access  Private (Requires token validation)
+ */
 exports.createPost = async (req, res) => {
   const { target_teams, target_departments, target_locations, content, mediaLinks, global } = req.body;
   const { id } = req.user;
@@ -80,7 +86,12 @@ exports.createPost = async (req, res) => {
   }
 };
 
-
+/**
+ * @desc    Create a congratulatory post targeting specific teams, departments, or locations.
+ *          - Sends notifications to the related employee.
+ * @route   POST /api/posts/congratulatory
+ * @access  Private (People Leaders only)
+ */
 exports.createCongratulatoryPost = async (req, res) => {
   const { target_teams, target_departments, target_locations, related_emp_id, content, mediaLinks, global } = req.body;
   const { id } = req.user;
@@ -166,6 +177,11 @@ exports.createCongratulatoryPost = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Update the visibility of a congratulatory post for the related employee.
+ * @route   PATCH /api/posts/visibility
+ * @access  Private (Requires token validation)
+ */
 exports.updatePostVisibility = async (req, res) => {
   const { post_id, visibility } = req.body;
   const { id } = req.user;
@@ -190,6 +206,12 @@ exports.updatePostVisibility = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Fetch targeted posts for the logged-in employee.
+ *          - Includes global, team, department, location-specific, and congratulatory posts.
+ * @route   GET /api/posts/get
+ * @access  Private (Requires token validation)
+ */
 exports.getTargetedPosts = async (req, res) => {
   const { id } = req.user;
 
@@ -256,6 +278,12 @@ exports.getTargetedPosts = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Add a comment to a post.
+ *          - Increments the post's comment count.
+ * @route   POST /api/posts/comments
+ * @access  Private (Requires token validation)
+ */
 exports.createComment = async (req, res) => {
   const { post_id, content } = req.body;
   const { id } = req.user;
@@ -295,6 +323,12 @@ exports.createComment = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Fetch all comments for a specific post.
+ *          - Includes employee and team details.
+ * @route   GET /api/posts/:post_id/comments
+ * @access  Private (Requires token validation)
+ */
 exports.getCommentsByPost = async (req, res) => {
   const { post_id } = req.params;
 
@@ -340,6 +374,12 @@ exports.getCommentsByPost = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Like a post.
+ *          - Prevents duplicate likes by the same user.
+ * @route   POST /api/posts/like
+ * @access  Private (Requires token validation)
+ */
 exports.likePost = async (req, res) => {
   const { post_id } = req.body;
   const { id } = req.user;
@@ -366,6 +406,11 @@ exports.likePost = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Unlike a previously liked post.
+ * @route   POST /api/posts/unlike
+ * @access  Private (Requires token validation)
+ */
 exports.unlikePost = async (req, res) => {
   const { post_id } = req.body;
   const { id } = req.user;
@@ -392,6 +437,11 @@ exports.unlikePost = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Fetch all resources (teams, departments, locations) required for post creation.
+ * @route   GET /api/posts/resources
+ * @access  Private (Requires token validation)
+ */
 exports.getPostResources = async (req, res) => {
   try {
     const teams = await Team.find().sort({ name: 1 });
@@ -409,6 +459,12 @@ exports.getPostResources = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Delete a post created by the logged-in user.
+ *          - Deletes associated likes, comments, and targeting data.
+ * @route   DELETE /api/posts/delete
+ * @access  Private (Requires token validation)
+ */
 exports.deletePost = async (req, res) => {
   const { post_id } = req.body;
   const { id } = req.user;

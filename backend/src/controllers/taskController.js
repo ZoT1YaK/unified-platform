@@ -5,6 +5,13 @@ const NotificationType = require("../models/NotificationType");
 const Achievement = require("../models/Achievement");
 const NotificationController = require("./notificationController");
 
+/**
+ * @desc    Create a new task.
+ *          - Tasks can be "Self-Created" (no badge) or "Leader-Assigned" (with optional badges).
+ *          - Sends a notification if the task is assigned to an employee.
+ * @route   POST /api/tasks/create
+ * @access  Private (Requires token validation)
+ */
 exports.createTask = async (req, res) => {
   const { title, deadline, type, description, assigned_to_id, badge_id } = req.body;
   const { id } = req.user;
@@ -48,6 +55,12 @@ exports.createTask = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Fetch tasks assigned to the logged-in employee and their self-created tasks.
+ *          - Supports filtering by status and search query.
+ * @route   GET /api/tasks/employee
+ * @access  Private (Requires token validation)
+ */
 exports.getEmployeeTasks = async (req, res) => {
   const { id } = req.user;
   const { search } = req.query;
@@ -100,7 +113,11 @@ exports.getEmployeeTasks = async (req, res) => {
   }
 };
 
-
+/**
+ * @desc    Fetch tasks assigned by the People Leader to their employees.
+ * @route   GET /api/tasks/leader
+ * @access  Private (People Leaders only)
+ */
 exports.getLeaderAssignedTasks = async (req, res) => {
   const { id } = req.user;
 
@@ -115,6 +132,12 @@ exports.getLeaderAssignedTasks = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Mark a task as completed or pending.
+ *          - Updates completion date and handles badge-related achievements.
+ * @route   PUT /api/tasks/complete
+ * @access  Private (Requires token validation)
+ */
 exports.completeTask = async (req, res) => {
   const { task_id, status } = req.body;
   const { id } = req.user;
@@ -177,6 +200,13 @@ exports.completeTask = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+/**
+ * @desc    Edit a task assigned by a People Leader.
+ *          - Allows updates to title, deadline, description, badge, and assignee.
+ * @route   PUT /api/tasks/edit-assigned
+ * @access  Private (People Leaders only)
+ */
 exports.editAssignedTask = async (req, res) => {
   const { task_id, title, deadline, description, badge_id, assigned_to_id } = req.body; // Include assigned_to_id if relevant
   const { id } = req.user;
@@ -214,6 +244,12 @@ exports.editAssignedTask = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Edit a self-created task by the logged-in employee.
+ *          - Allows updates to title, deadline, and description.
+ * @route   PUT /api/tasks/edit-own
+ * @access  Private (Requires token validation)
+ */
 exports.editOwnCreatedTask = async (req, res) => {
   const { task_id, title, deadline, description } = req.body;
   const { id } = req.user;
@@ -245,6 +281,11 @@ exports.editOwnCreatedTask = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Delete a self-created task.
+ * @route   DELETE /api/tasks/delete
+ * @access  Private (Requires token validation)
+ */
 exports.deleteTask = async (req, res) => {
   const { task_id } = req.body;
   const { id } = req.user;

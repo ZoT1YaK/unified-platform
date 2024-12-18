@@ -4,6 +4,15 @@ const Badge = require("../models/Badge");
 const Task = require("../models/Task");
 const Event = require("../models/Event")
 
+/**
+ * @desc    Fetch achievements for an employee.
+ *          If emp_id is provided in query params, fetch achievements for that employee.
+ *          If emp_id is not provided, fetch achievements for the logged-in user.
+ *          - Own profile: fetch all achievements.
+ *          - Other profiles: fetch only visible achievements.
+ * @route   GET /api/achievements/get?emp_id=<employee_id>
+ * @access  Private (Requires token validation)
+ */
 exports.getAchievementsByEmployee = async (req, res) => {
   const { id: loggedInId } = req.user;
   const { emp_id } = req.query; // Fetch specific employee's achievements if provided
@@ -32,6 +41,12 @@ exports.getAchievementsByEmployee = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Update the visibility of an achievement.
+ *          - Only the owner of the achievement can update its visibility.
+ * @route   PUT /api/achievements/visibility
+ * @access  Private (Requires token validation)
+ */
 exports.updateAchievementVisibility = async (req, res) => {
   const { achievement_id, visibility } = req.body;
   const { id } = req.user;

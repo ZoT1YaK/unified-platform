@@ -14,6 +14,12 @@ const EventEmployee = require("../models/EventEmployee");
 const Event = require ("../models/Event");
 const { getGridFsBucket  } = require("../config/db");
 
+/**
+ * @desc    Update daily metrics snapshots for all employees.
+ *          - Calculates task completion rate, milestones achieved, engagement score, etc.
+ *          - Updates or creates a snapshot for the current month.
+ * @access  Internal (Used within the server, no public route)
+ */
 exports.updateDailyMetricsSnapshot = async () => {
   const startOfMonth = new Date(new Date().setDate(1)); // First day of the current month
   startOfMonth.setHours(0, 0, 0, 0);
@@ -77,6 +83,11 @@ exports.updateDailyMetricsSnapshot = async () => {
   }
 };
 
+/**
+ * @desc    Fetch metrics reports by a specified date range for the logged-in People Leader.
+ * @route   GET /api/metrics/reports
+ * @access  Private (People Leaders only)
+ */
 exports.getReportsByDate = async (req, res) => {
   const { id } = req.user;
   const { start_date, end_date } = req.query;
@@ -111,6 +122,11 @@ exports.getReportsByDate = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Generate a manual metrics report for the logged-in People Leader.
+ * @route   POST /api/metrics/report
+ * @access  Private (People Leaders only)
+ */
 exports.generateManualMetricsReport = async (req, res) => {
   const { id } = req.user;
 
@@ -126,6 +142,11 @@ exports.generateManualMetricsReport = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Generate monthly metrics reports for all People Leaders.
+ *          - Generates PDF reports and sends notifications for availability.
+ * @access  Internal (Used within the server, no public route)
+ */
 exports.generateMonthlyMetricsReports = async () => {
   console.log("Generating monthly metrics reports...");
 
@@ -228,6 +249,11 @@ const generateMetricsReportForLeader = async (leaderId) => {
   });
 };
 
+/**
+ * @desc    Download a specific metrics report.
+ * @route   GET /api/metrics/report/download/:report_id
+ * @access  Private (Requires token validation)
+ */
 exports.downloadMetricsReport = async (req, res) => {
   const { report_id } = req.params;
 
@@ -252,6 +278,12 @@ exports.downloadMetricsReport = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Fetch metrics data for employees reporting to the logged-in People Leader.
+ *          - Returns metrics such as task completion rate, average task speed, and achievements.
+ * @route   GET /api/metrics/metrics
+ * @access  Private (People Leaders only)
+ */
 exports.getMetricsByPeopleLeader = async (req, res) => {
   const { id } = req.user;
 
@@ -392,123 +424,13 @@ const calculateMetricsData = async ({ emp_id, start_date, end_date }) => {
   return metrics[0];
 };
 
-//-------------------------------- PowerBI --------------------------------//
-
-exports.generateMonthlyPowerBIReport = async () => {
-  console.log("Generating monthly Power BI reports...");
-
-  try {
-    const leaders = await Employee.find({ is_people_leader: true }).select("_id email");
-
-    for (const leader of leaders) {
-      try {
-        const reportPath = await generatePowerBIReportForLeader(leader._id);
-        console.log(`Power BI Report generated for Leader: ${leader.email} at ${reportPath}`);
-      } catch (error) {
-        console.error(`Error generating Power BI report for leader ${leader.email}:`, error);
-      }
-    }
-
-    console.log("Monthly Power BI reports generated successfully.");
-  } catch (error) {
-    console.error("Error generating monthly Power BI reports:", error);
-  }
-};
-
-exports.generateManualPowerBIReport = async (req, res) => {
-  const { id } = req.user;
-
-  try {
-    const reportPath = await generatePowerBIReportForLeader(id);
-    res.status(201).json({
-      message: "Power BI report generated successfully.",
-      reportPath,
-    });
-  } catch (error) {
-    console.error("Error generating manual Power BI report:", error);
-    res.status(500).json({ message: "Server error." });
-  }
-};
-
-const generatePowerBIReportForLeader = async (leaderId) => {
-  const leader = await Employee.findById(leaderId).select("email");
-  if (!leader) {
-    throw new Error("Leader not found.");
-  }
-
-  const leaderEmployees = await Employee.find({ people_leader_id: leaderId }).select("_id email");
-
-  if (!leaderEmployees.length) {
-    throw new Error("No employees found for this leader.");
-  }
-
-  const employeeIds = leaderEmployees.map((emp) => emp._id);
-  const employeeEmailsMap = leaderEmployees.reduce((acc, emp) => {
-    acc[emp._id.toString()] = emp.email;
-    return acc;
-  }, {});
-
-  const snapshots = await MetricsSnapshot.find({ emp_id: { $in: employeeIds } });
-
-  if (!snapshots.length) {
-    throw new Error("No metrics data found for the leader's employees.");
-  }
-
-  const csvFields = [
-    "Employee Email",
-    "Task Completion Rate",
-    "Average Task Speed (days)",
-    "Milestones Achieved",
-    "Engagement Score",
-    "Start Date",
-    "End Date",
-  ];
-
-  const csvData = snapshots.map((snapshot) => ({
-    "Employee Email": employeeEmailsMap[snapshot.emp_id?.toString()] || "N/A",
-    "Task Completion Rate": `${snapshot.task_completion_rate.toFixed(2)}%`,
-    "Average Task Speed (days)": snapshot.average_task_speed.toFixed(2),
-    "Milestones Achieved": snapshot.milestones_achieved,
-    "Engagement Score": snapshot.engagement_score.toFixed(2),
-    "Start Date": snapshot.start_date.toISOString(),
-    "End Date": snapshot.end_date.toISOString(),
-  }));
-
-  const json2csvParser = new Parser({ fields: csvFields });
-  const csv = json2csvParser.parse(csvData);
-
-  const reportsDir = path.resolve(__dirname, "../reports");
-  if (!fs.existsSync(reportsDir)) {
-    fs.mkdirSync(reportsDir, { recursive: true });
-  }
-
-  const reportFilePath = path.join(reportsDir, `power_bi_report_${leaderId}_${Date.now()}.csv`);
-  fs.writeFileSync(reportFilePath, csv);
-
-  return reportFilePath;
-};
-
-exports.downloadPowerBIReport = async (req, res) => {
-  const { report_path } = req.params;
-
-  try {
-    if (!fs.existsSync(report_path)) {
-      return res.status(404).json({ message: "File not found." });
-    }
-
-    res.download(report_path, (err) => {
-      if (err) {
-        console.error("Error downloading file:", err);
-        res.status(500).json({ message: "Error downloading file." });
-      }
-    });
-  } catch (error) {
-    console.error("Error fetching report for download:", error);
-    res.status(500).json({ message: "Server error." });
-  }
-};
-
 //-------------------------------- ChartJS --------------------------------//
+/**
+ * @desc    Fetch task metrics for employees managed by the logged-in People Leader.
+ *          - Aggregates task completion data and average speed.
+ * @route   GET /api/metrics/team-tasks
+ * @access  Private (People Leaders only)
+ */
 exports.getTeamTasksMetrics = async (req, res) => {
   const { id: leaderId } = req.user; // Leader's ID from authentication
 
@@ -560,7 +482,12 @@ exports.getTeamTasksMetrics = async (req, res) => {
   }
 };
 
-
+/**
+ * @desc    Fetch event participation metrics for events created by the logged-in People Leader.
+ *          - Groups events by participant responses (Accepted, Declined, Pending).
+ * @route   GET /api/metrics/team-events
+ * @access  Private (People Leaders only)
+ */
 exports.getTeamEventMetrics = async (req, res) => {
   const { id: leaderId } = req.user; // Extract People Leader ID
 

@@ -4,6 +4,12 @@ const NotificationSettings = require("../models/NotificationSettings");
 const NotificationType = require("../models/NotificationType");
 const Employee = require("../models/Employee");
 
+/**
+ * @desc    Create a notification for a recipient and optionally their leader.
+ *          - Handles user notification preferences.
+ *          - Sends notifications for specific events like Milestone Reminders.
+ * @access  Internal (Used within the server, no public route)
+ */
 exports.createNotification = async ({ recipient_id, noti_type_id, related_entity_id, message }) => {
   try {
     if (!recipient_id || !noti_type_id || !message) {
@@ -65,6 +71,12 @@ exports.createNotification = async ({ recipient_id, noti_type_id, related_entity
   }
 };
 
+/**
+ * @desc    Fetch notifications for the logged-in employee.
+ *          - Notifications are sorted by the latest date.
+ * @route   GET /api/notifications/get
+ * @access  Private (Requires token validation)
+ */
 exports.getNotificationsForEmployee = async (req, res) => {
   const { id } = req.user;
 
@@ -82,6 +94,11 @@ exports.getNotificationsForEmployee = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Mark a specific notification as read.
+ * @route   PUT /api/notifications/read
+ * @access  Private (Requires token validation)
+ */
 exports.markNotificationAsRead = async (req, res) => {
   const { notification_id } = req.body;
 
@@ -110,6 +127,12 @@ exports.markNotificationAsRead = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Update notification preferences for a specific notification type.
+ *          - Allows enabling/disabling notifications for the logged-in employee.
+ * @route   PUT /api/notifications/preferences
+ * @access  Private (Requires token validation)
+ */
 exports.updateNotificationPreference = async (req, res) => {
   const { noti_type_id, preference } = req.body;
   const { id } = req.user;
@@ -140,6 +163,12 @@ exports.updateNotificationPreference = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Fetch the notification preferences of the logged-in employee.
+ *          - Returns all preferences with their current settings.
+ * @route   GET /api/notifications/preferences
+ * @access  Private (Requires token validation)
+ */
 exports.getNotificationPreferences = async (req, res) => {
   const { id } = req.user;
 

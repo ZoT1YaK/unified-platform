@@ -1,6 +1,13 @@
 const mongoose = require("mongoose");
 const Milestone = require("../models/Milestone");
 
+/**
+ * @desc    Fetch milestones for a specific employee.
+ *          - If `emp_id` is provided as a query parameter, fetch that employee's milestones.
+ *          - If `emp_id` is not provided or invalid, fetch milestones for the logged-in user.
+ * @route   GET /api/milestones/get
+ * @access  Private (Requires token validation)
+ */
 exports.getMilestonesByEmployee = async (req, res) => {
   const { id: loggedInId } = req.user; 
   const { emp_id } = req.query; 
@@ -22,7 +29,12 @@ exports.getMilestonesByEmployee = async (req, res) => {
   }
 };
 
-
+/**
+ * @desc    Update the visibility of a milestone for the logged-in user.
+ *          - Only the milestone owner can update its visibility.
+ * @route   PUT /api/milestones/visibility
+ * @access  Private (Requires token validation)
+ */
 exports.updateMilestoneVisibility = async (req, res) => {
   const { milestone_id, visibility } = req.body;
   const { id } = req.user;

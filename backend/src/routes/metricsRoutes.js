@@ -21,10 +21,4 @@ router.get("/team-tasks", verifyToken, verifyPeopleLeader, metricsController.get
 // Get event participation metrics
 router.get("/team-events", verifyToken, verifyPeopleLeader, metricsController.getTeamEventMetrics);
 
-// // Generate metrics report (PowerBI)
-// router.post("/report/power_bi", verifyToken, metricsController.generateManualPowerBIReport);
-
-// // Download a metrics report (PowerBI)
-// router.get("/report/power_bi/download/:report_path", metricsController.downloadPowerBIReport);
-
 module.exports = router;

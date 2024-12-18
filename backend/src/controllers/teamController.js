@@ -1,6 +1,12 @@
 const TeamEmployee = require("../models/TeamEmployee");
 const Team = require("../models/Team");
 
+/**
+ * @desc    Fetch all teams associated with the logged-in employee.
+ *          - Requires the employee to be part of at least one team.
+ * @route   GET /api/teams/get-teams
+ * @access  Private (People Leaders only)
+ */
 exports.getTeamsByEmployee = async (req, res) => {
   const { id } = req.user;
 
@@ -20,6 +26,12 @@ exports.getTeamsByEmployee = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Fetch all members of a specific team.
+ *          - Requires a valid `team_id` as a route parameter.
+ * @route   GET /api/teams/get-members
+ * @access  Private (Requires token validation)
+ */ 
 exports.getTeamMembers = async (req, res) => {
   const { team_id } = req.params;
 

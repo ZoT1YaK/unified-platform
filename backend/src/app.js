@@ -2,12 +2,11 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
-require("dotenv").config(); // Load environment variables if needed locally
+require("dotenv").config();
 
 // Scheduled tasks
-require("./utils/scheduledTasks");
+require("./utils/scheduledMilestones");
 require("./utils/scheduledReports");
-require("./utils/fileCleanup");
 require("./utils/scheduledMetrics");
 
 // Import route files
@@ -31,7 +30,7 @@ app.use(cors()); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse JSON payloads
 
 // Ensure "uploads" directory exists
-const uploadDir = path.join(__dirname, "src/uploads");
+const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
   console.log("Uploads directory ensured at:", uploadDir);

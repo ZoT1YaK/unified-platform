@@ -7,6 +7,4 @@ cron.schedule("0 0 * * *", async () => {
   await checkForMilestones();
 });
 
-console.log("Scheduled tasks initialized.");
-
 module.exports = {};

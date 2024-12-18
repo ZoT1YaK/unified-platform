@@ -2,6 +2,15 @@ const Achievement = require("../models/Achievement")
 const Milestone = require("../models/Milestone");
 const Post = require("../models/Post");
 
+/**
+ * @desc    Fetch analytics for a specific employee.
+ *          - Returns counts of achievements, posts, and milestones.
+ *          - If empId is provided as a route parameter, fetch analytics for that employee.
+ *          - If empId is not provided, fetch analytics for the logged-in user.
+ * @route   GET /api/analytics/:empId?
+ * @route   GET /api/analytics
+ * @access  Private (Requires token validation)
+ */
 exports.getEmployeeAnalytics = async (req, res) => {
   const id = req.params.empId || req.user.id;
   console.log("Analytics requested for employee ID:", id);

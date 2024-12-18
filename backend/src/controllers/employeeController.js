@@ -190,17 +190,19 @@ exports.getEmployeeProfile = async (req, res) => {
       return res.status(404).json({ message: "Employee not found" });
     }
 
-    const datamind = await Datamind.findOne({ emp_id });
+    const datamind = await EmployeeDatamind.findOne({ emp_id: employee._id })
+    .populate("datamind_id", "data_mind_type");
 
     res.status(200).json({
       profile: {
         id: employee._id,
         f_name: employee.f_name,
         l_name: employee.l_name,
+        img_link: employee.img_link,
         position: employee.position,
         location: employee.location,
         department: employee.dep_id?.name || "Unknown",
-        datamind: datamind ? datamind.data_mind_type : null,
+        datamind: datamind?.datamind_id?.data_mind_type || "X",
       },
     });
   } catch (error) {

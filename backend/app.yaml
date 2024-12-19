@@ -9,7 +9,7 @@ env_variables:
   JWT_SECRET: "JWT_SECRET"
 
 # Entrypoint
-entrypoint: node server.js
+entrypoint: node src/server.js
 
 # Secure all routes
 handlers:

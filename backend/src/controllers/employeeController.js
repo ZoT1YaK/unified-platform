@@ -42,14 +42,11 @@ exports.loginEmployee = async (req, res) => {
       f_name: employee.f_name,
       l_name: employee.l_name,
       position: employee.position,
-      hire_date: employee.hire_date,
       location: employee.location,
       is_admin: employee.is_admin,
       is_people_leader: employee.is_people_leader,
-      preferred_language: employee.preferred_language,
       img_link: employee.img_link,
       dep_id: employee.dep_id ? { number: employee.dep_id.number, name: employee.dep_id.name } : null,
-      people_leader_id: employee.people_leader_id,
     };
 
     res.status(200).json({

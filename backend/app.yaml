@@ -1,4 +1,4 @@
-runtime: nodejs16
+runtime: nodejs18
 
 # Environment variables (non-sensitive)
 env_variables:

@@ -36,10 +36,6 @@ exports.getTeamMembers = async (req, res) => {
   const { team_id } = req.params;
 
   try {
-    if (!mongoose.Types.ObjectId.isValid(team_id)) {
-      return res.status(400).json({ message: "Invalid team ID" });
-    }
-
     const teamEmployees = await TeamEmployee.find({ team_id }).populate("emp_id", "f_name l_name position email");
 
     if (!teamEmployees.length) {

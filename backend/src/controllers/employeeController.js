@@ -195,6 +195,14 @@ exports.getEmployeeDatamind = async (req, res) => {
       emp_id: id,
     }).populate("datamind_id", "data_mind_type");
 
+    if (!employeeDatamind) {
+      return res.status(404).json({ message: "Employee data not found" });
+    }
+
+    if (!employeeDatamind.datamind_id?.data_mind_type) {
+      employeeDatamind.datamind_id = { data_mind_type: "X" };
+    }
+
     res.status(200).json({
       employeeDatamind,
     });

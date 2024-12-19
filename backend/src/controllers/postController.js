@@ -216,7 +216,7 @@ exports.getTargetedPosts = async (req, res) => {
   const { id } = req.user;
 
   try {
-    const employee = await Employee.findById(id).populate("dep_id", "name");;
+    const employee = await Employee.findById(id).populate("dep_id", "name");
     if (!employee) {
       return res.status(404).json({ message: "Employee not found" });
     }

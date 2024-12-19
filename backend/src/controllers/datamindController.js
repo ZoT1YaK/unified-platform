@@ -16,6 +16,8 @@ const sanitizeString = (str) => {
  * @access  Private (Admin only)
  */
 exports.uploadDatamind = async (req, res) => {
+  const { id } = req.user;
+  
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded." });
@@ -28,7 +30,8 @@ exports.uploadDatamind = async (req, res) => {
 
     // Save Datamind values to the database
     const dataMindValues = sheetData.map((row) => ({
-      data_mind_type: sanitizeString(row.data_mind_type)
+      data_mind_type: sanitizeString(row.data_mind_type),
+      created_by_id: id,
     }));
 
     // Insert only unique values

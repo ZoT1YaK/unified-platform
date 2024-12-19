@@ -78,6 +78,8 @@ exports.getActiveBadges = async (req, res) => {
  * @access  Private (Admin only)
  */
 exports.uploadBadges = async (req, res) => {
+  const { id } = req.user; 
+
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded." });

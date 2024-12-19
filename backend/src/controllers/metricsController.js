@@ -424,6 +424,10 @@ const calculateMetricsData = async ({ emp_id, start_date, end_date }) => {
   return metrics[0];
 };
 
+exports.calculateMetricsData = calculateMetricsData;
+
+exports.generateMetricsReportForLeader = generateMetricsReportForLeader;
+
 //-------------------------------- ChartJS --------------------------------//
 /**
  * @desc    Fetch task metrics for employees managed by the logged-in People Leader.

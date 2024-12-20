@@ -82,7 +82,7 @@ const UserPostTracker = () => {
             <h2>Posts</h2>
             <div className="empl-post-search-wrapper">
                 <img
-                    src="/magnifying-glass 1.png"
+                    src={`${process.env.PUBLIC_URL || ''}/magnifying-glass 1.png`} 
                     alt="Search Icon"
                     className="search-icon"
                 />
@@ -127,7 +127,7 @@ const UserPostTracker = () => {
                                 onClick={() => handleDeletePost(post._id)}
                             >
                                 <img
-                                    src="/trash1.png"
+                                    src={`${process.env.PUBLIC_URL || ''}/trash1.png`} 
                                     alt="Trash Icon"
                                     className="trash-icon"
                                 />

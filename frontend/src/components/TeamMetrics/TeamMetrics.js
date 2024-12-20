@@ -56,7 +56,7 @@ const TeamMetrics = () => {
                         <div className="metric-card" key={index}>
                             <div className="metric-avatar">
                                 <img
-                                    src={metric.img_link || "/placeholder.png"}
+                                    src={`${metric.img_link || `${process.env.PUBLIC_URL || ''}/placeholder.png`}`}
                                     alt={`${metric.employeeName}'s Avatar`}
                                     className="metric-avatar-image"
                                 />

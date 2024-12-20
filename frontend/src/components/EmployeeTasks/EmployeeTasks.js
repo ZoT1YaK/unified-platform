@@ -134,7 +134,7 @@ const EmployeeTasks = () => {
             <div className="search-add-container">
                 <div className="event-search-wrapper">
                     <img
-                        src="/magnifying-glass 1.png"
+                        src={`${process.env.PUBLIC_URL || ''}/magnifying-glass 1.png`}
                         alt="Search Icon"
                         className="search-icon"
                     />
@@ -147,7 +147,7 @@ const EmployeeTasks = () => {
                     />
                 </div>
                 <button className="add-task-button" onClick={() => openModal()}>
-                    <img src="more.png" alt="Add" className="icon" />
+                    <img src={`${process.env.PUBLIC_URL || ''}/more.png`} alt="Add" className="icon" />
                 </button>
             </div>
 
@@ -171,7 +171,7 @@ const EmployeeTasks = () => {
                                 className="edit-button"
                                 onClick={() => openModal(task)}
                             >
-                                <img src="edit.png" alt="Edit" className="icon" />
+                                <img src={`${process.env.PUBLIC_URL || ''}/edit.png`} alt="Edit" className="icon" />
                             </button>
                         )}
                         <input
@@ -191,7 +191,7 @@ const EmployeeTasks = () => {
                                 className="employee-task-delete-button"
                                 onClick={() => handleDeleteTask(task._id)}
                             >
-                                <img src="trash.png" alt="Delete" className="icon" />
+                                <img src={`${process.env.PUBLIC_URL || ''}/trash.png`} alt="Delete" className="icon" />
                             </button>
                         )}
                     </li>

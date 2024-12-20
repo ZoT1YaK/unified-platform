@@ -51,7 +51,7 @@ const EmployeeDetails = ({ empId, mode = "own", children }) => {
             {/* User Avatar and Details */}
             <div className="employee-info">
                 <img
-                    src={user?.img_link || '/placeholder.png'}
+                    src={`${user?.img_link || `${process.env.PUBLIC_URL || ''}/placeholder.png`}`}
                     alt="User Avatar"
                     className="employee-user-avatar"
                 />

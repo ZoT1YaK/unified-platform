@@ -119,7 +119,7 @@ const PostDialog = ({ user, closeDialog }) => {
         <div className="post-dialog-overlay" onClick={closeDialog}>
             <div className="post-dialog" onClick={(e) => e.stopPropagation()}>
                 <div className="post-dialogue-header">
-                    <img src={user.img_link || "/placeholder.png"} alt="User Avatar" className="post-avatar" />
+                    <img src={`${user.img_link || `${process.env.PUBLIC_URL || ''}/placeholder.png`}`} alt="User Avatar" className="post-avatar" />
                     <div className="user-info">
                         <h2>{user.name}</h2>
                         <p>Post to
@@ -159,7 +159,7 @@ const PostDialog = ({ user, closeDialog }) => {
                         </div>
                     )}
                     <button className="close-btn" onClick={closeDialog}>
-                        <img src="/close.png" alt="Close button" className="post-dialogue-close-bttn" />
+                        <img src={`${process.env.PUBLIC_URL || ''}/close.png`}  alt="Close button" className="post-dialogue-close-bttn" />
                     </button>
                 </div>
 
@@ -203,7 +203,7 @@ const PostDialog = ({ user, closeDialog }) => {
                                             </a>
                                         )}
                                         <button onClick={() => handleRemoveMediaLink(index)} className="remove-media-btn">
-                                            <img src="/close.png" alt="Close button" className="media-attach-close-bttn" />
+                                            <img src={`${process.env.PUBLIC_URL || ''}/close.png`}  alt="Close button" className="media-attach-close-bttn" />
                                         </button>
                                     </div>
                                 ))}

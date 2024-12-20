@@ -86,7 +86,7 @@ const Achievements = ({ empId, simpleMode = false, onAchievementsFetched }) => {
                             <li key={achievement._id} className="achievement-item">
                                 <img
                                     className="achievement-icon"
-                                    src={achievement.badge_id?.img_link || "Ach-badge1.png"}
+                                    src={`${achievement.badge_id?.img_link || `${process.env.PUBLIC_URL || ''}/Ach-badge1.png`}`}
                                     alt={achievement.badge_id?.name || "Achievement Badge"}
                                 />
                             </li>
@@ -108,7 +108,7 @@ const Achievements = ({ empId, simpleMode = false, onAchievementsFetched }) => {
                 <div className="achievements-filters">
                     <div className="event-search-wrapper">
                         <img
-                            src="/magnifying-glass 1.png"
+                            src={`${process.env.PUBLIC_URL || ''}/magnifying-glass 1.png`} 
                             alt="Search Icon"
                             className="search-icon"
                         />
@@ -138,7 +138,7 @@ const Achievements = ({ empId, simpleMode = false, onAchievementsFetched }) => {
                     <div key={achievement._id} className="achievement-row">
                         <img
                             className="achievement-icon"
-                            src={achievement.badge_id?.img_link || "Ach-badge1.png"}
+                            src={`${achievement.badge_id?.img_link || `${process.env.PUBLIC_URL || ''}/Ach-badge1.png`}`}
                             alt={achievement.badge_id?.name || "Achievement Badge"}
                         />
                         <div className="achievement-details">
@@ -147,7 +147,7 @@ const Achievements = ({ empId, simpleMode = false, onAchievementsFetched }) => {
                         </div>
                         <img
                             className="visibility-icon"
-                            src={achievement.visibility ? "/eye-icon.png" : "/eye-off-icon.png"}
+                            src={`${process.env.PUBLIC_URL || ''}${achievement.visibility ? '/eye-icon.png' : '/eye-off-icon.png'}`}
                             alt="Toggle visibility"
                             onClick={() => toggleVisibility(achievement._id)}
                         />

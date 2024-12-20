@@ -61,7 +61,7 @@ const PostComponent = ({ post, mode = "default" }) => {
             <div className="post-header">
                 <div className="post-avatar">
                     <img
-                        src={post.author.img_link || "/placeholder.png"}
+                        src={`${post.author.img_link || `${process.env.PUBLIC_URL || ''}/placeholder.png`}`}
                         alt={`${post.author.f_name} ${post.author.l_name}'s Avatar`}
                         className="post-avatar"
                     />
@@ -130,7 +130,7 @@ const PostComponent = ({ post, mode = "default" }) => {
                 <div className="post-footer">
                     <div className="likes-section">
                         <button onClick={handleLikeClick} className="like-button">
-                            <img src="/like.png" alt="Like icon" className="like-icon" />
+                            <img src={`${process.env.PUBLIC_URL || ''}/like.png`}  alt="Like icon" className="like-icon" />
                         </button>
                         <span>{likes} Likes</span>
                     </div>

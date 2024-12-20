@@ -58,7 +58,7 @@ const LeaderHub = () => {
                     <div className="task-creator-container">
                         <h2>
                             <img
-                                src="clipboard.png"
+                                src={`${process.env.PUBLIC_URL || ''}/clipboard.png`}
                                 alt="Clipboard Icon"
                                 className="task-creator-title-icon"
                             />

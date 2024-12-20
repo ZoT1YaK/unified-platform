@@ -26,7 +26,5 @@ services:
       - "3000:3000"
     env_file:
       - ./frontend/.env               # Load environment variables from frontend .env file
-    environment:
-      - REACT_APP_BACKEND_URL = http://localhost:5000
     restart: unless-stopped
     command: npm start                # Run React in development mode

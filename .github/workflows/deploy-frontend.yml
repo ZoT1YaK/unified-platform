@@ -27,7 +27,13 @@ jobs:
           cd frontend
           npm install
 
-      # Step 4: Deploy to GitHub Pages
+      # Step 4: Configure Git
+      - name: Configure Git
+        run: |
+          git config --global user.email "robert.zustars@gmail.com"
+          git config --global user.name "Roberts Zustars"
+
+      # Step 5: Deploy to GitHub Pages
       - name: Deploy Frontend to GitHub Pages
         run: |
           cd frontend

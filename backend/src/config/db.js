@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { GridFSBucket } = require("mongodb");
+require("dotenv").config();
 
 let gridFsBucket;
 

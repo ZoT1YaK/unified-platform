@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 const path = require("path");
-const { Parser } = require("json2csv");
 const Task = require("../models/Task");
 const Milestone = require("../models/Milestone");
 const Employee = require("../models/Employee");

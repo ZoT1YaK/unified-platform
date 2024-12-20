@@ -10,6 +10,7 @@ const Department = require("../models/Department");
 const Team = require("../models/Team");
 const NotificationType = require("../models/NotificationType");
 const NotificationController = require("./notificationController");
+const Achievement = require("../models/Achievement");
 
 /**
  * @desc    Create a new event with optional targeting for departments, teams, locations, and employees.

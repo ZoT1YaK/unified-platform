@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/unified-platform/static/css/main.f3a66e0e.css",
-    "main.js": "/unified-platform/static/js/main.cdd83c5a.js",
+    "main.js": "/unified-platform/static/js/main.457ebf13.js",
     "static/js/453.8ab44547.chunk.js": "/unified-platform/static/js/453.8ab44547.chunk.js",
     "index.html": "/unified-platform/index.html",
     "main.f3a66e0e.css.map": "/unified-platform/static/css/main.f3a66e0e.css.map",
-    "main.cdd83c5a.js.map": "/unified-platform/static/js/main.cdd83c5a.js.map",
+    "main.457ebf13.js.map": "/unified-platform/static/js/main.457ebf13.js.map",
     "453.8ab44547.chunk.js.map": "/unified-platform/static/js/453.8ab44547.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f3a66e0e.css",
-    "static/js/main.cdd83c5a.js"
+    "static/js/main.457ebf13.js"
   ]
 }

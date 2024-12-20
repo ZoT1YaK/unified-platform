@@ -1,5 +1,5 @@
 import React from "react";
-import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./components/Login/Login";
 import Home from "./components/Home(explore)/Home";
@@ -10,7 +10,7 @@ import VisitedProfPage from "./components/VisitedProfile/VisitedProfPage";
 
 const App = () => {
   return (
-    <Router basename="/unified-platform">
+    <Router>
       <Routes>
         {/* Public Route: Login */}
         <Route path="/login" element={<Login />} />

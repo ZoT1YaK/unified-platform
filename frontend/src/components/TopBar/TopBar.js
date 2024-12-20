@@ -101,29 +101,29 @@ const TopBar = () => {
             {/* Left Icons */}
             <div className="left-icons">
                 <img
-                    src="/home-icon.png"
+                    src={`${process.env.PUBLIC_URL || ''}/home-icon.png`} 
                     alt="Home Icon"
                     className="icon"
                     onClick={handleNavigateToDashboard} // Navigate to Dashboard
                 />
                 {/* Peakon Employee Voice */}
                 <a href="https://www.peakon.com" target="_blank" rel="noopener noreferrer">
-                    <img src="/Screenshot_1.png" alt="Peakon Employee Voice" className="icon-peakon" />
+                    <img src={`${process.env.PUBLIC_URL || ''}/Screenshot_1.png`} alt="Peakon Employee Voice" className="icon-peakon" />
                 </a>
 
                 {/* Udemy */}
                 <a href="https://www.udemy.com" target="_blank" rel="noopener noreferrer">
-                    <img src="/Udemy-Emblem.png" alt="Udemy" className="icon" />
+                    <img src={`${process.env.PUBLIC_URL || ''}/Udemy-Emblem.png`} alt="Udemy" className="icon" />
                 </a>
 
                 {/* Workday */}
                 <a href="https://www.workday.com" target="_blank" rel="noopener noreferrer">
-                    <img src="/5019634-middle.png" alt="Workday" className="icon" />
+                    <img src={`${process.env.PUBLIC_URL || ''}/5019634-middle.png`} alt="Workday" className="icon" />
                 </a>
 
                 {/* SharePoint */}
                 <a href="https://www.microsoft.com/en-us/microsoft-365/sharepoint/collaboration" target="_blank" rel="noopener noreferrer">
-                    <img src="/Microsoft_Office_SharePoint_(2019–present).svg.png" alt="SharePoint" className="icon" />
+                    <img src={`${process.env.PUBLIC_URL || ''}/Microsoft_Office_SharePoint_(2019–present).svg.png`} alt="SharePoint" className="icon" />
                 </a>
             </div>
 
@@ -136,7 +136,7 @@ const TopBar = () => {
                     onChange={handleSearchChange}
                     placeholder="Search employees..."
                 />
-                <img src="/magnifying-glass 2.png" alt="search" className="search-icon" />
+                <img src={`${process.env.PUBLIC_URL || ''}/magnifying-glass 2.png`}  alt="search" className="search-icon" />
                 {searchQuery && (
                     <ul className="search-results">
                         {filteredResults.length > 0 ? (
@@ -160,7 +160,7 @@ const TopBar = () => {
             <div className="right-icons">
                 {/* Microsoft Teams */}
                 <a href="https://teams.microsoft.com" target="_blank" rel="noopener noreferrer">
-                    <img src="/business (1).png" alt="Microsoft Teams" className="icon" />
+                    <img src={`${process.env.PUBLIC_URL || ''}/business (1).png`} alt="Microsoft Teams" className="icon" />
                 </a>
 
                 {/* Notification Button */}
@@ -168,14 +168,14 @@ const TopBar = () => {
                     className="notification-button"
                     onClick={() => setShowHistory((prev) => !prev)}
                 >
-                    <img src="/notification.png" alt="Notifications" className="icon" />
+                    <img src={`${process.env.PUBLIC_URL || ''}/notification.png`} alt="Notifications" className="icon" />
                 </button>
                 {/* Notification Dropdown */}
                 <Notification showHistory={showHistory} toggleHistory={() => setShowHistory(false)} />
 
                 <div className="dropdown-user-container">
                     <img
-                        src={user?.img_link || "/placeholder.png"}
+                        src={`${user?.img_link || `${process.env.PUBLIC_URL || ''}/placeholder.png`}`}
                         alt="User Avatar"
                         className="dropdown-user-avatar"
                         onClick={toggleDropdown}
@@ -184,7 +184,7 @@ const TopBar = () => {
                         <div className="dropdown-user-details">
                             <div className="dropdown-header">
                                 <img
-                                    src={user?.img_link || "/placeholder.png"}
+                                    src={`${user?.img_link || `${process.env.PUBLIC_URL || ''}/placeholder.png`}`}
                                     alt="User Avatar"
                                     className="dropdown-user-avatar-large"
                                 />
@@ -248,7 +248,7 @@ const TopBar = () => {
                 {/* Conditional Button for Leaders */}
                 {isLeader && (
                     <button className="leader-button" onClick={toggleView}>
-                        <img src="spin.png" alt="switch-button" className="switch-button" />
+                        <img src={`${process.env.PUBLIC_URL || ''}/spin.png`}  alt="switch-button" className="switch-button" />
                         {location.pathname === '/leaderhub' ? 'Profile' : 'Leader Hub'}
                     </button>
                 )}

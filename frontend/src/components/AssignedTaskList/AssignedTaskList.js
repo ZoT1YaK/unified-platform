@@ -175,7 +175,7 @@ const AssignedTaskList = () => {
                 <div className="assigned-task-search-container">
                     <div className="event-search-wrapper">
                         <img
-                            src="/magnifying-glass 1.png"
+                            src={`${process.env.PUBLIC_URL || ''}/magnifying-glass 1.png`} 
                             alt="Search Icon"
                             className="search-icon"
                         />
@@ -215,7 +215,7 @@ const AssignedTaskList = () => {
                                     onClick={() => openEditModal(task)}
                                     title="Edit Task"
                                 >
-                                    <img src="/edit.png" alt="Edit" />
+                                    <img src={`${process.env.PUBLIC_URL || ''}/edit.png`}  alt="Edit" />
 
                                 </button>
                                 <button
@@ -223,7 +223,7 @@ const AssignedTaskList = () => {
                                     onClick={() => handleDeleteTask(task)}
                                     title="Delete Task"
                                 >
-                                    <img src="trash.png" alt="Delete" />
+                                    <img src={`${process.env.PUBLIC_URL || ''}/trash.png`} alt="Delete" />
                                 </button>
 
                             </div>

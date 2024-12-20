@@ -113,7 +113,7 @@ const handleDeleteEvent = async (eventId) => {
       <div className="event-search-container">
         <div className="event-search-wrapper">
           <img
-            src="/magnifying-glass 1.png"
+            src={`${process.env.PUBLIC_URL || ''}/magnifying-glass 1.png`}
             alt="Search Icon"
             className="search-icon"
           />

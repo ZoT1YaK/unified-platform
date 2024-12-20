@@ -135,7 +135,7 @@ const Home = () => {
           {/* User Profile Overview */}
           <div className="profile-container">
             <div className="profile-container-top"></div>
-            <img src={user.img_link || "/placeholder.png"} alt="User Avatar" className="avatar" />
+            <img src={`${user.img_link || `${process.env.PUBLIC_URL || ''}/placeholder.png`}`} alt="User Avatar" className="avatar" />
             <div className="user-details">
               <h2>
                 {user.f_name && user.l_name
@@ -195,7 +195,7 @@ const Home = () => {
           <div className="filter-controls">
             <div className="post-search-wrapper">
               <img
-                src="/magnifying-glass 1.png"
+                src={`${process.env.PUBLIC_URL || ''}/magnifying-glass 1.png`}
                 alt="Search Icon"
                 className="search-icon"
               />

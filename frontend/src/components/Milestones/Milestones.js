@@ -86,7 +86,7 @@ const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
                 <div className="milestones-filters">
                     <div className="event-search-wrapper">
                         <img
-                            src="/magnifying-glass 1.png"
+                            src={`${process.env.PUBLIC_URL || ''}/magnifying-glass 1.png`} 
                             alt="Search Icon"
                             className="search-icon"
                         />
@@ -120,7 +120,8 @@ const Milestones = ({ empId, simpleMode = false, onMilestonesFetched }) => {
                         </div>
                         <img
                             className="visibility-icon"
-                            src={milestone.visibility ? "/eye-icon.png" : "/eye-off-icon.png"}
+                            src={`${process.env.PUBLIC_URL || ''}${milestone.visibility ? '/eye-icon.png' : '/eye-off-icon.png'}`}
+
                             alt="Toggle visibility"
                             onClick={() => handleToggleVisibility(milestone._id)}
                         />

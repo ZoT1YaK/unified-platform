@@ -33,7 +33,7 @@ const Login = () => {
   return (
     <div className="login-page"> {/* Add the login-page class here */}
       <div className="login-container">
-        <img src="/StiboLogo.png" alt="icon8" className="logo" />
+        <img src={`${process.env.PUBLIC_URL || ''}/StiboLogo.png`} alt="icon8" className="logo" />
         {message && <p style={{ color: "green" }}>{message}</p>}
         {error && <p>{error}</p>}
 

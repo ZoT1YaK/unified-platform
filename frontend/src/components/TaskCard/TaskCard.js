@@ -84,7 +84,7 @@ const TaskCard = () => {
             <div className="task-search-container">
                 <div className="task-search-wrapper">
                     <img
-                        src="/magnifying-glass 1.png"
+                        src={`${process.env.PUBLIC_URL || ''}/magnifying-glass 1.png`} 
                         alt="Search Icon"
                         className="search-icon"
                     />

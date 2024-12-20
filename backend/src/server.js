@@ -1,5 +1,4 @@
 const app = require("./app");
-const { connectDB } = require("./config/db");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 8080;
@@ -8,7 +7,7 @@ const PORT = process.env.PORT || 8080;
   try {
     let MONGO_URI;
     let JWT_SECRET;
-
+    
     // Use Secret Manager in production, otherwise fallback to local .env
     if (process.env.NODE_ENV === "production") {
       console.log("Fetching MongoDB URI from Google Secret Manager...");
@@ -23,11 +22,11 @@ const PORT = process.env.PORT || 8080;
         return version.payload.data.toString("utf8");
       };
       const SECRET_NAME = process.env.SECRET_NAME || "MONGO_URI_PRODUCTION";
-      const JWT_SECRET = process.env.JWT_SECRET || "JWT_SECRET";
+      const JWT_SECRET_NAME = process.env.JWT_SECRET || "JWT_SECRET";
 
       // Fetch MongoDB URI and JWT_SECRET
       MONGO_URI = await getSecret(SECRET_NAME);
-      JWT_SECRET = await getSecret(JWT_SECRET);
+      JWT_SECRET = await getSecret(JWT_SECRET_NAME);
       if (!MONGO_URI) {
         throw new Error("MongoDB URI is empty. Check Secret Manager configuration.");
       }
@@ -40,11 +39,11 @@ const PORT = process.env.PORT || 8080;
         throw new Error("MONGO_URI is not set in the .env file.");
       }
     }
-
     // Set environment variables
     process.env.MONGO_URI = MONGO_URI;
     process.env.JWT_SECRET = JWT_SECRET;
 
+    const { connectDB } = require("./config/db");
     // Connect to MongoDB
     await connectDB();
 
